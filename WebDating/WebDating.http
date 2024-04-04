@@ -1,0 +1,6 @@
+@WebDating_HostAddress = http://localhost:5054
+
+GET {{WebDating_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

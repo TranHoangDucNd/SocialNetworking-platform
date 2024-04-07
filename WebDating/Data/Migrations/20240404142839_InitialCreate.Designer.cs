@@ -12,7 +12,7 @@ using WebDating.Data;
 namespace WebDating.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240404065410_InitialCreate")]
+    [Migration("20240404142839_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />

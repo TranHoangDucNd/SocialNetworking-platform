@@ -1,7 +1,9 @@
 ﻿namespace WebDating.Interfaces
 {
-    public class IUnitOfWork
+    public interface IUnitOfWork
     {
-
+        IUserRepository UserRepository { get; }
+        Task<bool> Complete();
+        bool HasChanges();
     }
 }

@@ -28,9 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="DTOs\" />
     <Folder Include="SignalR\" />
-    <Folder Include="Services\" />
   </ItemGroup>
 
 </Project>

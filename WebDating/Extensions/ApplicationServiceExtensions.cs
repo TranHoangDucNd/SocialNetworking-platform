@@ -2,6 +2,7 @@
 using WebDating.Data;
 using WebDating.Helpers;
 using WebDating.Interfaces;
+using WebDating.Services;
 
 namespace WebDating.Extensions
 {
@@ -16,7 +17,7 @@ namespace WebDating.Extensions
             });
 
             services.AddCors();
-
+            services.AddScoped<ITokenService, TokenService>();
 
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.Configure<CloudinarySettings>(config.GetSection("CloudinarySetting"));

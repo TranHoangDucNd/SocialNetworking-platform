@@ -19,12 +19,13 @@ var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 
-app.UseCors(builder =>
-{
-    builder.AllowAnyHeader();
-    builder.AllowAnyMethod();
-    builder.AllowCredentials();
-});
+app.UseCors(builder => builder
+.AllowAnyHeader()
+.AllowAnyMethod()
+.AllowCredentials()
+.WithOrigins("https://localhost:4200")
+);
+
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
@@ -38,7 +39,6 @@ try
     var context = services.GetRequiredService<DataContext>();
     var userManager = services.GetRequiredService<UserManager<AppUser>>();
     var roleManager = services.GetRequiredService<RoleManager<AppRole>>();
-
 
     await context.Database.MigrateAsync();
     await Seed.SeedUsers(userManager, roleManager);

@@ -1,0 +1,47 @@
+<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+  <div class="container">
+    <a class="navbar-brand" href="#" routerLink="/" routerLinkActive="active">Dating</a>
+    <div class="collapse navbar-collapse" id="navbarCollapse">
+      <ul class="navbar-nav me-auto mb-2 mb-md-0">
+       <ng-container *ngIf="accountService.currentUser$ | async">
+        <li class="nav-item">
+          <a class="nav-link " routerLink="/members" routerLinkActive="active">Matches</a>
+        </li>
+        
+       </ng-container>
+      </ul>
+
+      <div class="dropdown" *ngIf="(accountService.currentUser$ | async) as user" dropdown>
+        <img src="{{user.photoUrl || './assets/user.png'}}" alt="User photo">
+        <a class="dropdown-toggle text-light text-decoration-none ms-2" dropdownToggle>Welcome {{user.knownAs}}</a>
+        <div class="dropdown-menu" *dropdownMenu>
+          <a class="dropdown-item" (click)="logout()">Logout</a>
+        </div>
+      </div>
+      
+      <form 
+      #loginForm="ngForm"
+      class="d-flex"
+      (ngSubmit)="login()"
+      *ngIf="!(accountService.currentUser$ | async)"
+      autocomplete="off"
+      >
+        <input
+          name="userName"
+          [(ngModel)]="model.userName"
+          class="form-control me-2"
+          type="text"
+          placeholder="Username"
+        />
+        <input
+          name="passWord"
+          [(ngModel)]="model.passWord"
+          class="form-control me-2"
+          type="text"
+          placeholder="Password"
+        />
+        <button class="btn btn-success" type="submit">Login</button>
+      </form>
+    </div>
+  </div>
+</nav>

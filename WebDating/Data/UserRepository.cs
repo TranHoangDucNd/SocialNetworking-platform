@@ -27,7 +27,7 @@ namespace WebDating.Data
                 .SingleOrDefaultAsync();
         }
 
-        public async Task<IEnumerable<MemberDto>> GetMembersAsync(UserParams userParams)
+        public async Task<PagedList<MemberDto>> GetMembersAsync(UserParams userParams)
         {
             var query = _context.Users.AsQueryable();
 
@@ -45,7 +45,14 @@ namespace WebDating.Data
 
             query = query.Where(x => x.DateOfBirth >= minDob && x.DateOfBirth <= maxDob);
 
-            return await query.ProjectTo<MemberDto>(_mapper.ConfigurationProvider).ToListAsync();
+
+
+            return await PagedList<MemberDto>
+                .CreateAsync
+                (query.AsNoTracking()
+                .ProjectTo<MemberDto>(_mapper.ConfigurationProvider),
+                userParams.PageNumber,
+                userParams.PageSize);
 
         }
 

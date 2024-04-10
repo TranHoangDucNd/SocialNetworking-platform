@@ -7,6 +7,8 @@ import { TabsModule } from 'ngx-bootstrap/tabs';
 import { TimeagoModule } from "ngx-timeago";
 import { NgxSpinnerModule } from "ngx-spinner";
 import { ButtonsModule } from 'ngx-bootstrap/buttons';
+import { PaginationModule } from 'ngx-bootstrap/pagination';
+
 @NgModule({
   declarations: [],
   imports: [
@@ -19,7 +21,8 @@ import { ButtonsModule } from 'ngx-bootstrap/buttons';
     TabsModule.forRoot(),
     TimeagoModule.forRoot(),
     NgxSpinnerModule.forRoot({ type: 'line-scale' }),
-    ButtonsModule.forRoot()
+    ButtonsModule.forRoot(),
+    PaginationModule.forRoot()
   ],
   exports: [
     ToastrModule,
@@ -28,7 +31,8 @@ import { ButtonsModule } from 'ngx-bootstrap/buttons';
     TabsModule,
     TimeagoModule,
     NgxSpinnerModule,
-    ButtonsModule
+    ButtonsModule,
+    PaginationModule
   ]
 })
 export class SharedModule { }

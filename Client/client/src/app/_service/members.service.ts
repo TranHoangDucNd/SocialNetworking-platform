@@ -52,7 +52,7 @@ export class MembersService {
     if(response) return of(response);
 
 
-    let params = getPaginationHeaders();
+    let params = getPaginationHeaders(userParams.pageNumber, userParams.pageSize);
 
     params = params.append('minAge', userParams.minAge);
     params = params.append('maxAge', userParams.maxAge);

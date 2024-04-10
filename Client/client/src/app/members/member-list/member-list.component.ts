@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Member } from 'src/app/_models/member';
+import { Pagination } from 'src/app/_models/pagination';
 import { UserParams } from 'src/app/_models/userParams';
 import { MembersService } from 'src/app/_service/members.service';
 
@@ -11,6 +12,7 @@ import { MembersService } from 'src/app/_service/members.service';
 export class MemberListComponent implements OnInit {
 
   members: Member[] = [];
+  pagination: Pagination | undefined;
   userParams: UserParams | undefined;
   genderList = [
     {value: 'male', display: 'Males'},
@@ -30,8 +32,9 @@ export class MemberListComponent implements OnInit {
       this.memberService.setUserParams(this.userParams);
       this.memberService.getMembers(this.userParams).subscribe({
         next: (response) =>{
-          if(response.result){
-            this.members = response.result
+          if(response.result && response.pagination){
+            this.members = response.result;
+            this.pagination = response.pagination;
           }
         }
       })
@@ -41,6 +44,14 @@ export class MemberListComponent implements OnInit {
   resetFiters(){
     this.userParams = this.memberService.resetUserParams();
     this.loadMembers();
+  }
+
+  pageChanged(event: any){
+    if(this.userParams && this.userParams?.pageNumber !== event.page){
+      this.userParams.pageNumber = event.page;
+      this.memberService.setUserParams(this.userParams);
+      this.loadMembers();
+    }
   }
 
 }

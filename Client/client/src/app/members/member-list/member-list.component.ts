@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Member } from 'src/app/_models/member';
+import { UserParams } from 'src/app/_models/userParams';
 import { MembersService } from 'src/app/_service/members.service';
 
 @Component({
@@ -10,18 +11,36 @@ import { MembersService } from 'src/app/_service/members.service';
 export class MemberListComponent implements OnInit {
 
   members: Member[] = [];
+  userParams: UserParams | undefined;
+  genderList = [
+    {value: 'male', display: 'Males'},
+    {value: 'female', display: 'Females'}
+  ];
 
-  constructor(private memberService: MembersService){}
+  constructor(private memberService: MembersService){
+    this.userParams = this.memberService.getUserParams();
+  }
   ngOnInit(): void {
-    this.loadMember();
+    
+    this.loadMembers();
   }
 
-  loadMember(){
-    this.memberService.getMembers().subscribe({
-      next: members =>{
-        this.members = members
-      }
-    })
+  loadMembers(){
+    if(this.userParams){
+      this.memberService.setUserParams(this.userParams);
+      this.memberService.getMembers(this.userParams).subscribe({
+        next: (response) =>{
+          if(response.result){
+            this.members = response.result
+          }
+        }
+      })
+    }
+  }
+
+  resetFiters(){
+    this.userParams = this.memberService.resetUserParams();
+    this.loadMembers();
   }
 
 }

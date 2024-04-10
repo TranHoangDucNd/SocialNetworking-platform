@@ -22,6 +22,7 @@ namespace WebDating.Extensions
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.Configure<CloudinarySettings>(config.GetSection("CloudinarySetting"));
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<LogUserActivity>();
             return services;
         }
     }

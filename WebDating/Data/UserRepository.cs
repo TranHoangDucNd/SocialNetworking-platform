@@ -3,6 +3,7 @@ using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
 using WebDating.DTOs;
 using WebDating.Entities;
+using WebDating.Helpers;
 using WebDating.Interfaces;
 
 namespace WebDating.Data
@@ -26,14 +27,31 @@ namespace WebDating.Data
                 .SingleOrDefaultAsync();
         }
 
-        public async Task<IEnumerable<MemberDto>> GetMembersAsync()
+        public async Task<IEnumerable<MemberDto>> GetMembersAsync(UserParams userParams)
         {
-            return await _context.Users.ProjectTo<MemberDto>(_mapper.ConfigurationProvider).ToListAsync(); 
+            var query = _context.Users.AsQueryable();
+
+            query = query.Where(x => x.UserName.ToLower() != userParams.CurrentUserName.ToLower());
+            query = query.Where(x => x.Gender == userParams.Gender);
+
+            var minDob = DateOnly.FromDateTime(DateTime.Today.AddYears(-userParams.MaxAge - 1));
+            var maxDob = DateOnly.FromDateTime(DateTime.Today.AddYears(-userParams.MinAge));
+
+            query = userParams.OrderBy switch
+            {
+                "created" => query.OrderByDescending(x => x.Created),
+                _ => query.OrderByDescending(x => x.LastActive)
+            };
+
+            query = query.Where(x => x.DateOfBirth >= minDob && x.DateOfBirth <= maxDob);
+
+            return await query.ProjectTo<MemberDto>(_mapper.ConfigurationProvider).ToListAsync();
+
         }
 
-        public async Task<MemberDto> GetUserByIdAsync(int id)
+        public async Task<AppUser> GetUserByIdAsync(int id)
         {
-            return await _context.Users.ProjectTo<MemberDto>(_mapper.ConfigurationProvider).FirstOrDefaultAsync(x => x.Id == id);
+            return await _context.Users.FindAsync(id);
         }
 
         public async Task<AppUser> GetUserByUsernameAsync(string username)
@@ -43,6 +61,13 @@ namespace WebDating.Data
                 .SingleOrDefaultAsync(x => x.UserName == username);
         }
 
-       
+        public async Task<string> GetUserGender(string userName)
+        {
+            return await _context.Users
+                .Where(x => x.UserName == userName)
+                .Select(x => x.Gender).FirstOrDefaultAsync();
+        }
+
+
     }
 }

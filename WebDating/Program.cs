@@ -28,8 +28,8 @@ app.UseCors(builder => builder
 
 app.UseHttpsRedirection();
 
-app.UseAuthorization();
 app.UseAuthentication();
+app.UseAuthorization();
 app.MapControllers();
 
 using var scope = app.Services.CreateScope();

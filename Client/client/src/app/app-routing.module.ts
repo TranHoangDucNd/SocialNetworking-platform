@@ -3,6 +3,9 @@ import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from './home/home.component';
 import { authGuard } from './_guards/auth.guard';
 import { MemberListComponent } from './members/member-list/member-list.component';
+import { MemberEditComponent } from './members/member-edit/member-edit.component';
+import { MemberDetailComponent } from './members/member-detail/member-detail.component';
+import { memberDetailedResolver } from './_resolvers/member-detailed.resolver';
 
 const routes: Routes = [
   {path: '', component: HomeComponent},
@@ -12,6 +15,8 @@ const routes: Routes = [
     canActivate: [authGuard],
     children: [
       {path: 'members', component: MemberListComponent},
+      {path: 'member/edit', component:MemberEditComponent},
+      {path: 'members/:username', component: MemberDetailComponent, resolve: {member: memberDetailedResolver}},
     ]
   }
 ];

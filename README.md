@@ -15,4 +15,5 @@ Setting https://localhost:4200 phía client
             "sslKey": "./ssl/localhost-key.pem"
           },
 Setting file environments để tạo http lấy dữ liệu bên server: ng g environments
+Thư viện upload file: https://valor-software.com/ng2-file-upload/
   

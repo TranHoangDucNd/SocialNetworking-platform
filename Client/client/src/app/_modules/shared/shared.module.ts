@@ -8,6 +8,7 @@ import { TimeagoModule } from "ngx-timeago";
 import { NgxSpinnerModule } from "ngx-spinner";
 import { ButtonsModule } from 'ngx-bootstrap/buttons';
 import { PaginationModule } from 'ngx-bootstrap/pagination';
+import { FileUploadModule } from 'ng2-file-upload';
 
 @NgModule({
   declarations: [],
@@ -22,7 +23,8 @@ import { PaginationModule } from 'ngx-bootstrap/pagination';
     TimeagoModule.forRoot(),
     NgxSpinnerModule.forRoot({ type: 'line-scale' }),
     ButtonsModule.forRoot(),
-    PaginationModule.forRoot()
+    PaginationModule.forRoot(),
+    FileUploadModule
   ],
   exports: [
     ToastrModule,
@@ -32,7 +34,8 @@ import { PaginationModule } from 'ngx-bootstrap/pagination';
     TimeagoModule,
     NgxSpinnerModule,
     ButtonsModule,
-    PaginationModule
+    PaginationModule,
+    FileUploadModule
   ]
 })
 export class SharedModule { }

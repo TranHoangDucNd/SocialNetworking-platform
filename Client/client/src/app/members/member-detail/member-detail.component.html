@@ -49,6 +49,9 @@
                         <h4>Interests</h4>
                         <p>{{member.interests}}</p>
                   </tab>
+                  <tab heading="Photos" #photoTap="tab">
+                    <gallery *ngIf="photoTap.active" [items]="images" class="gallery" thumbPosition="left"></gallery>
+                  </tab>
             </tabset>
         </div>
     </div>

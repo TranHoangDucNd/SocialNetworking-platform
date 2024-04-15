@@ -23,6 +23,7 @@ namespace WebDating.Extensions
             services.Configure<CloudinarySettings>(config.GetSection("CloudinarySetting"));
             services.AddScoped<IPhotoService, PhotoService>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<ILikeRepository, LikeRepository>();
             services.AddScoped<LogUserActivity>();
             return services;
         }

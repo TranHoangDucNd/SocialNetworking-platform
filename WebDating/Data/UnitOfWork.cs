@@ -16,6 +16,8 @@ namespace WebDating.Data
 
         public IUserRepository UserRepository => new UserRepository(_context, _mapper);
 
+        public ILikeRepository LikeRepository => new LikeRepository(_context);
+
         public async Task<bool> Complete()
         {
            return await _context.SaveChangesAsync() > 0;

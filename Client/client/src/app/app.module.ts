@@ -19,6 +19,7 @@ import { TextInputComponent } from './_forms/text-input/text-input.component';
 import { DatePickerComponent } from './_forms/date-picker/date-picker.component'; 
 import { JwtInterceptor } from './_interceptors/jwt.interceptor';
 import { LoadingInterceptor } from './_interceptors/loading.interceptor';
+import { ListsComponent } from './lists/lists.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -31,7 +32,8 @@ import { LoadingInterceptor } from './_interceptors/loading.interceptor';
     HomeComponent,
     RegisterComponent,
     TextInputComponent,
-    DatePickerComponent
+    DatePickerComponent,
+    ListsComponent
   ],
   imports: [
     BrowserModule,

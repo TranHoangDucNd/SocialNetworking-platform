@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection.Emit;
 using WebDating.Entities;
 
 namespace WebDating.Data
@@ -16,6 +17,7 @@ namespace WebDating.Data
         }
 
         public DbSet<UserLike> Likes { get; set; }
+        public DbSet<Message> Messages { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -34,6 +36,17 @@ namespace WebDating.Data
                 .WithMany(l => l.LikedByUsers)
                 .HasForeignKey(t => t.TargetUserId)
                 .OnDelete(DeleteBehavior.ClientCascade);
+
+
+            builder.Entity<Message>()
+            .HasOne(u => u.Recipient)
+            .WithMany(m => m.MessagesReceived)
+            .OnDelete(DeleteBehavior.Restrict);//vd khi người dùng xóa tài khoản thì tin nhắn họ gửi phía người nhận vẫn còn
+
+            builder.Entity<Message>()
+            .HasOne(u => u.Sender)
+            .WithMany(m => m.MessagesSent)
+            .OnDelete(DeleteBehavior.Restrict);
 
             builder.Entity<AppUser>()
                 .HasMany(ur => ur.UserRoles)

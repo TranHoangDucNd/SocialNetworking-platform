@@ -17,4 +17,5 @@ Setting https://localhost:4200 phía client
 Setting file environments để tạo http lấy dữ liệu bên server: ng g environments
 Thư viện upload file: https://valor-software.com/ng2-file-upload/
 Thư viện ảnh gallery: https://ngx-gallery.netlify.app/#/gallery
-  
+
+Dowload signalr phía client: npm install @microsoft/signalr

@@ -1,0 +1,77 @@
+.card {
+      border: none;
+    }
+    .chat {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    
+    .chat li {
+      margin-bottom: 10px;
+      padding-bottom: 10px;
+      border-bottom: 1px dotted #b3a9a9;
+    }
+    .rounded-circle {
+      max-height: 50px;
+    }
+    .rounded-circle.sent{
+          float: inline-start;
+    }
+    .rounded-circle.received{
+          text-align: left;
+    }
+    
+    .dropdown-toggle,
+    .dropdown-item {
+      cursor: pointer;
+    }
+    .dropdown-toggle::after {
+      border-top-color: #ff0000; /* Màu của tam giác */
+    }
+    
+    .chat-bodys.sent {
+          display: flex;
+          flex-direction: row;
+          align-items: flex-start;
+      }
+      
+      .chat-bodys.sent .chat-img {
+          margin-right: 10px; /* Để tạo khoảng cách giữa ảnh và nội dung tin nhắn */
+      }
+      
+      .chat-bodys.sent .chat-body {
+          text-align: left;
+      }
+    
+      .chat-bodys.received {
+          display: flex;
+          flex-direction: row-reverse;
+          align-items: flex-start;
+      }
+      
+      .chat-bodys.received .chat-img {
+          margin-left: 10px; /* Để tạo khoảng cách giữa ảnh và nội dung tin nhắn */
+      }
+      
+      .chat-bodys.received .chat-body {
+          text-align: right;
+      }
+    
+    
+    
+    .chat-bodys {
+      display: flex;
+      align-items: flex-start; /* Căn phần tử theo phần tử con (chat-img) */
+    }
+    
+    .chat-img {
+      flex: 0 0 auto; /* Đảm bảo không co giãn, không co giãn và chiều rộng mặc định */
+      margin-right: 10px; /* Để tạo khoảng cách giữa chat-img và chat-body */
+    }
+    
+    .chat-body {
+      flex: 1; /* Phần tử này sẽ mở rộng để lấp đầy không gian còn lại */
+    }
+    
+    

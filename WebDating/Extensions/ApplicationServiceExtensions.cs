@@ -19,17 +19,13 @@ namespace WebDating.Extensions
 
             services.AddCors();
             services.AddScoped<ITokenService, TokenService>();
-
-            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies()); //automapper
             services.Configure<CloudinarySettings>(config.GetSection("CloudinarySetting"));
             services.AddScoped<IPhotoService, PhotoService>();
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
-            services.AddScoped<ILikeRepository, LikeRepository>();
-
             services.AddScoped<LogUserActivity>();
             services.AddSignalR();
             services.AddSingleton<PresenceTracker>();//Không muốn bị hủy sau khi yêu cầu HTTP đã hoàn thành
-            services.AddScoped<IMessageRepository, MessageRepository>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
             return services;
         }
     }

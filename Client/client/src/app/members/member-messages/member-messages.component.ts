@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnInit, ViewChild } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { TimeagoModule } from 'ngx-timeago';
@@ -7,6 +7,7 @@ import { Message } from 'src/app/_models/message';
 import { MessageService } from 'src/app/_service/message.service';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-member-messages',
   standalone: true,
   templateUrl: './member-messages.component.html',
@@ -16,34 +17,21 @@ import { MessageService } from 'src/app/_service/message.service';
 export class MemberMessagesComponent implements OnInit {
   @ViewChild('messageForm') messageForm?: NgForm;
   @Input() username?: string;
-  @Input() user?: string;
-  @Input() messages: Message[] = [];
-
   messageContent = '';
+  loading = false;
 
-  constructor(private messageService: MessageService) {}
+  constructor(public messageService: MessageService) {}
   ngOnInit(): void {}
 
   sendMessage() {
     if (!this.username) return;
+    this.loading = true;
     this.messageService
       .sendMessage(this.username, this.messageContent)
-      .subscribe({
-        next: (messsage) => {
-          this.messages.push(messsage);
-          this.messageForm?.reset();
-        },
-      });
-  }
-
-  loadMessages() {
-    if (this.username) {
-      this.messageService.getMessageThread(this.username).subscribe({
-        next: (messages) => {
-          this.messages = messages;
-        },
-      });
-    }
+      .then(() => {
+        this.messageForm?.reset();
+      })
+      .finally(() => (this.loading = false));
   }
 
   // deleteMessage(id: number,containerDeleteMessage: string){

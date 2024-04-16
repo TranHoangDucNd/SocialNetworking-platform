@@ -19,7 +19,7 @@ namespace WebDating.Helpers
 
             var user = await uow.UserRepository.GetUserByIdAsync(userId);
 
-            user.LastActive = DateTime.Now;
+            user.LastActive = DateTime.UtcNow;
 
             await uow.Complete();
 

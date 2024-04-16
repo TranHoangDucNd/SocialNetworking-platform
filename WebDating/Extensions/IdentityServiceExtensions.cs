@@ -30,6 +30,24 @@ namespace WebDating.Extensions
                         ValidateIssuer = false,
                         ValidateAudience = false
                     };
+
+                    options.Events = new JwtBearerEvents
+                    {
+                        OnMessageReceived = context =>
+                        {
+                            //access_token tín hiệu từ máy khách sử dụng khi nó gửi thông báo
+                            var accessToken = context.Request.Query["access_token"];
+
+                            var path = context.HttpContext.Request.Path;
+                            if (!string.IsNullOrEmpty(accessToken) &&
+                             path.StartsWithSegments("/hubs")) //program app.MapHub<PresenceHub>("hubs/presence");
+                            {
+                                context.Token = accessToken;
+                            }
+
+                            return Task.CompletedTask;
+                        }
+                    };
                 });
 
 

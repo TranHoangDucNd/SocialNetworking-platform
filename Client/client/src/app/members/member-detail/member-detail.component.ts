@@ -11,6 +11,7 @@ import { User } from 'src/app/_models/user';
 import { AccountService } from 'src/app/_service/account.service';
 import { MessageService } from 'src/app/_service/message.service';
 import { take } from 'rxjs';
+import { PresenceService } from 'src/app/_service/presence.service';
 
 @Component({
   selector: 'app-member-detail',
@@ -31,14 +32,19 @@ export class MemberDetailComponent implements OnInit {
   images: GalleryItem[] = [];
   activeTab?: TabDirective;
   messages: Message[] = [];
+  user?: User;
 
-  constructor(
-    private accountService: AccountService,
-    private route: ActivatedRoute,
-    private messageService: MessageService
-  ) {
-    
-  }
+  constructor(private accountService:AccountService,
+    private route:ActivatedRoute, private messageService: MessageService,
+    public presenceService: PresenceService) {
+     this.accountService.currentUser$.pipe(take(1)).subscribe({
+       next: user => {
+         if(user){
+           this.user = user
+         }
+       }
+     })
+     }
   ngOnInit(): void {
     this.route.data.subscribe({
       next: (data) => {

@@ -27,8 +27,4 @@
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.5.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="SignalR\" />
-  </ItemGroup>
-
 </Project>

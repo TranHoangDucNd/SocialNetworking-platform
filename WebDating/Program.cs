@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using WebDating.Data;
 using WebDating.Entities;
 using WebDating.Extensions;
+using WebDating.SignalR;
 
 
 
@@ -32,8 +33,13 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
+app.MapHub<PresenceHub>("hubs/presence");//"hubs/presence" giúp client tìm th?y tên trung tâm PresenceHub
+
+
 using var scope = app.Services.CreateScope();
 var services = scope.ServiceProvider;
+
+//seed data
 try
 {
     var context = services.GetRequiredService<DataContext>();

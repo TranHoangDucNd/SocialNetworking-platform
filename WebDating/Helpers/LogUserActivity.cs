@@ -6,6 +6,7 @@ namespace WebDating.Helpers
 {
     public class LogUserActivity : IAsyncActionFilter
     {
+        //Ghi lại nhật ký người dùng đăng nhập
         public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
             var resultContext = await next();

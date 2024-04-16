@@ -3,6 +3,7 @@ using WebDating.Data;
 using WebDating.Helpers;
 using WebDating.Interfaces;
 using WebDating.Services;
+using WebDating.SignalR;
 
 namespace WebDating.Extensions
 {
@@ -24,7 +25,10 @@ namespace WebDating.Extensions
             services.AddScoped<IPhotoService, PhotoService>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<ILikeRepository, LikeRepository>();
+
             services.AddScoped<LogUserActivity>();
+            services.AddSignalR();
+            services.AddSingleton<PresenceTracker>();//Không muốn bị hủy sau khi yêu cầu HTTP đã hoàn thành
             services.AddScoped<IMessageRepository, MessageRepository>();
             return services;
         }

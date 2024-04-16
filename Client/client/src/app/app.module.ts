@@ -20,7 +20,6 @@ import { JwtInterceptor } from './_interceptors/jwt.interceptor';
 import { LoadingInterceptor } from './_interceptors/loading.interceptor';
 import { ListsComponent } from './lists/lists.component';
 import { MessagesComponent } from './messages/messages.component';
-import { MemberMessagesComponent } from "./members/member-messages/member-messages.component";
 import { RouteReuseStrategy } from '@angular/router';
 import { CustomRoteReuseStrategy } from './_service/customRouteReuseStrategy';
 @NgModule({
@@ -52,7 +51,6 @@ import { CustomRoteReuseStrategy } from './_service/customRouteReuseStrategy';
         FormsModule,
         SharedModule,
         ReactiveFormsModule,
-        MemberMessagesComponent
     ]
 })
 export class AppModule { }

@@ -1,4 +1,4 @@
-<div class="row">
+<div class="row" >
   <div class="col-4">
     <div class="card">
       <img
@@ -14,63 +14,50 @@
           <strong>Location:</strong>
           <p>{{ member.city }}, {{ member.country }}</p>
         </div>
+
         <div>
           <strong>Age:</strong>
           <p>{{ member.age }}</p>
         </div>
+
         <div>
           <strong>Last active:</strong>
-          <p>{{ member.lastActive | timeago }}</p>
+          <p>{{ member.lastActive | timeago}}</p>
         </div>
+
         <div>
           <strong>Member since:</strong>
-          <p>{{ member.created | date : "dd MMM yyyy" }}</p>
+          <p>{{ member.created | date: 'dd MMM yyyy'}}</p>
         </div>
       </div>
+
       <div class="card-footer">
         <div class="btn-group d-flex">
           <button class="btn btn-primary">Like</button>
           <!-- Messages là heading dưới heading="Messages"-->
-          <button (click)="selectTab('Messages')" class="btn btn-success">
-            Messages
-          </button>
+          <button (click)="selectTab('Messages')" class="btn btn-success">Messages</button>
         </div>
       </div>
     </div>
   </div>
   <div class="col-8">
-    <tabset class="member-tabset" #memberTabs>
-      <tab
-        heading="About {{ member.knownAs }}"
-        (selectTab)="onTabActivated($event)"
-      >
-        <h4>Description</h4>
-        <p>{{ member.introduction }}</p>
-        <h4>Looking for</h4>
-        <p>{{ member.lookingFor }}</p>
-      </tab>
-      <tab heading="Interests" (selectTab)="onTabActivated($event)">
-        <h4>Interests</h4>
-        <p>{{ member.interests }}</p>
-      </tab>
-      <tab
-        heading="Photos"
-        #photoTap="tab"
-        (selectTab)="onTabActivated($event)"
-      >
-        <gallery
-          *ngIf="photoTap.active"
-          [items]="images"
-          class="gallery"
-          thumbPosition="left"
-        ></gallery>
-      </tab>
-      <tab heading="Messages" (selectTab)="onTabActivated($event)">
-        <app-member-messages
-          [username]="member.userName"
-          [messages]="messages"
-        ></app-member-messages>
-      </tab>
-    </tabset>
+      <tabset class="member-tabset" #memberTabs>
+            <tab heading="About {{member.knownAs}}" (selectTab)="onTabActivated($event)">
+                  <h4>Description</h4>
+                  <p>{{member.introduction}}</p>
+                  <h4>Looking for</h4>
+                  <p>{{member.lookingFor}}</p>
+            </tab>
+            <tab heading="Interests" (selectTab)="onTabActivated($event)">
+                  <h4>Interests</h4>
+                  <p>{{member.interests}}</p>
+            </tab>
+            <tab heading="Photos" #photoTap="tab" (selectTab)="onTabActivated($event)">
+                  <gallery *ngIf="photoTap.active" [items]="images" class="gallery" thumbPosition="left"></gallery>
+            </tab>
+            <tab heading="Messages" (selectTab)="onTabActivated($event)">
+                  <app-member-messages [username]="member.userName"></app-member-messages>
+            </tab>
+      </tabset>
   </div>
 </div>

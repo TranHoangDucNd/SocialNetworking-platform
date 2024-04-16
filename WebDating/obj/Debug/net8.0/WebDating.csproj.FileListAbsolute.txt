@@ -145,3 +145,5 @@ E:\WebDate\WebDating\WebDating\bin\Debug\net8.0\runtimes\win\lib\net6.0\System.S
 E:\WebDate\WebDating\WebDating\bin\Debug\net8.0\runtimes\win\lib\net6.0\System.Windows.Extensions.dll
 E:\WebDate\WebDating\WebDating\obj\Debug\net8.0\WebDating.csproj.CopyComplete
 E:\WebDate\WebDating\WebDating\obj\Debug\net8.0\WebDating.sourcelink.json
+E:\WebDate\WebDating\WebDating\obj\Debug\net8.0\WebDating.MvcApplicationPartsAssemblyInfo.cs
+E:\WebDate\WebDating\WebDating\obj\Debug\net8.0\WebDating.MvcApplicationPartsAssemblyInfo.cache

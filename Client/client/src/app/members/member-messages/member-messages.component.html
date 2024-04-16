@@ -1,11 +1,19 @@
 <div class="card">
-  <div class="card-body">
-    <div *ngIf="messages.length === 0">
+  <div
+    class="card-body"
+    #scrollMe
+    style="overflow: scroll; height: 500px"
+    [scrollTop]="scrollMe.scrollHeight"
+  >
+    <div *ngIf="(messageService.messageThread$ | async)?.length === 0">
       No messages yet... say hi by using the message box below
     </div>
 
-    <ul *ngIf="messages.length > 0" class="chat">
-      <li *ngFor="let message of messages">
+    <ul
+      *ngIf="(messageService.messageThread$ | async)!.length > 0"
+      class="chat"
+    >
+      <li *ngFor="let message of messageService.messageThread$ | async">
         <div
           class="chat-bodys"
           [ngClass]="{
@@ -24,7 +32,7 @@
             <div class="header">
               <small class="text-muted">
                 <span class="fa fa-clock-o">{{
-                  message.messageSent + "Z" | timeago
+                  message.messageSent | timeago
                 }}</span>
                 <span
                   class="text-danger"
@@ -38,38 +46,14 @@
                   *ngIf="
                     message.dateRead && message.senderUsername !== username
                   "
-                  >(read {{ message.dateRead + "Z" | timeago }})</span
+                  >(read {{ message.dateRead | timeago }})</span
                 >
               </small>
             </div>
 
             <p>{{ message.content }}</p>
           </div>
-          <!-- <div class="dropdown" dropdown>
-            <a
-              class="dropdown-toggle text-light text-decoration-none me-2"
-              dropdownToggle
-              >&#8942;</a
-            >
-            <div class="dropdown-menu" *dropdownMenu>
-              <a
-                class="dropdown-item"
-                *ngIf="
-                  message.senderUsername == username ||
-                  message.recipientUsername == username
-                "
-                (click)="$event.stopPropagation()"
-                (click)="deleteMessage(message.id, 'DeleteOne')"
-                >Unsend for everyone</a
-              >
-              <a
-                class="dropdown-item"
-                *ngIf="message.senderUsername != username"
-                (click)="deleteMessage(message.id, 'DeleteAll')"
-                >Remove for you</a
-              >
-            </div>
-          </div> -->
+          
         </div>
       </li>
     </ul>
@@ -88,11 +72,11 @@
         />
         <div class="input-group-append">
           <button
-            [disabled]="!messageForm.valid"
+            [disabled]="!messageForm.valid || loading"
             class="btn btn-primary"
             type="submit"
           >
-            Send
+            Send <i *ngIf="loading" class="fa fa-spinner fa-spin"></i>
           </button>
         </div>
       </div>

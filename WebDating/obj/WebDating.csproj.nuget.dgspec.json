@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "E:\\WebDate\\WebDating\\WebDating\\WebDating.csproj": {}
+    "E:\\WebDoAn\\Try-Hard\\WebDating\\WebDating.csproj": {}
   },
   "projects": {
-    "E:\\WebDate\\WebDating\\WebDating\\WebDating.csproj": {
+    "E:\\WebDoAn\\Try-Hard\\WebDating\\WebDating.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\WebDate\\WebDating\\WebDating\\WebDating.csproj",
+        "projectUniqueName": "E:\\WebDoAn\\Try-Hard\\WebDating\\WebDating.csproj",
         "projectName": "WebDating",
-        "projectPath": "E:\\WebDate\\WebDating\\WebDating\\WebDating.csproj",
+        "projectPath": "E:\\WebDoAn\\Try-Hard\\WebDating\\WebDating.csproj",
         "packagesPath": "C:\\Users\\ADMIN\\.nuget\\packages\\",
-        "outputPath": "E:\\WebDate\\WebDating\\WebDating\\obj\\",
+        "outputPath": "E:\\WebDoAn\\Try-Hard\\WebDating\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\ADMIN\\AppData\\Roaming\\NuGet\\NuGet.Config",

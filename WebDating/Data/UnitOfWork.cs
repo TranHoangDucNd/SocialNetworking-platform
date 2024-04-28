@@ -20,9 +20,16 @@ namespace WebDating.Data
 
         public IMessageRepository MessageRepository => new MessageRepository(_context, _mapper);
 
+        public IDatingRepository DatingRepository => new DatingRepository(_context, _mapper);
+
         public async Task<bool> Complete()
         {
            return await _context.SaveChangesAsync() > 0;
+        }
+
+        public bool CompleteNotAsync()
+        {
+            return _context.SaveChanges() > 0;
         }
 
         public bool HasChanges()

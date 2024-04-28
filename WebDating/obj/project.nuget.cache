@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "HAHjldtlxdunn9q3x5QHUZU7JaiGtuhPqtMAPe61a16PR80WrYo6bG79zir7hl5PEx5mqclw7BrIkcFegGZukA==",
+  "dgSpecHash": "7nD0l6RcjFGZJReLW96YWNIn+n0Ap0Ug/emkYb2WjUPy3FLpz/tVkhJw745m5InxDIcXp93srHigJeKKi872BQ==",
   "success": true,
-  "projectFilePath": "E:\\WebDoAn\\Try-Hard\\WebDating\\WebDating.csproj",
+  "projectFilePath": "E:\\Đồ án tốt nghiệp\\Try-Hard\\WebDating\\WebDating.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\ADMIN\\.nuget\\packages\\automapper\\12.0.1\\automapper.12.0.1.nupkg.sha512",
     "C:\\Users\\ADMIN\\.nuget\\packages\\automapper.extensions.microsoft.dependencyinjection\\12.0.1\\automapper.extensions.microsoft.dependencyinjection.12.0.1.nupkg.sha512",

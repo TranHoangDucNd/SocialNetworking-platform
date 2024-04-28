@@ -28,6 +28,10 @@ namespace WebDating.Helpers
             CreateMap<DateTime, DateTime>().ConvertUsing(d => DateTime.SpecifyKind(d, DateTimeKind.Utc));
             CreateMap<DateTime?, DateTime?>().ConvertUsing(d => d.HasValue ?
                 DateTime.SpecifyKind(d.Value, DateTimeKind.Utc) : null);
+
+            CreateMap<UserInterest, UserInterestVM>().ReverseMap();
+            CreateMap<DatingProfile, DatingProfileVM>().ReverseMap();
+          
         }
     }
 }

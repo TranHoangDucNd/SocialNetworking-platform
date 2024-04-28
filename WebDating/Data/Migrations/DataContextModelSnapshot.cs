@@ -167,6 +167,9 @@ namespace WebDating.Data.Migrations
                     b.Property<DateOnly>("DateOfBirth")
                         .HasColumnType("date");
 
+                    b.Property<int?>("DatingProfileId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Email")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
@@ -182,6 +185,9 @@ namespace WebDating.Data.Migrations
 
                     b.Property<string>("Introduction")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsUpdatedDatingProfile")
+                        .HasColumnType("bit");
 
                     b.Property<string>("KnownAs")
                         .HasColumnType("nvarchar(max)");
@@ -230,6 +236,8 @@ namespace WebDating.Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("DatingProfileId");
+
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
 
@@ -272,6 +280,34 @@ namespace WebDating.Data.Migrations
                     b.HasIndex("GroupName");
 
                     b.ToTable("Connections");
+                });
+
+            modelBuilder.Entity("WebDating.Entities.DatingProfile", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("DatingObject")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Height")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("WhereToDate")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("DatingProfiles");
                 });
 
             modelBuilder.Entity("WebDating.Entities.Group", b =>
@@ -355,6 +391,27 @@ namespace WebDating.Data.Migrations
                     b.ToTable("Photos");
                 });
 
+            modelBuilder.Entity("WebDating.Entities.UserInterest", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("DatingProfileId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("InterestName")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DatingProfileId");
+
+                    b.ToTable("UserInterests");
+                });
+
             modelBuilder.Entity("WebDating.Entities.UserLike", b =>
                 {
                     b.Property<int>("TargetUserId")
@@ -406,6 +463,15 @@ namespace WebDating.Data.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("WebDating.Entities.AppUser", b =>
+                {
+                    b.HasOne("WebDating.Entities.DatingProfile", "DatingProfile")
+                        .WithMany()
+                        .HasForeignKey("DatingProfileId");
+
+                    b.Navigation("DatingProfile");
+                });
+
             modelBuilder.Entity("WebDating.Entities.AppUserRole", b =>
                 {
                     b.HasOne("WebDating.Entities.AppRole", "Role")
@@ -430,6 +496,17 @@ namespace WebDating.Data.Migrations
                     b.HasOne("WebDating.Entities.Group", null)
                         .WithMany("Connections")
                         .HasForeignKey("GroupName");
+                });
+
+            modelBuilder.Entity("WebDating.Entities.DatingProfile", b =>
+                {
+                    b.HasOne("WebDating.Entities.AppUser", "User")
+                        .WithOne()
+                        .HasForeignKey("WebDating.Entities.DatingProfile", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("WebDating.Entities.Message", b =>
@@ -460,6 +537,17 @@ namespace WebDating.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("AppUser");
+                });
+
+            modelBuilder.Entity("WebDating.Entities.UserInterest", b =>
+                {
+                    b.HasOne("WebDating.Entities.DatingProfile", "DatingProfile")
+                        .WithMany("UserInterests")
+                        .HasForeignKey("DatingProfileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("DatingProfile");
                 });
 
             modelBuilder.Entity("WebDating.Entities.UserLike", b =>
@@ -499,6 +587,11 @@ namespace WebDating.Data.Migrations
                     b.Navigation("Photos");
 
                     b.Navigation("UserRoles");
+                });
+
+            modelBuilder.Entity("WebDating.Entities.DatingProfile", b =>
+                {
+                    b.Navigation("UserInterests");
                 });
 
             modelBuilder.Entity("WebDating.Entities.Group", b =>

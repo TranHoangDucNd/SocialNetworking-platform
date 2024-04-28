@@ -1,4 +1,27 @@
 /* You can add global styles to this file, and also import other style files */
+@import '~@angular/material/prebuilt-themes/indigo-pink.css';
+
+.button-primaryyy {
+  background-color: #ffa3a8 !;
+}
+.button-primaryyy:hover{
+  background-color: #ff9096;
+}
+::ng-deep .mat-select-panel {
+  z-index: 10000 !important; 
+}
+
+.modal-backdrop {
+  z-index: 991 !important;
+  background-color: #c8c8c8;
+}
+.fixed-top {
+  z-index: 990 !important;
+}
+.modal{
+  z-index: 1000 !important;
+  margin-top: 50px;
+}
 .tab-panel {
       border: 1px solid #ddd;
       padding: 10px;

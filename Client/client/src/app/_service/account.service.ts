@@ -13,43 +13,50 @@ export class AccountService {
   private currentUserSource = new BehaviorSubject<User | null>(null);
   currentUser$ = this.currentUserSource.asObservable();
 
-  constructor(private http: HttpClient, private presenceService: PresenceService) {}
+  constructor(
+    private http: HttpClient,
+    private presenceService: PresenceService
+  ) {}
 
   login(model: any) {
     return this.http.post<User>(this.baseUrl + 'account/login', model).pipe(
-      map(response =>{
+      map((response) => {
         const user = response;
-        if(user){
+        if (user) {
           this.setCurrentUser(user);
         }
       })
-    )
+    );
   }
 
-  register(model: any){
+  register(model: any) {
     return this.http.post<User>(this.baseUrl + 'account/register', model).pipe(
-      map(user =>{
-        if(user){
+      map((user) => {
+        if (user) {
           this.setCurrentUser(user);
         }
       })
-    )
+    );
   }
 
-  setCurrentUser(user: User){
+  setCurrentUser(user: User) {
     localStorage.setItem('user', JSON.stringify(user));
     this.currentUserSource.next(user);
     this.presenceService.createHubConnection(user);
   }
-  
-  logout(){
+
+  logout() {
     localStorage.removeItem('user');
     this.currentUserSource.next(null);
     this.presenceService.stopHubConnection();
   }
 
-   //Lấy phần giữa của token (role)
-  getDecodedToken(token: string){
+  //Lấy phần giữa của token (role)
+  getDecodedToken(token: string) {
     return JSON.parse(atob(token.split('.')[1]));
+  }
+
+  checkDatingProfile() {
+    return this.http.get(this.baseUrl + 'Account/CheckDatingProfile');
   }
 }

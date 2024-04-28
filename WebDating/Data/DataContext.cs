@@ -20,7 +20,8 @@ namespace WebDating.Data
         public DbSet<Message> Messages { get; set; }
         public DbSet<Group> Groups { get; set; }
         public DbSet<Connection> Connections { get; set; }
-
+        public DbSet<DatingProfile> DatingProfiles { get; set; }
+        public DbSet<UserInterest> UserInterests { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -62,6 +63,16 @@ namespace WebDating.Data
                 .WithOne(u => u.Role)
                 .HasForeignKey(ur => ur.RoleId)
                 .IsRequired();
+
+            builder.Entity<UserInterest>()
+                .HasOne(x => x.DatingProfile)
+                .WithMany(x => x.UserInterests)
+                .HasForeignKey(x => x.DatingProfileId);
+
+            builder.Entity<AppUser>()
+                .HasOne<DatingProfile>()
+                .WithOne(x => x.User)
+                .HasForeignKey<DatingProfile>(x => x.UserId);
         }
 
     }

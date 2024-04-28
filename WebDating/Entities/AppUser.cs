@@ -9,6 +9,7 @@ namespace WebDating.Entities
         public string KnownAs { get; set; }
         public DateTime Created { get; set; } = DateTime.UtcNow;
         public DateTime LastActive { get; set; } = DateTime.UtcNow;
+        public bool IsUpdatedDatingProfile { get; set; } = false;
         public string Gender { get; set; }
         public string Introduction { get; set; }
         public string LookingFor { get; set; }
@@ -21,5 +22,6 @@ namespace WebDating.Entities
         public List<Message> MessagesSent { get; set; }
         public List<Message> MessagesReceived { get; set; }
         public ICollection<AppUserRole> UserRoles { get; set; }
+        public DatingProfile DatingProfile { get; set; }
     }
 }

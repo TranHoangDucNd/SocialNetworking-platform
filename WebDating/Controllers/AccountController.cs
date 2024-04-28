@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -74,6 +75,14 @@ namespace WebDating.Controllers
         public async Task<bool> UserExists(string username)
         {
             return await _userManager.Users.AnyAsync(x => x.UserName.ToLower() == username.ToLower());
+        }
+
+        [HttpGet("CheckDatingProfile")]
+        [Authorize]
+        public async Task<ActionResult<bool>> CheckDatingProfile()
+        {
+            var result = await _userManager.FindByNameAsync(User.Identity.Name);
+            return Ok(result.IsUpdatedDatingProfile);
         }
     }
 }

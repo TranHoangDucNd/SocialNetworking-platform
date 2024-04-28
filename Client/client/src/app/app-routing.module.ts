@@ -8,25 +8,31 @@ import { MemberDetailComponent } from './members/member-detail/member-detail.com
 import { memberDetailedResolver } from './_resolvers/member-detailed.resolver';
 import { ListsComponent } from './lists/lists.component';
 import { MessagesComponent } from './messages/messages.component';
+import { DatingProfileComponent } from './dating-profile/dating-profile.component';
 
 const routes: Routes = [
-  {path: '', component: HomeComponent},
+  { path: '', component: HomeComponent },
   {
     path: '',
     runGuardsAndResolvers: 'always',
     canActivate: [authGuard],
     children: [
-      {path: 'members', component: MemberListComponent},
-      {path: 'member/edit', component:MemberEditComponent},
-      {path: 'members/:username', component: MemberDetailComponent, resolve: {member: memberDetailedResolver}},
-      {path: 'lists', component: ListsComponent},
+      { path: 'members', component: MemberListComponent },
+      { path: 'member/edit', component: MemberEditComponent },
+      {
+        path: 'members/:username',
+        component: MemberDetailComponent,
+        resolve: { member: memberDetailedResolver },
+      },
+      { path: 'lists', component: ListsComponent },
       { path: 'messages', component: MessagesComponent },
-    ]
-  }
+      { path: 'datingprofile', component: DatingProfileComponent },
+    ],
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}

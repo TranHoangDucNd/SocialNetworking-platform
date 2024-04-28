@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "E:\\WebDoAn\\Try-Hard\\WebDating\\WebDating.csproj": {}
+    "E:\\Đồ án tốt nghiệp\\Try-Hard\\WebDating\\WebDating.csproj": {}
   },
   "projects": {
-    "E:\\WebDoAn\\Try-Hard\\WebDating\\WebDating.csproj": {
+    "E:\\Đồ án tốt nghiệp\\Try-Hard\\WebDating\\WebDating.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\WebDoAn\\Try-Hard\\WebDating\\WebDating.csproj",
+        "projectUniqueName": "E:\\Đồ án tốt nghiệp\\Try-Hard\\WebDating\\WebDating.csproj",
         "projectName": "WebDating",
-        "projectPath": "E:\\WebDoAn\\Try-Hard\\WebDating\\WebDating.csproj",
+        "projectPath": "E:\\Đồ án tốt nghiệp\\Try-Hard\\WebDating\\WebDating.csproj",
         "packagesPath": "C:\\Users\\ADMIN\\.nuget\\packages\\",
-        "outputPath": "E:\\WebDoAn\\Try-Hard\\WebDating\\obj\\",
+        "outputPath": "E:\\Đồ án tốt nghiệp\\Try-Hard\\WebDating\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\ADMIN\\AppData\\Roaming\\NuGet\\NuGet.Config",

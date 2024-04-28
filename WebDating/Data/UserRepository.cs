@@ -75,6 +75,9 @@ namespace WebDating.Data
                 .Select(x => x.Gender).FirstOrDefaultAsync();
         }
 
-
+        public void UpdateUser(AppUser user)
+        {
+            _context.Users.Update(user);
+        }
     }
 }

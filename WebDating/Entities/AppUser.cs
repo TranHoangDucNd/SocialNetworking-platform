@@ -23,5 +23,12 @@ namespace WebDating.Entities
         public List<Message> MessagesReceived { get; set; }
         public ICollection<AppUserRole> UserRoles { get; set; }
         public DatingProfile DatingProfile { get; set; }
+
+        //Post -------
+        public ICollection<Post> Posts { get; set; }
+        public ICollection<PostLike> PostLikes { get; set; }
+        public ICollection<PostComment> PostComments { get; set; }
+        public ICollection<PostSubComment> PostSubComments { get; set; }
+        public ICollection<PostReportDetail> PostReportDetails { get; set; }
     }
 }

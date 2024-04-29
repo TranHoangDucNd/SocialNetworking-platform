@@ -17,11 +17,25 @@ namespace WebDating.Data
         }
 
         public DbSet<UserLike> Likes { get; set; }
+
+        //Message Signalr
         public DbSet<Message> Messages { get; set; }
         public DbSet<Group> Groups { get; set; }
         public DbSet<Connection> Connections { get; set; }
+
+        //Profile
         public DbSet<DatingProfile> DatingProfiles { get; set; }
         public DbSet<UserInterest> UserInterests { get; set; }
+
+        //Post
+        public DbSet<Post> Posts { get; set; }
+        public DbSet<PostComment> PostsComments { get; set; }
+        public DbSet<PostLike> PostLikes { get; set; }
+        public DbSet<Report> Reports { get; set; }
+        public DbSet<PostReportDetail> PostReportDetails { get; set; }
+        public DbSet<PostSubComment> PostSubComments { get; set; }
+        public DbSet<ImagePost> ImagePosts { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -73,6 +87,83 @@ namespace WebDating.Data
                 .HasOne<DatingProfile>()
                 .WithOne(x => x.User)
                 .HasForeignKey<DatingProfile>(x => x.UserId);
+
+
+            //Post
+
+            builder.Entity<Post>(entity =>
+            {
+                entity.HasOne(d => d.User)
+                .WithMany(p => p.Posts)
+                .HasForeignKey(d => d.UserId)
+                .HasConstraintName("FK__Post__UserId__778AC167");
+            });
+
+            builder.Entity<PostComment>(entity =>
+            {
+                entity.HasOne(x => x.Post)
+                .WithMany(x => x.PostComments)
+                .HasForeignKey(x => x.PostId)
+                .HasConstraintName("FK__PostComme__PostI__0F624AF8");
+
+                entity.HasOne(x => x.User)
+                .WithMany(x => x.PostComments)
+                .HasForeignKey(x => x.UserId)
+                .HasConstraintName("FK__PostComme__UserI__10566F31");
+
+            });
+
+            builder.Entity<PostLike>(entity =>
+            {
+                entity.HasOne(d => d.Post)
+                    .WithMany(p => p.PostLikes)
+                    .HasForeignKey(d => d.PostId)
+                    .HasConstraintName("FK__PostLike__PostId__1332DBDC");
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.PostLikes)
+                    .HasForeignKey(d => d.UserId)
+                    .HasConstraintName("FK__PostLike__UserId__14270015");
+            });
+
+            builder.Entity<ImagePost>(entity =>
+            {
+                entity.HasOne(d => d.Post)
+                    .WithMany(p => p.Images)
+                    .HasForeignKey(d => d.PostId)
+                    .HasConstraintName("FK__PostImage__PostId__1332DBDC");
+            });
+
+
+            builder.Entity<PostReportDetail>(entity =>
+            {
+                entity.HasOne(d => d.Post)
+                    .WithMany(p => p.PostReportDetails)
+                    .HasForeignKey(d => d.PostId)
+                    .HasConstraintName("FK__PostRepor__PostI__17036CC0");
+
+                entity.HasOne(d => d.Report)
+                    .WithMany(p => p.PostReportDetails)
+                    .HasForeignKey(d => d.ReportId)
+                    .HasConstraintName("FK__PostRepor__Repor__151B244E");
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.PostReportDetails)
+                    .HasForeignKey(d => d.UserId)
+                    .HasConstraintName("FK__PostRepor__UserI__160F4887");
+            });
+
+            builder.Entity<PostSubComment>(entity =>
+            {
+                entity.HasOne(d => d.PreComment)
+                    .WithMany(p => p.PostSubComments)
+                    .HasForeignKey(d => d.PreCommentId)
+                    .HasConstraintName("FK__PostSubCo__PreCo__114A936A");
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.PostSubComments)
+                    .HasForeignKey(d => d.UserId)
+                    .HasConstraintName("FK__PostSubCo__UserI__123EB7A3");
+            });
         }
 
     }

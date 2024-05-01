@@ -1,0 +1,26 @@
+<div style="max-height: 550px; overflow: auto;">
+      <div class="modal-header d-flex justify-content-center align-items-center mx-auto" style="max-width: 620px;">
+            <div class="d-flex align-items-center ">
+                  <h4 class="modal-title pull-left" style="color: #eb6864">Now, edit
+                      your post on
+                      <strong>DATING</strong>
+                  </h4>
+                  <mat-icon style="color: #eb6864" class="ps-1"> edit</mat-icon>
+              </div>
+            <button type="button" class="btn bg-primary text-white" (click)="UpdatePost()">Update</button>
+      </div>
+
+      <div class="modal-body mat-typography ms-auto  me-auto "
+      style="font-family: 'Roboto' !important; max-width: 620px;">
+      <textarea type="text" [(ngModel)]="createPost.content" rows="3" class="border-0 px-2 py-2  text-start w-100"
+      style="outline: none;" placeholder="What do you feel?"></textarea>
+      <label class="relative" style="float: inline-end;" title="Update images">
+            <mat-icon style="color: #9d9d9d;">add_photo_alternate</mat-icon>
+            <input id="img-upload" type="file" multiple class="d-none" (change)="AddImage($event)">
+      </label>
+        <div class="d-flex w-100 flex-wrap ">
+            <img *ngFor="let imageUrl of selectedImages" class="px-2 py-2" [src]="imageUrl" alt="Selected Image"
+                style="width: 25%; object-fit: contain;">
+        </div>
+      </div>
+</div>

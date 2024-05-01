@@ -9,6 +9,8 @@ import { memberDetailedResolver } from './_resolvers/member-detailed.resolver';
 import { ListsComponent } from './lists/lists.component';
 import { MessagesComponent } from './messages/messages.component';
 import { DatingProfileComponent } from './dating-profile/dating-profile.component';
+import { PersonalpageComponent } from './personalpage/personalpage.component';
+import { PostComponent } from './post/post.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -17,6 +19,7 @@ const routes: Routes = [
     runGuardsAndResolvers: 'always',
     canActivate: [authGuard],
     children: [
+      { path: 'personalpage/:username', component: PersonalpageComponent },
       { path: 'members', component: MemberListComponent },
       { path: 'member/edit', component: MemberEditComponent },
       {

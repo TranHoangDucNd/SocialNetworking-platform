@@ -34,6 +34,12 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatSelectModule } from '@angular/material/select';
 import { DatingService } from './_service/Dating.service';
 import { BsModalService, ModalModule } from 'ngx-bootstrap/modal';
+import { PostComponent } from './post/post.component';
+import { CreatepostComponent } from './post/createpost/createpost.component';
+import { UpdatepostComponent } from './post/updatepost/updatepost.component';
+import { PersonalpageComponent } from './personalpage/personalpage.component';
+import { TimeagoModule } from "ngx-timeago";
+import { TimeAgoPipe } from './_service/time-ago.pipe';
 
 @NgModule({
   declarations: [
@@ -49,7 +55,12 @@ import { BsModalService, ModalModule } from 'ngx-bootstrap/modal';
     DatePickerComponent,
     ListsComponent,
     MessagesComponent,
-    DatingProfileComponent
+    DatingProfileComponent,
+    PostComponent,
+    CreatepostComponent,
+    UpdatepostComponent,
+    PersonalpageComponent,
+    TimeAgoPipe
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
@@ -75,7 +86,7 @@ import { BsModalService, ModalModule } from 'ngx-bootstrap/modal';
     MatIconModule,
     MatAutocompleteModule,
     MatSelectModule,
-    ModalModule.forRoot()
+    ModalModule.forRoot(), TimeagoModule.forRoot()
   ],
 })
 export class AppModule {}

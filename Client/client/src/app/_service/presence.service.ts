@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
-import { ToastrService } from 'ngx-toastr';
+import { IndividualConfig, ToastrService } from 'ngx-toastr';
 import { BehaviorSubject, take } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { User } from '../_models/user';
@@ -49,8 +49,11 @@ export class PresenceService {
     });
 
     this.hubConnection.on('NewMessageReceived', ({ username, knownAs }) => {
+      const config: Partial<IndividualConfig> = {
+        timeOut: 10000*2, // Thời gian tồn tại của thông báo: 5000ms = 5 giây
+      };
       this.toastr
-        .info(knownAs + ' has sent you a new message! Click me to see it')
+        .info(knownAs + ' has sent you a new message! Click me to see it' , ' ',config)
         .onTap.pipe(take(1))
         .subscribe({
           next: () =>

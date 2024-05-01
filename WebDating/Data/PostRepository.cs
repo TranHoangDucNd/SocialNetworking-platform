@@ -42,7 +42,6 @@ namespace WebDating.Data
         public async Task<IEnumerable<Post>> GetMyPost(int id)
         => await _context.Posts.Where(x => x.User.Id == id)
             .OrderByDescending(x => x.CreatedAt)
-            .Include(x => x.PostComments)
             .Include(x => x.PostLikes)
             .Include(x => x.Images)
             .Include(x => x.User)

@@ -9,7 +9,7 @@
         </li>
 
         <li class="nav-item">
-          <a class="nav-link" routerLink="/lists" routerLinkActive="active">Lists</a>
+          <a class="nav-link" routerLink="/lists" routerLinkActive="active">Likes</a>
         </li>
 
         <li class="nav-item">
@@ -21,7 +21,8 @@
       </ul>
 
       <div class="dropdown" *ngIf="(accountService.currentUser$ | async) as user" dropdown>
-        <img src="{{user.photoUrl || './assets/user.png'}}" alt="User photo">
+        <img src="{{user.photoUrl || './assets/user.png'}}" alt="User photo" 
+        routerLink="/personalpage/{{user.userName}}">
         <a class="dropdown-toggle text-light text-decoration-none ms-2" dropdownToggle>Welcome {{user.knownAs}}</a>
         <div class="dropdown-menu" *dropdownMenu>
           <a class="dropdown-item" routerLink="/member/edit">Edit profile</a>

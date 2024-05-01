@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using WebDating.DTOs;
+using WebDating.DTOs.Post;
 using WebDating.Entities;
 using WebDating.Extensions;
 
@@ -31,6 +32,17 @@ namespace WebDating.Helpers
 
             CreateMap<UserInterest, UserInterestVM>().ReverseMap();
             CreateMap<DatingProfile, DatingProfileVM>().ReverseMap();
+
+            CreateMap<Post, PostResponseDto>()
+                .ForMember(dest => dest.Images, o => o.MapFrom(s => s.Images.Select(x => x.Path).ToList()))
+                .ForPath(dest => dest.UserShort.Id, o => o.MapFrom(s => s.User.Id))
+                .ForPath(dest => dest.UserShort.FullName, o=> o.MapFrom(s=> s.User.UserName))
+                .ForPath(dest => dest.UserShort.Image, o=> o.MapFrom(s => s.User.Photos.Select(s => s.Url).FirstOrDefault()))
+                .ReverseMap();
+
+            CreateMap<PostComment, CommentPostDto>().ReverseMap();
+
+            
           
         }
     }

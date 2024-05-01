@@ -1,6 +1,7 @@
 ﻿using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
 using Microsoft.Extensions.Options;
+using WebDating.Entities;
 using WebDating.Helpers;
 using WebDating.Interfaces;
 
@@ -41,6 +42,24 @@ namespace WebDating.Services
         {
             var deleteParams = new DeletionParams(publicId);
             return await _cloudinary.DestroyAsync(deleteParams);
+        }
+
+        public async Task<IEnumerable<ImageUploadResult>> AddRangerPhotoAsync(List<IFormFile> files)
+        {
+            var uploadResults = new List<ImageUploadResult>();
+            foreach(var image in files)
+            {
+                uploadResults.Add(await AddPhotoAsync(image));
+            }
+            return uploadResults;
+        }
+
+        public async Task DeleteRangerPhotoAsync(ICollection<ImagePost> images)
+        {
+            foreach(var image in images)
+            {
+                await DeletePhotoAsync(image.PublicId);
+            }
         }
     }
 }

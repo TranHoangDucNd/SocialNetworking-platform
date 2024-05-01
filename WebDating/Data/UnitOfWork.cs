@@ -22,6 +22,8 @@ namespace WebDating.Data
 
         public IDatingRepository DatingRepository => new DatingRepository(_context, _mapper);
 
+        public IPostRepository PostRepository => new PostRepository(_context);
+
         public async Task<bool> Complete()
         {
            return await _context.SaveChangesAsync() > 0;

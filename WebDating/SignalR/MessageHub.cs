@@ -3,9 +3,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using WebDating.DTOs;
-using WebDating.Entities;
 using WebDating.Interfaces;
 using WebDating.Extensions;
+using WebDating.Entities;
 
 namespace WebDating.SignalR
 {

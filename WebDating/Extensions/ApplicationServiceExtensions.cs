@@ -27,6 +27,7 @@ namespace WebDating.Extensions
             services.AddSingleton<PresenceTracker>();//Không muốn bị hủy sau khi yêu cầu HTTP đã hoàn thành
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IDatingService, DatingService>();
+            services.AddScoped<IPostService, PostService>();
             return services;
         }
     }

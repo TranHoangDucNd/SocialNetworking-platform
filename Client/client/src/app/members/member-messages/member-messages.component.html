@@ -1,39 +1,70 @@
-<div class="card">
+<div class="message-chat">
   <div
-    class="card-body"
+    class="chat-body"
     #scrollMe
-    style="overflow: scroll; height: 500px"
+    style="overflow: scroll; height: 550px"
     [scrollTop]="scrollMe.scrollHeight"
   >
     <div *ngIf="(messageService.messageThread$ | async)?.length === 0">
       No messages yet... say hi by using the message box below
     </div>
 
-    <ul
-      *ngIf="(messageService.messageThread$ | async)!.length > 0"
-      class="chat"
-    >
+    <ul *ngIf="(messageService.messageThread$ | async)!.length > 0">
       <li *ngFor="let message of messageService.messageThread$ | async">
         <div
-          class="chat-bodys"
-          [ngClass]="{
-            sent: message.senderUsername === username,
-            received: message.recipientUsername === username
-          }"
+          class="message info"
+          *ngIf="message.recipientUsername === username"
         >
-          <span class="chat-img">
-            <img
-              class="rounded-circle"
-              src="{{ message.senderPhotoUrl || './assets/user.png' }}"
-              alt="Image of user"
-            />
-          </span>
-          <div class="chat-body">
+          <img
+            alt=""
+            class="img-circle medium-image"
+            src="{{ message.senderPhotoUrl || './assets/user.png' }}"
+          />
+          <div class="message-body">
             <div class="header">
               <small class="text-muted">
-                <span class="fa fa-clock-o">{{
-                  message.messageSent | timeago
-                }}</span>
+                <span
+                  class="text-danger"
+                  *ngIf="
+                    !message.dateRead && message.senderUsername !== username
+                  "
+                  >Unread</span
+                >
+                <span
+                  class="text-success-emphasis"
+                  *ngIf="
+                    message.dateRead && message.senderUsername !== username
+                  "
+                  >Read {{ message.dateRead | timeago }}</span
+                >
+              </small>
+            </div>
+            <div class="message-info">
+              <h4>{{ message.senderUsername }}</h4>
+              <h5>
+                <i class="fa fa-clock-o"></i>
+                {{ message.messageSent | timeago }}
+              </h5>
+            </div>
+            <hr />
+            <div class="message-text">
+              {{ message.content }}
+            </div>
+          </div>
+          <br />
+        </div>
+        <div
+          class="message my-message"
+          *ngIf="message.senderUsername === username"
+        >
+          <img
+            alt=""
+            class="img-circle medium-image"
+            src="{{ message.senderPhotoUrl || './assets/user.png' }}"
+          />
+          <div class="message-body">
+            <div class="header">
+              <small class="text-muted">
                 <span
                   class="text-danger"
                   *ngIf="
@@ -50,16 +81,27 @@
                 >
               </small>
             </div>
+            <div class="message-body-inner">
+              <div class="message-info">
+                <h4>{{ message.senderUsername }}</h4>
+                <h5>
+                  <i class="fa fa-clock-o"></i>
+                  {{ message.messageSent | timeago }}
+                </h5>
+              </div>
+              <hr />
 
-            <p>{{ message.content }}</p>
+              <div class="message-text">
+                {{ message.content }}
+              </div>
+            </div>
           </div>
-          
+          <br />
         </div>
       </li>
     </ul>
   </div>
-
-  <div class="card-footer">
+  <div class="chat-footer">
     <form #messageForm="ngForm" (ngSubmit)="sendMessage()" autocomplete="off">
       <div class="input-group">
         <input
@@ -70,6 +112,7 @@
           class="form-control input-sm"
           placeholder="Send a private message"
         />
+
         <div class="input-group-append">
           <button
             [disabled]="!messageForm.valid || loading"

@@ -1,8 +1,3 @@
-.img-thumbnail{
-      margin: 25px;
-      width: 85%;
-      height: 85%;
-}
 
 .card-body{
       padding: 0 25px;
@@ -13,3 +8,103 @@
       background-color: #fff;
       border-top: none;
 }
+
+
+/* User Cards */
+.user-box {
+      width: 110px;
+      margin: auto;
+      margin-bottom: 20px;
+      
+  }
+  
+  .user-box img {
+      width: 100%;
+      border-radius: 50%;
+        padding: 3px;
+        background: #fff;
+        -webkit-box-shadow: 0px 5px 25px 0px rgba(0, 0, 0, 0.2);
+      -moz-box-shadow: 0px 5px 25px 0px rgba(0, 0, 0, 0.2);
+      -ms-box-shadow: 0px 5px 25px 0px rgba(0, 0, 0, 0.2);
+      box-shadow: 0px 5px 25px 0px rgba(0, 0, 0, 0.2);
+  }
+  
+  .profile-card-2 .card {
+        position:relative;
+  }
+  
+  .profile-card-2 .card .card-body {
+        z-index:1;
+  }
+  
+  .profile-card-2 .card::before {
+      content: "";
+      position: absolute;
+      top: 0px;
+      right: 0px;
+      left: 0px;
+        border-top-left-radius: .25rem;
+      border-top-right-radius: .25rem;
+      height: 112px;
+      background-color: #e6e6e6;
+  }
+  
+  .profile-card-2 .card.profile-primary::before {
+        background-color: #008cff;
+  }
+  .profile-card-2 .card.profile-success::before {
+        background-color: #15ca20;
+  }
+  .profile-card-2 .card.profile-danger::before {
+        background-color: #fd3550;
+  }
+  .profile-card-2 .card.profile-warning::before {
+        background-color: #ff9700;
+  }
+  .profile-card-2 .user-box {
+        margin-top: 30px;
+  }
+  
+  .profile-card-3 .user-fullimage {
+        position:relative;
+  }
+  
+  .profile-card-3 .user-fullimage .details{
+        position: absolute;
+      bottom: 0;
+      left: 0px;
+        width:100%;
+  }
+  
+  .profile-card-4 .user-box {
+      width: 110px;
+      margin: auto;
+      margin-bottom: 10px;
+      margin-top: 15px;
+  }
+  
+  .profile-card-4 .list-icon {
+      display: table-cell;
+      font-size: 30px;
+      padding-right: 20px;
+      vertical-align: middle;
+      color: #223035;
+  }
+  
+  .profile-card-4 .list-details {
+        display: table-cell;
+        vertical-align: middle;
+        font-weight: 600;
+      color: #223035;
+      font-size: 15px;
+      line-height: 15px;
+  }
+  
+  .profile-card-4 .list-details small{
+        display: table-cell;
+        vertical-align: middle;
+        font-size: 12px;
+        font-weight: 400;
+      color: #808080;
+  }
+  

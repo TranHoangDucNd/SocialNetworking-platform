@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using WebDating.Data;
-using WebDating.Entities;
+using WebDating.Entities.UserEntities;
 using WebDating.Extensions;
 using WebDating.SignalR;
 

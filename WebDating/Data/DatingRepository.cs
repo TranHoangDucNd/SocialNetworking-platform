@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using WebDating.DTOs;
-using WebDating.Entities;
+using WebDating.Entities.ProfileEntities;
+using WebDating.Entities.UserEntities;
 using WebDating.Interfaces;
 
 namespace WebDating.Data
@@ -10,11 +12,12 @@ namespace WebDating.Data
         private readonly IMapper _mapper;
         private readonly DataContext _context;
 
-        public DatingRepository( DataContext context, IMapper mapper)
+        public DatingRepository(DataContext context, IMapper mapper)
         {
             _mapper = mapper;
             _context = context;
         }
+
         public async Task<DatingProfileVM> Insert(DatingProfile datingProfile)
         {
             await _context.DatingProfiles.AddAsync(datingProfile);

@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
-using WebDating.Entities;
+using WebDating.Entities.UserEntities;
 
 namespace WebDating.Data
 {

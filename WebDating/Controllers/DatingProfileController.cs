@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using WebDating.DTOs;
-using WebDating.Entities;
+using WebDating.Entities.ProfileEntities;
 using WebDating.Interfaces;
 using WebDating.Utilities;
 
@@ -59,6 +59,5 @@ namespace WebDating.Controllers
             var result = await _service.InitDatingProfile(datingProfile, User.Identity.Name);
             return Ok(result);
         }
-
     }
 }

@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebDating.DTOs;
-using WebDating.Entities;
+using WebDating.Entities.UserEntities;
 using WebDating.Interfaces;
 
 namespace WebDating.Controllers

@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Identity;
 using WebDating.DTOs;
 using WebDating.DTOs.Post;
 using WebDating.Entities;
+using WebDating.Entities.PostEntities;
+using WebDating.Entities.UserEntities;
 using WebDating.Interfaces;
 
 namespace WebDating.Services

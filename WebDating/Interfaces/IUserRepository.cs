@@ -1,5 +1,5 @@
 ﻿using WebDating.DTOs;
-using WebDating.Entities;
+using WebDating.Entities.UserEntities;
 using WebDating.Helpers;
 
 namespace WebDating.Interfaces

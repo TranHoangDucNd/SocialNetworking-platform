@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using WebDating.Data;
 using WebDating.DTOs;
 using WebDating.Entities;
+using WebDating.Entities.MessageEntities;
 using WebDating.Extensions;
 using WebDating.Helpers;
 using WebDating.Interfaces;

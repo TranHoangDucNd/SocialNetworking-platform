@@ -1,7 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using WebDating.Entities.UserEntities;
 
-namespace WebDating.Entities
+namespace WebDating.Entities.PostEntities
 {
     [Table("PostLike")]
     public class PostLike

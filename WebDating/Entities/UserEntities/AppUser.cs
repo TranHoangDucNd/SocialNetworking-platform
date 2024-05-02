@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using WebDating.Entities.MessageEntities;
+using WebDating.Entities.PostEntities;
+using WebDating.Entities.ProfileEntities;
 
-namespace WebDating.Entities
+namespace WebDating.Entities.UserEntities
 {
     public class AppUser : IdentityUser<int>
     {

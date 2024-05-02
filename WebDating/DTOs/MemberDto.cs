@@ -1,4 +1,6 @@
-﻿namespace WebDating.DTOs
+﻿using WebDating.Entities;
+
+namespace WebDating.DTOs
 {
     public class MemberDto
     {

@@ -1,6 +1,6 @@
 ﻿
 using WebDating.DTOs;
-using WebDating.Entities;
+using WebDating.Entities.MessageEntities;
 using WebDating.Helpers;
 
 namespace WebDating.Interfaces

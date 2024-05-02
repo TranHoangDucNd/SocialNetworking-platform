@@ -6,6 +6,7 @@ using WebDating.DTOs;
 using WebDating.Interfaces;
 using WebDating.Extensions;
 using WebDating.Entities;
+using WebDating.Entities.MessageEntities;
 
 namespace WebDating.SignalR
 {

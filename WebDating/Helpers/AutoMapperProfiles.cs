@@ -1,7 +1,10 @@
 ﻿using AutoMapper;
 using WebDating.DTOs;
 using WebDating.DTOs.Post;
-using WebDating.Entities;
+using WebDating.Entities.MessageEntities;
+using WebDating.Entities.PostEntities;
+using WebDating.Entities.ProfileEntities;
+using WebDating.Entities.UserEntities;
 using WebDating.Extensions;
 
 namespace WebDating.Helpers
@@ -14,7 +17,9 @@ namespace WebDating.Helpers
                 .ForMember(d => d.PhotoUrl,
                     opt => opt.MapFrom(src => src.Photos.FirstOrDefault(x => x.IsMain).Url))
                 .ForMember(d => d.Age,
-                    opt => opt.MapFrom(src => src.DateOfBirth.CaculateAge()));
+                    opt => opt.MapFrom(src => src.DateOfBirth.CaculateAge()))
+                .ReverseMap();
+                
 
             CreateMap<Photo, PhotoDto>();
             CreateMap<RegisterDto, AppUser>();

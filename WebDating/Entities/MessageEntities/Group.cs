@@ -1,7 +1,7 @@
 ﻿using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 using System.ComponentModel.DataAnnotations;
 
-namespace WebDating.Entities
+namespace WebDating.Entities.MessageEntities
 {
     //Nhóm message
     public class Group

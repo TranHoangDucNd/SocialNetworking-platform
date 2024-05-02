@@ -1,14 +1,15 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using WebDating.Entities.UserEntities;
 
-namespace WebDating.Entities
+namespace WebDating.Entities.PostEntities
 {
     [Table("PostComment")]
     public class PostComment
     {
         public PostComment()
         {
-            PostSubComments =  new HashSet<PostSubComment>();
+            PostSubComments = new HashSet<PostSubComment>();
         }
         [Key]
         public int Id { get; set; }

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace WebDating.Entities
+namespace WebDating.Entities.UserEntities
 {
     [Table("Photos")]
     public class Photo

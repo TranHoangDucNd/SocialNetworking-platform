@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace WebDating.Entities
+namespace WebDating.Entities.ProfileEntities
 {
     public enum Provice
     {

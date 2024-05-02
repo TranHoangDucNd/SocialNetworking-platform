@@ -2,7 +2,7 @@
 using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
 using WebDating.DTOs;
-using WebDating.Entities;
+using WebDating.Entities.MessageEntities;
 using WebDating.Helpers;
 using WebDating.Interfaces;
 

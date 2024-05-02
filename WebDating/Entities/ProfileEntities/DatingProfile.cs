@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using WebDating.Entities.UserEntities;
 
-namespace WebDating.Entities
+namespace WebDating.Entities.ProfileEntities
 {
     public class DatingProfile
     {

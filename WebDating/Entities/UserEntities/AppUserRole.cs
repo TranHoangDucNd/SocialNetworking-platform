@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace WebDating.Entities
+namespace WebDating.Entities.UserEntities
 {
     public class AppUserRole : IdentityUserRole<int>
     {

@@ -3,7 +3,10 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection.Emit;
-using WebDating.Entities;
+using WebDating.Entities.MessageEntities;
+using WebDating.Entities.PostEntities;
+using WebDating.Entities.ProfileEntities;
+using WebDating.Entities.UserEntities;
 
 namespace WebDating.Data
 {

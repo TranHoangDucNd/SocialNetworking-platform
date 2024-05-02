@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using WebDating.Data;
-using WebDating.Entities;
+using WebDating.Entities.UserEntities;
 
 namespace WebDating.Extensions
 {

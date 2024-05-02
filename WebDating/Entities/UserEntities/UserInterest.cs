@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using WebDating.Entities.ProfileEntities;
 
-namespace WebDating.Entities
+namespace WebDating.Entities.UserEntities
 {
     public class UserInterest
     {

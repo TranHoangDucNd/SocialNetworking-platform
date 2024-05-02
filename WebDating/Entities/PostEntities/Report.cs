@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace WebDating.Entities
+namespace WebDating.Entities.PostEntities
 {
     [Table("Report")]
     public class Report

@@ -1,4 +1,5 @@
-﻿using WebDating.Entities;
+﻿using WebDating.Entities.PostEntities;
+using WebDating.Entities.UserEntities;
 
 namespace WebDating.Interfaces
 {

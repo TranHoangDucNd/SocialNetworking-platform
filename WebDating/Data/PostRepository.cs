@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using WebDating.Entities;
+using WebDating.Entities.PostEntities;
+using WebDating.Entities.UserEntities;
 using WebDating.Interfaces;
 
 namespace WebDating.Data

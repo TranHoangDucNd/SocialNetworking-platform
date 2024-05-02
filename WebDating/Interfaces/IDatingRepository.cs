@@ -1,5 +1,6 @@
 ﻿using WebDating.DTOs;
-using WebDating.Entities;
+using WebDating.Entities.ProfileEntities;
+using WebDating.Entities.UserEntities;
 
 namespace WebDating.Interfaces
 {

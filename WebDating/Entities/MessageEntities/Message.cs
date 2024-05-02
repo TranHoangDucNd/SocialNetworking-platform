@@ -1,4 +1,6 @@
-﻿namespace WebDating.Entities
+﻿using WebDating.Entities.UserEntities;
+
+namespace WebDating.Entities.MessageEntities
 {
     public class Message
     {

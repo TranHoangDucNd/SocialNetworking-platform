@@ -296,9 +296,9 @@ E:\WebDoAn\Try-Hard\WebDating\obj\Debug\net8.0\refint\WebDating.dll
 E:\WebDoAn\Try-Hard\WebDating\obj\Debug\net8.0\WebDating.pdb
 E:\WebDoAn\Try-Hard\WebDating\obj\Debug\net8.0\WebDating.genruntimeconfig.cache
 E:\WebDoAn\Try-Hard\WebDating\obj\Debug\net8.0\ref\WebDating.dll
+E:\Đồ án tốt nghiệp\Try-Hard\WebDating\bin\Debug\net8.0\appsettings.Development.json
 E:\Đồ án tốt nghiệp\Try-Hard\WebDating\bin\Debug\net8.0\appsettings.json
 E:\Đồ án tốt nghiệp\Try-Hard\WebDating\bin\Debug\net8.0\Data\UserSeedData.json
-E:\Đồ án tốt nghiệp\Try-Hard\WebDating\bin\Debug\net8.0\appsettings.Development.json
 E:\Đồ án tốt nghiệp\Try-Hard\WebDating\bin\Debug\net8.0\WebDating.exe
 E:\Đồ án tốt nghiệp\Try-Hard\WebDating\bin\Debug\net8.0\WebDating.deps.json
 E:\Đồ án tốt nghiệp\Try-Hard\WebDating\bin\Debug\net8.0\WebDating.runtimeconfig.json

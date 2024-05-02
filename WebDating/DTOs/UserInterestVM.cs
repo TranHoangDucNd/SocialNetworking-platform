@@ -1,4 +1,4 @@
-﻿using WebDating.Entities;
+﻿using WebDating.Entities.ProfileEntities;
 
 namespace WebDating.DTOs
 {

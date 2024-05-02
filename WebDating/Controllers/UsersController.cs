@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebDating.DTOs;
 using WebDating.Entities;
+using WebDating.Entities.UserEntities;
 using WebDating.Extensions;
 using WebDating.Helpers;
 using WebDating.Interfaces;

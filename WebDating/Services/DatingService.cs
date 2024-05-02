@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using WebDating.DTOs;
-using WebDating.Entities;
+using WebDating.Entities.ProfileEntities;
 using WebDating.Interfaces;
 
 namespace WebDating.Services
@@ -15,6 +16,8 @@ namespace WebDating.Services
             _mapper = mapper;
             _uow = uow;
         }
+
+        //lưu vào db
         public async Task<ResultDto<DatingProfileVM>> InitDatingProfile(DatingProfileVM datingProfileVM, string userName)
         {
             try
@@ -26,15 +29,17 @@ namespace WebDating.Services
                 var result = await _uow.DatingRepository.Insert(dating);
                 await _uow.Complete();
                 //Lưu hết r set user update = true
+
                 user.IsUpdatedDatingProfile = true;
 
-                _uow.UserRepository.UpdateUser(user); 
+                _uow.UserRepository.UpdateUser(user);
                 _uow.CompleteNotAsync();
 
                 await _uow.DatingRepository.InsertUserInterest(dating.UserInterests, dating.Id);
 
                 return new SuccessResult<DatingProfileVM>(result);
-            }catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 return new ErrorResult<DatingProfileVM>(ex.Message);
             }

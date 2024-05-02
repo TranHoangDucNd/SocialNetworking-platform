@@ -1,4 +1,4 @@
-﻿using WebDating.Entities;
+﻿using WebDating.Entities.PostEntities;
 
 namespace WebDating.DTOs.Post
 {

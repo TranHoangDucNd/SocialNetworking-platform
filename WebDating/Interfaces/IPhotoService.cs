@@ -1,5 +1,5 @@
 ﻿using CloudinaryDotNet.Actions;
-using WebDating.Entities;
+using WebDating.Entities.PostEntities;
 
 namespace WebDating.Interfaces
 {

@@ -1,4 +1,4 @@
-﻿namespace WebDating.Entities
+﻿namespace WebDating.Entities.MessageEntities
 {
     public class Connection
     {

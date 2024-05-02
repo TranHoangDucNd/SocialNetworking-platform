@@ -1,7 +1,7 @@
 ﻿using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
 using Microsoft.Extensions.Options;
-using WebDating.Entities;
+using WebDating.Entities.PostEntities;
 using WebDating.Helpers;
 using WebDating.Interfaces;
 

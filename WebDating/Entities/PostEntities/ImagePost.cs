@@ -1,14 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace WebDating.Entities
+namespace WebDating.Entities.PostEntities
 {
     [Table("ImagePost")]
     public class ImagePost
     {
         public ImagePost()
         {
-            
+
         }
 
         public ImagePost(int id, string uri, string publicId)

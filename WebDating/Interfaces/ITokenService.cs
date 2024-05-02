@@ -1,4 +1,4 @@
-﻿using WebDating.Entities;
+﻿using WebDating.Entities.UserEntities;
 
 namespace WebDating.Interfaces
 {

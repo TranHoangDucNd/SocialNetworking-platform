@@ -11,5 +11,11 @@ namespace WebDating.Interfaces
         Task<AppUser> FindByNameAsync(string name);
         Task<IEnumerable<Post>> GetMyPost(int id);
         Task InsertImagePost(ImagePost imagePost);
+
+        Task InsertComment(PostComment comment);
+        Task<IEnumerable<PostComment>> GetCommentsByPostId(int id);
+        Task<PostComment> GetCommentById(int id);
+        void DeleteComment(PostComment comment);
+        void UpdateComment(PostComment postComment);
     }
 }

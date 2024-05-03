@@ -4,7 +4,7 @@ namespace WebDating.DTOs.Post
 {
     public class SubCommentDto
     {
-        public Guid Id { get; set; }
+        public int Id { get; set; }
         public string? Content { get; set; }
         [Column(TypeName = "dateTime")]
         public DateTime? CreatedAt { get; set; }

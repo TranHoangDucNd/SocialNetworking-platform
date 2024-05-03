@@ -34,6 +34,7 @@ app.MapControllers();
 
 app.MapHub<PresenceHub>("hubs/presence");//"hubs/presence" giúp client tìm th?y tên trung tâm PresenceHub
 app.MapHub<MessageHub>("hubs/message");
+app.MapHub<CommentSignalR>("hubs/commentHub");
 
 using var scope = app.Services.CreateScope();
 var services = scope.ServiceProvider;

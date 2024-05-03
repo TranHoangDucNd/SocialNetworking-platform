@@ -19,6 +19,9 @@ namespace WebDating.Data
             _mapper = mapper;
         }
 
+        public async Task<IEnumerable<AppUser>> GetAll()
+        => await _context.Users.ToListAsync();
+
         public async Task<MemberDto> GetMemberAsync(string username)
         {
             return await _context.Users

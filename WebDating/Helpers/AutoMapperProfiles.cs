@@ -42,10 +42,14 @@ namespace WebDating.Helpers
                 .ForMember(dest => dest.Images, o => o.MapFrom(s => s.Images.Select(x => x.Path).ToList()))
                 .ForPath(dest => dest.UserShort.Id, o => o.MapFrom(s => s.User.Id))
                 .ForPath(dest => dest.UserShort.FullName, o=> o.MapFrom(s=> s.User.UserName))
-                .ForPath(dest => dest.UserShort.Image, o=> o.MapFrom(s => s.User.Photos.Select(s => s.Url).FirstOrDefault()))
+                .ForPath(dest => dest.UserShort.Image, o=> o.MapFrom(s => s.User.Photos.FirstOrDefault(x => x.IsMain).Url))
                 .ReverseMap();
 
-            CreateMap<PostComment, CommentPostDto>().ReverseMap();
+            CreateMap<PostComment, CommentPostDto>()
+                .ForPath(dest => dest.UserShort.Id, o => o.MapFrom(s => s.User.Id))
+                .ForPath(dest => dest.UserShort.FullName, o=> o.MapFrom(s=> s.User.UserName))
+                .ForPath(dest => dest.UserShort.Image, o => o.MapFrom(s => s.User.Photos.FirstOrDefault(x => x.IsMain).Url))
+                .ReverseMap();
 
             
           

@@ -2,12 +2,12 @@
 {
     public class CommentPostDto
     {
-        public Guid Id { get; set; } = Guid.NewGuid();
-        public Guid? UserId { get; set; }
-        public string PostId { get; set; } = String.Empty;
+        public int Id { get; set; }
+        public int UserId { get; set; }
+        public int PostId { get; set; }
         public UserShortDto? UserShort { get; set; }
         public string Content { get; set; } = String.Empty;
-        public DateTime? CreatedAt { get; set; } = DateTime.Now;
+        public DateTime? CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? UpdatedAt { get; set; }
         public List<SubCommentDto>? SubComment { get; set; }
 

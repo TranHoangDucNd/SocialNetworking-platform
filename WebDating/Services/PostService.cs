@@ -1,12 +1,14 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.SignalR;
 using WebDating.DTOs;
 using WebDating.DTOs.Post;
 using WebDating.Entities;
 using WebDating.Entities.PostEntities;
 using WebDating.Entities.UserEntities;
 using WebDating.Interfaces;
+using WebDating.SignalR;
 
 namespace WebDating.Services
 {
@@ -16,14 +18,16 @@ namespace WebDating.Services
         private readonly IUnitOfWork _uow;
         private readonly UserManager<AppUser> _userManager;
         private readonly IPhotoService _photoService;
+        private readonly IHubContext<CommentSignalR> _commentHubContext;
 
         public PostService(IMapper mapper, IUnitOfWork uow, UserManager<AppUser> userManager,
-            IPhotoService photoService)
+            IPhotoService photoService, IHubContext<CommentSignalR> commentHubContext)
         {
             _mapper = mapper;
             _uow = uow;
             _userManager = userManager;
             _photoService = photoService;
+            _commentHubContext = commentHubContext;
         }
         public async Task<ResultDto<PostResponseDto>> Create(CreatePostDto requestDto, string name)
         {
@@ -60,6 +64,8 @@ namespace WebDating.Services
             }
         }
 
+
+
         public async Task<ResultDto<string>> Delete(int id)
         {
             var post = await _uow.PostRepository.GetById(id);
@@ -67,6 +73,7 @@ namespace WebDating.Services
             await _uow.Complete();
             return new SuccessResult<string>();
         }
+
 
         public async Task<ResultDto<PostResponseDto>> Detail(int id)
         {
@@ -81,6 +88,7 @@ namespace WebDating.Services
             return new SuccessResult<List<PostResponseDto>>(_mapper.Map<List<PostResponseDto>>(result));
         }
 
+
         public async Task<ResultDto<List<PostResponseDto>>> GetMyPost(string name)
         {
             var username = await _userManager.FindByNameAsync(name);
@@ -92,7 +100,8 @@ namespace WebDating.Services
         public async Task<ResultDto<UserShortDto>> GetUserShort(string name)
         {
             var username = await _uow.UserRepository.GetUserByUsernameAsync(name);
-            return new SuccessResult<UserShortDto>(new UserShortDto() { 
+            return new SuccessResult<UserShortDto>(new UserShortDto()
+            {
                 Id = username.Id,
                 FullName = username.KnownAs,
                 Image = username.Photos.Select(x => x.Url).FirstOrDefault()
@@ -132,6 +141,79 @@ namespace WebDating.Services
             {
                 return new ErrorResult<PostResponseDto>(ex.Message);
             }
+        }
+        public async Task<ResultDto<List<CommentPostDto>>> CreateComment(CommentPostDto comment, int userId)
+        {
+            var post = await _uow.PostRepository.GetById(comment.PostId);
+            if (post == null)
+            {
+                return new
+                    ErrorResult<List<CommentPostDto>>("Không tìm thấy bài đọc bạn bình luận, nó có thể đã bị xóa");
+            }
+
+
+            var postComment = new PostComment()
+            {
+                PostId = post.Id,
+                UserId = comment.UserId,
+                Content = comment.Content
+            };
+            postComment.UpdatedAt = DateTime.UtcNow;
+
+            await _uow.PostRepository.InsertComment(postComment);
+            await _uow.Complete();
+
+            var comments = await GetComment(post);
+            await _commentHubContext.Clients.All.SendAsync("ReceiveComment", comments);
+            return comments;
+
+        }
+
+        public async Task<ResultDto<List<CommentPostDto>>> GetComment(Post post)
+        {
+            var users = await _uow.UserRepository.GetAll();
+            var postComments = await _uow.PostRepository.GetCommentsByPostId(post.Id);
+            return new SuccessResult<List<CommentPostDto>>(_mapper.Map<List<CommentPostDto>>(postComments));
+        }
+
+        public async Task<Post> GetById(int postId)
+        => await _uow.PostRepository.GetById(postId);
+
+        public async Task<ResultDto<List<CommentPostDto>>> UpdateComment(CommentPostDto comment)
+        {
+            var postComment = await _uow.PostRepository.GetCommentById(comment.Id);
+            var post = await _uow.PostRepository.GetById(comment.PostId);
+            if (postComment == null)
+            {
+                return new ErrorResult<List<CommentPostDto>>("Không tìm thấy bài đọc bạn bình luận");
+            }
+            postComment.Content = comment.Content;
+            postComment.UpdatedAt = DateTime.UtcNow;
+
+            _uow.PostRepository.UpdateComment(postComment);
+            await _uow.Complete();
+
+            var comments = await GetComment(post);
+            await _commentHubContext.Clients.All.SendAsync("ReceiveComment", comments);
+
+            return comments;
+        }
+        public async Task<ResultDto<List<CommentPostDto>>> DeleteComment(int id)
+        {
+            var comment = await _uow.PostRepository.GetCommentById(id);
+            var post = await _uow.PostRepository.GetById(comment.PostId);
+
+            if (comment == null)
+            {
+                return new ErrorResult<List<CommentPostDto>>("Không tìm thấy bình luận");
+            }
+
+            _uow.PostRepository.DeleteComment(comment);
+            await _uow.Complete();
+
+            var comments = await GetComment(post);
+            await _commentHubContext.Clients.All.SendAsync("ReceiveComment", comments);
+            return comments;
         }
     }
 }

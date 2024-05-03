@@ -4,7 +4,7 @@ using WebDating.Helpers;
 
 namespace WebDating.Interfaces
 {
-    public interface IUserRepository
+    public interface IUserRepository : IBaseGetAllRepository<AppUser>
     {
         Task<AppUser> GetUserByUsernameAsync(string username);
         Task<PagedList<MemberDto>> GetMembersAsync(UserParams userParams);

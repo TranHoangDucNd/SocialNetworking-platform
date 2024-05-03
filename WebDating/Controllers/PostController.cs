@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
+using WebDating.DTOs;
 using WebDating.DTOs.Post;
 using WebDating.Extensions;
 using WebDating.Interfaces;
@@ -65,5 +67,46 @@ namespace WebDating.Controllers
             return Ok(result);
         }
 
+        [HttpPost("Chat")]
+        [Authorize]
+        public async Task<IActionResult> CreateComment(CommentPostDto comment)
+        {
+            var result = await _postService.CreateComment(comment, User.GetUserId());
+            return Ok(result);
+        }
+        [HttpGet("Chat")]
+        public async Task<IActionResult> GetComments(int postId)
+        {
+            var post = await _postService.GetById(postId);
+            var result =  await _postService.GetComment(post);
+            return Ok(result);
+        }
+        [HttpPut("Chat")]
+        [Authorize]
+        public async Task<IActionResult> UpdateComment(CommentPostDto comment)
+        {
+            var id = User.GetUserId();
+            if (!id.Equals(comment.UserId))
+            {
+                return BadRequest();
+            }
+            var result = await _postService.UpdateComment(comment);
+            return Ok(result);
+        }
+        [HttpDelete("Chat")]
+        [Authorize]
+        public async Task<IActionResult> DeleteComment(int commentId)
+        {
+            var result = await _postService.DeleteComment(commentId);
+            return Ok(result);  
+        }
+        [HttpGet("Chat/NumberComment")]
+        public async Task<IActionResult> GetCommentPost(int postId)
+        {
+            var post = await _postService.GetById(postId);
+            var result = await _postService.GetComment(post);
+            var numberResult = new SuccessResult<int>(result.ResultObj.Count);
+            return numberResult is null ? BadRequest(numberResult) : Ok(numberResult);
+        }
     }
 }

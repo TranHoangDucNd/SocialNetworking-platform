@@ -40,7 +40,12 @@ import { UpdatepostComponent } from './post/updatepost/updatepost.component';
 import { PersonalpageComponent } from './personalpage/personalpage.component';
 import { TimeagoModule } from "ngx-timeago";
 import { TimeAgoPipe } from './_service/time-ago.pipe';
-
+import {MatDialogModule} from '@angular/material/dialog';
+import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
+import { ChatComponent } from './post/chat/chat.component';
+import {MatMenuModule} from '@angular/material/menu';
+import {MatTooltipModule} from '@angular/material/tooltip';
+import {OverlayModule} from '@angular/cdk/overlay';
 @NgModule({
   declarations: [
     AppComponent,
@@ -60,7 +65,8 @@ import { TimeAgoPipe } from './_service/time-ago.pipe';
     CreatepostComponent,
     UpdatepostComponent,
     PersonalpageComponent,
-    TimeAgoPipe
+    TimeAgoPipe,
+    ChatComponent
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
@@ -86,7 +92,12 @@ import { TimeAgoPipe } from './_service/time-ago.pipe';
     MatIconModule,
     MatAutocompleteModule,
     MatSelectModule,
-    ModalModule.forRoot(), TimeagoModule.forRoot()
+    ModalModule.forRoot(), TimeagoModule.forRoot(),
+    MatDialogModule,
+    CKEditorModule,
+    MatMenuModule,
+    MatTooltipModule,
+    OverlayModule
   ],
 })
 export class AppModule {}

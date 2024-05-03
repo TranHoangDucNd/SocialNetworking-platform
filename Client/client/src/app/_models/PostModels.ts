@@ -25,3 +25,13 @@ export interface CreatePostDto {
     content: string;
     image?: FileList;
 }
+
+export interface CommentPostDto {
+  id: number;
+  userId?: number;
+  postId: number;
+  userShort?: UserShortDto | null;
+  content: string;
+  createdAt: Date | string;
+  updatedAt: Date | string | null;
+}

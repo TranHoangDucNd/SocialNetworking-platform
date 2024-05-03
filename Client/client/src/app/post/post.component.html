@@ -1,7 +1,7 @@
 <div class="w-100">
       <div class="w-100">
             <div class="d-flex align-items-center">
-                  <img src="{{user.photoUrl}}" alt=""
+                  <img src="{{userShort != undefined && userShort.image != undefined ? userShort.image : ''}}" alt=""
                   style="width: 36px; height: 36px; object-fit: cover;" class="rounded-circle ">
 
                   <button type="text" class=" border-top-0 border-start-0 border-end-0 text-start "
@@ -61,7 +61,7 @@
                                   </span>
                               </button>
                               <button class="bg-white border-0 px-3 ">
-                                    <span class="material-symbols-outlined">
+                                    <span class="material-symbols-outlined" (click)="Comment(post.id)">
                                           comment
                                           </span>
                               </button>

@@ -46,6 +46,10 @@ import { ChatComponent } from './post/chat/chat.component';
 import {MatMenuModule} from '@angular/material/menu';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import {OverlayModule} from '@angular/cdk/overlay';
+import { AdminModule } from './admin/admin.module';
+import { HasRoleDirective } from './_directives/has-role.directive';
+import { RolesModalComponent } from './modals/roles-modal/roles-modal.component';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -66,7 +70,9 @@ import {OverlayModule} from '@angular/cdk/overlay';
     UpdatepostComponent,
     PersonalpageComponent,
     TimeAgoPipe,
-    ChatComponent
+    ChatComponent,
+    RolesModalComponent
+   
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
@@ -97,7 +103,8 @@ import {OverlayModule} from '@angular/cdk/overlay';
     CKEditorModule,
     MatMenuModule,
     MatTooltipModule,
-    OverlayModule
+    OverlayModule,
+    AdminModule
   ],
 })
 export class AppModule {}

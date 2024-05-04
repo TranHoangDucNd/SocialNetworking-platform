@@ -43,12 +43,12 @@ namespace WebDating.Controllers
 
             var userRoles = await _userManager.GetRolesAsync(user);
 
-            var result = await _userManager.AddToRolesAsync(user, selectedRoles.Except(userRoles));
+            var result = await _userManager.AddToRolesAsync(user, selectedRoles.Except(userRoles)); // loại bỏ các vai trò mà người dùng đã có sẵn, chỉ giữ lại các vai trò mới mà người dùng chưa có
 
             if (!result.Succeeded) return BadRequest("Failed to add to roles");
 
 
-            result = await _userManager.RemoveFromRolesAsync(user, userRoles.Except(selectedRoles));
+            result = await _userManager.RemoveFromRolesAsync(user, userRoles.Except(selectedRoles)); // loại bỏ các vai trò 2 cái đã có chỉ giữ lại vai trò mà userrole còn và xóa nó đi
 
             if (!result.Succeeded) return BadRequest("Failed to remove from roles");
 

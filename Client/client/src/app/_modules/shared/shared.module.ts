@@ -9,9 +9,12 @@ import { NgxSpinnerModule } from "ngx-spinner";
 import { ButtonsModule } from 'ngx-bootstrap/buttons';
 import { PaginationModule } from 'ngx-bootstrap/pagination';
 import { FileUploadModule } from 'ng2-file-upload';
-
+import { HasRoleDirective } from 'src/app/_directives/has-role.directive';
+import { ModalModule } from 'ngx-bootstrap/modal';
 @NgModule({
-  declarations: [],
+  declarations: [
+    HasRoleDirective
+  ],
   imports: [
     CommonModule,
     ToastrModule.forRoot({
@@ -24,7 +27,8 @@ import { FileUploadModule } from 'ng2-file-upload';
     NgxSpinnerModule.forRoot({ type: 'line-scale' }),
     ButtonsModule.forRoot(),
     PaginationModule.forRoot(),
-    FileUploadModule
+    FileUploadModule,
+    ModalModule.forRoot()
   ],
   exports: [
     ToastrModule,
@@ -35,7 +39,9 @@ import { FileUploadModule } from 'ng2-file-upload';
     NgxSpinnerModule,
     ButtonsModule,
     PaginationModule,
-    FileUploadModule
+    FileUploadModule,
+    HasRoleDirective,
+    ModalModule
   ]
 })
 export class SharedModule { }

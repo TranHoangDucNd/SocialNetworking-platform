@@ -11,6 +11,9 @@ import { MessagesComponent } from './messages/messages.component';
 import { DatingProfileComponent } from './dating-profile/dating-profile.component';
 import { PersonalpageComponent } from './personalpage/personalpage.component';
 import { PostComponent } from './post/post.component';
+import { LayoutComponent } from './admin/layout/layout.component';
+import { DashboardComponent } from './admin/components/dashboard/dashboard.component';
+import { adminGuard } from './_guards/admin.guard';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -30,6 +33,18 @@ const routes: Routes = [
       { path: 'lists', component: ListsComponent },
       { path: 'messages', component: MessagesComponent },
       { path: 'datingprofile', component: DatingProfileComponent },
+
+      {
+        path: "admin", component: LayoutComponent, children: [
+          {path: "", component: DashboardComponent},
+          {path: "customerroles", loadChildren: ()=> import("./admin/components/customerrole/customerrole.module")
+          .then(module => module.CustomerroleModule)},
+          {path: "managepostreport", loadChildren: ()=> import("./admin/components/managepostreport/managepostreport.module")
+          .then(module => module.ManagepostreportModule)},
+          {path: "moderator", loadChildren: ()=> import("./admin/components/moderator/moderator.module")
+          .then(module => module.ModeratorModule)},
+        ], canActivate: [adminGuard]
+      },
     ],
   },
 ];

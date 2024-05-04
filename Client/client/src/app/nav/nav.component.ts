@@ -13,18 +13,6 @@ export class NavComponent {
 
   constructor(public accountService: AccountService, private router: Router, private toastr: ToastrService){}
 
-  login(){
-    this.accountService.login(this.model).subscribe({
-      next: (_) =>{
-        this.router.navigateByUrl('/members');
-        this.model = {};
-      },
-
-      error: (error) => this.toastr.error(error.error)
-      
-    })
-  }
-
   logout(){
     this.accountService.logout();
     this.router.navigateByUrl('/');

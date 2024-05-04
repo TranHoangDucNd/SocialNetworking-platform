@@ -1,25 +1,82 @@
 <div class="container mt-5">
-      <div *ngIf="(accountService.currentUser$ | async) as user; else notaccount" style="max-width: 620px;" 
-      class="d-flex ms-auto me-auto  mt-5 mb-5 "
-      >
-      <app-post class="w-100"></app-post>
+      <div *ngIf="(accountService.currentUser$ | async) as user; else notaccount" style="max-width: 620px; "
+            class="d-flex ms-auto me-auto  mt-5 mb-5 ">
+            <app-post class="w-100 "></app-post>
       </div>
-      <ng-template #notaccount>
-            <div *ngIf="!registerMode" style="text-align: center;">
-                  <h1>Find your match</h1>
-                  <p class="lead">Come on in to view your matches... all you need to do is sign up!</p>
-                  <div class="text-center">
-                        <button (click)="registerToggle()" class="btn btn-primary btn-lg me-2">Register</button>
-                        <button class="btn btn-primary btn-info btn-lg">Learn more</button>
-                  </div>
-            </div>
+      <div>
+            <ng-template #notaccount>
+                  <div *ngIf="!registerMode" >
+                        <section class="vh-100">
+                              <div class="container-fluid h-custom">
+                                <div class="row d-flex justify-content-center align-items-center h-100">
+                                  <div class="col-md-9 col-lg-6 col-xl-5">
+                                    <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/draw2.webp"
+                                      class="img-fluid" alt="Sample image">
+                                  </div>
+                                  <div class="col-md-8 col-lg-6 col-xl-4 offset-xl-1">
+                                    <form #loginForm="ngForm" class="d-table-row" (ngSubmit)="login()"
+                                    *ngIf="!(accountService.currentUser$ | async)"autocomplete="off">
+                                          
+                                          <div class="text-center">
+                                                <h1>Find your match</h1>
+                                          <p class="lead">Come on in to view your matches... all you need to do is sign up!</p>
+                                          </div>
+                                          
+                                      <div class="divider d-flex align-items-center my-4">
+                                        <p class="text-center fw-bold mx-3 mb-0">Or</p>
+                                      </div>
+                                          <!-- Email input -->
+                                          <div data-mdb-input-init class="form-outline mb-4">
+                                                <input name="userName" [(ngModel)]="model.userName" class="form-control form-control-lg"
+                                                 type="text"
+                                                placeholder="Enter a valid user name" />
+                                                <label class="form-label" for="form3Example4">User name</label>
+                                          </div>
+                                            <!-- Password input -->
+                                          <div data-mdb-input-init class="form-outline mb-3">
+                                                <input name="passWord" type="password" id="form3Example4" [(ngModel)]="model.passWord" 
+                                                 class="form-control form-control-lg"
+                                                  placeholder="Enter password" />
+                                                <label class="form-label" for="form3Example4">Password</label>
+                                          </div>
       
-            <div *ngIf="registerMode" class="container">
-                  <div class="row justify-content-center">
-                        <div class="col-4">
-                              <app-register (cancelRegister)="cancelRegisterMode($event)"></app-register>
+                                          <div class="d-flex justify-content-between align-items-center">
+                                                <!-- Checkbox -->
+                                                <div class="form-check mb-2">
+                                                  <input class="form-check-input me-2" type="checkbox" value="" id="form2Example3" />
+                                                  <label class="form-check-label" for="form2Example3">
+                                                    Remember me
+                                                  </label>
+                                                </div>
+                                          </div>
+      
+                                     <button type="submit" data-mdb-button-init data-mdb-ripple-init class="btn btn-primary btn-lg"
+                                          style="padding-left: 2.5rem; padding-right: 2.5rem;">Login</button>
+      
+                                    </form>
+
+                                    <div class="text-center text-lg-start mt-4 pt-2">
+                                          <p class="small fw-bold mt-2 pt-1 mb-0">Don't have an account? <a href="#!"
+                                              class="link-danger" (click)="registerToggle()">Register</a></p>
+                                        </div>
+                                  </div>
+                                </div>
+                              </div>
+                        </section>
+                  </div>
+      
+                  <div *ngIf="registerMode" class="container">
+                        <div class="row justify-content-center">
+                              <div class="col-4">
+                                    <app-register (cancelRegister)="cancelRegisterMode($event)"></app-register>
+                              </div>
                         </div>
                   </div>
-            </div>
-      </ng-template>
+            </ng-template>
+      </div>
 </div>
+
+
+
+
+

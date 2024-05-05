@@ -20,5 +20,12 @@ namespace WebDating.Interfaces
         Task<ResultDto<List<CommentPostDto>>> UpdateComment(CommentPostDto comment);
         Task<ResultDto<List<CommentPostDto>>> CreateComment(CommentPostDto comment, int userId);
         Task<Post> GetById(int postId);
+
+        Task<ResultDto<NumberResponse>> GetLike(PostFpkDto postFpk);
+        Task<ResultDto<List<PostResponseDto>>> AddOrUnLikePost(PostFpkDto postFpk);
+
+        Task<bool> Report(PostReportDto postReport);
+        Task<ResultDto<List<PostReportDto>>> GetReport();
+
     }
 }

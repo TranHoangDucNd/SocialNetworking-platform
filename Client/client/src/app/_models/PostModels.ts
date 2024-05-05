@@ -35,3 +35,24 @@ export interface CommentPostDto {
   createdAt: Date | string;
   updatedAt: Date | string | null;
 }
+
+export interface PostFpkDto {
+  postId: number;
+  userId: number;
+}
+
+export interface PostLike {
+  id: number;
+  postId: number;
+  userId?: number;
+}
+
+export interface PostReportDto {
+  id: number;
+  userId: number;
+  postId: number;
+  description: string;
+  reportDate: Date;
+  checked: boolean;
+  report: number;
+}

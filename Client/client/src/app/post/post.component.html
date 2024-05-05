@@ -55,16 +55,32 @@
                       </div>
                       <div class="d-flex justify-content-between mt-3 mb-2">
                           <div>
-                              <button class="bg-white border-0 px-3 ">
-                                  <span class="material-symbols-outlined">
-                                      favorite
-                                  </span>
-                              </button>
-                              <button class="bg-white border-0 px-3 ">
-                                    <span class="material-symbols-outlined" (click)="Comment(post.id)">
-                                          comment
-                                          </span>
-                              </button>
+                             <div *ngIf="getLike(post.postLikes); else like2">
+                                <button class="bg-white border-0 px-3 " (click)="likeOrDisLike(post.id)">
+                                    <span class="material-symbols-outlined" style="color:red;">
+                                        favorite
+                                    </span>
+                                </button>
+                                <button class="bg-white border-0 px-3 ">
+                                      <span class="material-symbols-outlined" (click)="Comment(post.id)">
+                                            comment
+                                            </span>
+                                </button>
+                             </div>
+                             <ng-template #like2>
+                                <button class="bg-white border-0 px-3 " (click)="likeOrDisLike(post.id)">
+                                    <span class="material-symbols-outlined">
+                                        favorite
+                                    </span>
+                                </button>
+                                <button class="bg-white border-0 px-3 ">
+                                      <span class="material-symbols-outlined" (click)="Comment(post.id)">
+                                            comment
+                                            </span>
+                                </button>
+                             </ng-template>
+
+
                           </div>
                           <div>
                               {{ post.createdAt | timeAgo }}

@@ -5,7 +5,7 @@ import { BsModalService } from 'ngx-bootstrap/modal';
 import { ToastrService } from 'ngx-toastr';
 import { take } from 'rxjs';
 import { User } from '../_models/user';
-import { PostResponseDto, UserShortDto } from '../_models/PostModels';
+import { PostFpkDto, PostLike, PostResponseDto, UserShortDto } from '../_models/PostModels';
 import { CreatepostComponent } from './createpost/createpost.component';
 import { UpdatepostComponent } from './updatepost/updatepost.component';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
@@ -21,6 +21,10 @@ export class PostComponent implements OnInit {
   user!: User;
   userShort!: UserShortDto;
   posts: PostResponseDto[] = [];
+  postLike: PostFpkDto = {
+    postId: 0,
+    userId: 0
+  }
 
   constructor(
     private accountService: AccountService,
@@ -47,7 +51,7 @@ export class PostComponent implements OnInit {
       (data: any) => {
         console.log(data);
         if (data.isSuccessed === true) {
-          this.posts = data.resultObj;
+          this.posts = data.resultObj as PostResponseDto[];
         }
       },
       (error: any) => {
@@ -117,5 +121,21 @@ export class PostComponent implements OnInit {
       // Enable scoll page
       scrollStrategy: this.overlay.scrollStrategies.noop(),
     });
+  }
+
+
+  getLike(postLikes: PostLike[]): any{
+    return postLikes.some((postlike) => postlike.userId === this.userShort.id);
+  }
+
+  likeOrDisLike(postId: number){
+    this.postLike.postId = postId;
+    this.postLike.userId = this.userShort.id;
+    this.postService.likeOrDisLike(this.postLike).subscribe(
+      (data: any) =>{
+        this.posts = data.resultObj;
+      },
+      (error: any) => {console.log(error)}
+    );
   }
 }

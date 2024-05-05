@@ -2,7 +2,7 @@
 using WebDating.Entities.MessageEntities;
 using WebDating.Entities.PostEntities;
 using WebDating.Entities.ProfileEntities;
-
+using System.ComponentModel.DataAnnotations.Schema;
 namespace WebDating.Entities.UserEntities
 {
     public class AppUser : IdentityUser<int>
@@ -29,6 +29,7 @@ namespace WebDating.Entities.UserEntities
 
         //Post -------
         public ICollection<Post> Posts { get; set; }
+        [System.Text.Json.Serialization.JsonIgnore]
         public ICollection<PostLike> PostLikes { get; set; }
         public ICollection<PostComment> PostComments { get; set; }
         public ICollection<PostSubComment> PostSubComments { get; set; }

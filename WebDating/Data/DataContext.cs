@@ -34,7 +34,6 @@ namespace WebDating.Data
         public DbSet<Post> Posts { get; set; }
         public DbSet<PostComment> PostsComments { get; set; }
         public DbSet<PostLike> PostLikes { get; set; }
-        public DbSet<Report> Reports { get; set; }
         public DbSet<PostReportDetail> PostReportDetails { get; set; }
         public DbSet<PostSubComment> PostSubComments { get; set; }
         public DbSet<ImagePost> ImagePosts { get; set; }
@@ -143,11 +142,6 @@ namespace WebDating.Data
                     .WithMany(p => p.PostReportDetails)
                     .HasForeignKey(d => d.PostId)
                     .HasConstraintName("FK__PostRepor__PostI__17036CC0");
-
-                entity.HasOne(d => d.Report)
-                    .WithMany(p => p.PostReportDetails)
-                    .HasForeignKey(d => d.ReportId)
-                    .HasConstraintName("FK__PostRepor__Repor__151B244E");
 
                 entity.HasOne(d => d.User)
                     .WithMany(p => p.PostReportDetails)

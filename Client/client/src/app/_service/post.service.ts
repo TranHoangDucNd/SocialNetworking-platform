@@ -1,8 +1,8 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
 import { environment } from 'src/environments/environment';
-import { CommentPostDto } from '../_models/PostModels';
+import { CommentPostDto, PostFpkDto, PostReportDto } from '../_models/PostModels';
 
 @Injectable({
   providedIn: 'root',
@@ -57,5 +57,17 @@ export class PostService {
   DeleteComment(id: number){
     return this.http.delete(this.baseUrl + 'Post/Chat?commentId='+id);
   }
+
+  likeOrDisLike(postFpk: PostFpkDto){
+    const params = new HttpParams()
+    .set('postId', postFpk.postId)
+    .set('userId', postFpk.userId)
+    return this.http.post(this.baseUrl + 'Post/Like', postFpk);
+  }
   
+
+  Report(report: PostReportDto){
+    const postReport = new FormData();
+    postReport.append
+  }
 }

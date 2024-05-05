@@ -3,8 +3,10 @@ using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using WebDating.DTOs;
 using WebDating.DTOs.Post;
+using WebDating.Entities.PostEntities;
 using WebDating.Extensions;
 using WebDating.Interfaces;
+using WebDating.Utilities;
 
 namespace WebDating.Controllers
 {
@@ -107,6 +109,39 @@ namespace WebDating.Controllers
             var result = await _postService.GetComment(post);
             var numberResult = new SuccessResult<int>(result.ResultObj.Count);
             return numberResult is null ? BadRequest(numberResult) : Ok(numberResult);
+        }
+        [HttpGet("Like")]
+        [Authorize]
+        public async Task<IActionResult> GetLikePost(PostFpkDto postFpk)
+        {
+            var result = await _postService.GetLike(postFpk);
+            return Ok(result);
+        }
+        [HttpPost("Like")]
+        public async Task<IActionResult> AddLike(PostFpkDto postFpk)
+        {
+            var result = await _postService.AddOrUnLikePost(postFpk);
+            return Ok(result);
+        }
+        [HttpGet("ContentReport")]
+        public IActionResult GetContentReport()
+        {
+            var reesult = Utils.GetAllAccountType<Report>();
+            return Ok(reesult); 
+        }
+
+        [HttpPost("Report")]
+        public async Task<IActionResult> Report([FromForm] PostReportDto postReport)
+        {
+            var result = await _postService.Report(postReport);
+            return Ok(result);
+        }
+
+        [HttpGet("Report")]
+        public async Task<IActionResult> GetReport()
+        {
+            var result = await _postService.GetReport();
+            return Ok(result);
         }
     }
 }

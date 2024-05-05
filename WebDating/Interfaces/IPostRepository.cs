@@ -17,5 +17,14 @@ namespace WebDating.Interfaces
         Task<PostComment> GetCommentById(int id);
         void DeleteComment(PostComment comment);
         void UpdateComment(PostComment postComment);
+
+        Task<PostLike> GetLikeByMultiId(int userId, int postId);
+        Task InsertPostLike(PostLike postLike);
+        void DeletePostLike(PostLike checkLike);
+        Task<IEnumerable<PostLike>> GetPostLikesByPostId(int postId);
+        Task<IEnumerable<PostReportDetail>> GetAllReport();
+        Task InsertPostReport(PostReportDetail report);
+        Task<PostReportDetail> GetReport(int userId, int postId);
+        void UpdatePostReport(PostReportDetail check);
     }
 }

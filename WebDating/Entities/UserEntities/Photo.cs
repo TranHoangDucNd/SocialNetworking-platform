@@ -10,6 +10,7 @@ namespace WebDating.Entities.UserEntities
         public bool IsMain { get; set; }
         public string PublicId { get; set; }
         public int AppUserId { get; set; }
+        [System.Text.Json.Serialization.JsonIgnore]
         public AppUser AppUser { get; set; }
     }
 }

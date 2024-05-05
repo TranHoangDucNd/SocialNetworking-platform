@@ -69,7 +69,7 @@ namespace WebDating.Helpers
                 .ForPath(dest => dest.UserShort.Image, o => o.MapFrom(s => s.User.Photos.FirstOrDefault(x => x.IsMain).Url))
                 .ReverseMap();
 
-            
+            CreateMap<PostReportDto, PostReportDetail>().ReverseMap();
           
         }
     }

@@ -215,5 +215,75 @@ namespace WebDating.Services
             await _commentHubContext.Clients.All.SendAsync("ReceiveComment", comments);
             return comments;
         }
+
+        public async Task<ResultDto<NumberResponse>> GetLike(PostFpkDto postFpk)
+        {
+            var postLikes = await _uow.PostRepository.GetPostLikesByPostId(postFpk.PostId);
+            NumberResponse numberResponse = new NumberResponse()
+            {
+                //Kiểm tra xem người dùng hiện tại đã thích bài đăng đó chưa
+                Check = postLikes.Where(x => x.UserId == postFpk.UserId).FirstOrDefault() is not null ? true : false,
+                Quantity = postLikes.Count()
+            };
+            return new SuccessResult<NumberResponse>(numberResponse);
+        }
+
+        public async Task<ResultDto<List<PostResponseDto>>> AddOrUnLikePost(PostFpkDto postFpk)
+        {
+            var checkLike =  await _uow.PostRepository.GetLikeByMultiId(postFpk.UserId, postFpk.PostId);
+            if(checkLike is null)
+            {
+                PostLike postLike = new()
+                {
+                    UserId = postFpk.UserId,
+                    PostId = postFpk.PostId,
+                };
+                await _uow.PostRepository.InsertPostLike(postLike);
+            }
+            else
+            {
+                _uow.PostRepository.DeletePostLike(checkLike);
+            }
+            await _uow.Complete();
+
+            return await GetAll();
+        }
+
+        public async Task<bool> Report(PostReportDto postReport)
+        {
+            var check = await _uow.PostRepository.GetReport(postReport.UserId, postReport.PostId);
+            if(check is not null)
+            {
+                check.Report = postReport.Report;
+                check.Description = postReport.Description;
+
+                _uow.PostRepository.UpdatePostReport(check);
+                await _uow.Complete();
+            }
+            else
+            {
+                var report = new PostReportDetail()
+                {
+                    Checked = false,
+                    Description = postReport.Description ?? "",
+                    PostId = postReport.PostId,
+                    UserId = postReport.UserId,
+                    Report = postReport.Report,
+                    ReportDate = DateTime.UtcNow
+                };
+
+                await _uow.PostRepository.InsertPostReport(report);
+                await _uow.Complete();
+            }
+
+            return true;
+        }
+
+        public async Task<ResultDto<List<PostReportDto>>> GetReport()
+        {
+            var result = await _uow.PostRepository.GetAllReport();
+            return new SuccessResult<List<PostReportDto>>(_mapper.Map<List<PostReportDto>>(result));
+            
+        }
     }
 }

@@ -84,5 +84,28 @@ namespace WebDating.Data
         public void DeleteComment(PostComment comment)
         => _context.PostsComments.Remove(comment);
 
+        public async Task<PostLike> GetLikeByMultiId(int userId, int postId)
+        => await _context.PostLikes.Where(x => x.UserId == userId && x.PostId == postId).FirstOrDefaultAsync();
+
+        public async Task InsertPostLike(PostLike postLike)
+        => await _context.PostLikes.AddAsync(postLike);
+
+        public void DeletePostLike(PostLike checkLike)
+        => _context.PostLikes.Remove(checkLike);
+
+        public async Task<IEnumerable<PostLike>> GetPostLikesByPostId(int postId)
+        => await _context.PostLikes.Where(x => x.PostId == postId).ToListAsync();
+
+        public async Task<IEnumerable<PostReportDetail>> GetAllReport()
+        => await _context.PostReportDetails.ToListAsync();
+
+        public async Task InsertPostReport(PostReportDetail report)
+        => await _context.PostReportDetails.AddAsync(report);
+
+        public async Task<PostReportDetail> GetReport(int userId, int postId)
+        => await _context.PostReportDetails.Where(x => x.UserId == userId && x.PostId == postId).FirstOrDefaultAsync();
+
+        public void UpdatePostReport(PostReportDetail check)
+        => _context.PostReportDetails.Update(check);
     }
 }

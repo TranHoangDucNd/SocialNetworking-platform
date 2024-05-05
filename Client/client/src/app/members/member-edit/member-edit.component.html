@@ -12,33 +12,43 @@
   </div>
 
   <div class="col-4">
-    <div class="card">
-      <img
-        src="{{ member.photoUrl || './assets/user.png' }}"
-        alt="{{ member.knownAs }}"
-        class="card-img-top img-thumbnail"
-      />
-      <div class="card-body">
-        <div>
-          <strong>Location:</strong>
-          <p>{{ member.city }}, {{ member.country }}</p>
+    <div class="profile-card-4 z-depth-3">
+      <div class="card">
+        <div class="card-body text-center bg-primary rounded-top">
+          <div class="user-box">
+            <img
+              src="{{ member.photoUrl || './assets/user.png' }}"
+              alt="{{ member.knownAs }}"
+            />
+          </div>
+          <h5 class="mb-1 text-white">{{ member.userName }}</h5>
         </div>
+        <div class="card-body">
+          <ul class="list-group shadow-none">
+            <li class="list-group-item">
+              <div>
+                <strong>Last active:</strong>
+                <p>{{ member.lastActive | timeago }}</p>
+              </div>
+            </li>
+            <li class="list-group-item">
+              <div>
+                <strong>Location:</strong>
+                <p>{{ member.city }}, {{ member.country }}</p>
+              </div>
 
-        <div>
-          <strong>Age:</strong>
-          <p>{{ member.age }}</p>
+              <div>
+                <strong>Age: {{ member.age }}</strong>
+              </div>
+            </li>
+            <li class="list-group-item">
+              <div>
+                <strong>Member since:</strong>
+                <p>{{ member.created | date : "dd MMM yyyy" }}</p>
+              </div>
+            </li>
+          </ul>
         </div>
-
-        <div>
-          <strong>Last active:</strong>
-          <p>{{ member.lastActive | timeago}}</p>
-        </div>
-
-        <div>
-          <strong>Member since:</strong>
-          <p>{{ member.created | date : "dd MMM yyyy" }}</p>
-        </div>
-
         <div class="card-footer">
           <button
             type="submit"
@@ -48,6 +58,28 @@
           >
             Save changes
           </button>
+          <div class="card-footer text-center">
+            <a
+              href="javascript:void()"
+              class="btn-social btn-facebook waves-effect waves-light m-1"
+              ><i class="fa fa-facebook"></i
+            ></a>
+            <a
+              href="javascript:void()"
+              class="btn-social btn-google-plus waves-effect waves-light m-1"
+              ><i class="fa fa-google-plus"></i
+            ></a>
+            <a
+              href="javascript:void()"
+              class="list-inline-item btn-social btn-behance waves-effect waves-light"
+              ><i class="fa fa-behance"></i
+            ></a>
+            <a
+              href="javascript:void()"
+              class="list-inline-item btn-social btn-dribbble waves-effect waves-light"
+              ><i class="fa fa-dribbble"></i
+            ></a>
+          </div>
         </div>
       </div>
     </div>
@@ -57,27 +89,73 @@
     <tabset class="member-tabset">
       <tab heading="About {{ member.knownAs }}">
         <form #editForm="ngForm" id="editForm" (ngSubmit)="updateMember()">
-          <h4 class="mt-2">Description</h4>
-          <textarea
-            name="introduction"
-            class="form-control"
-            [(ngModel)]="member.introduction"
-            rows="6"
-          ></textarea>
-          <h4 class="mt-2">Looking for</h4>
-          <textarea
-            name="lookingFor"
-            class="form-control"
-            [(ngModel)]="member.lookingFor"
-            rows="6"
-          ></textarea>
-          <h4 class="mt-2">Interests</h4>
-          <textarea
-            name="interests"
-            class="form-control"
-            [(ngModel)]="member.interests"
-            rows="6"
-          ></textarea>
+          <div class="row">
+          <div class="col-md-6">
+            <h4 class="mt-2">Description</h4>
+            <textarea
+              name="introduction"
+              class="form-control"
+              [(ngModel)]="member.introduction"
+              rows="4"
+            ></textarea>
+            <h4 class="mt-2">Looking for</h4>
+            <textarea
+              name="lookingFor"
+              class="form-control"
+              [(ngModel)]="member.lookingFor"
+              rows="4"
+            ></textarea>
+            <h4 class="mt-2">Interests</h4>
+            <textarea
+              name="interests"
+              class="form-control"
+              [(ngModel)]="member.interests"
+              rows="4"
+            ></textarea>
+          </div>
+
+          <div class="col-md-6">
+            <h6>Interests</h6>
+            <li *ngFor="let i of member.datingProfile.userInterests" class="badge badge-dark badge-pill">
+              {{ i.interestName }}
+            </li>
+            <hr />
+            <table class="table table-hover table-striped">
+              <tbody>
+                <tr>
+                  <td>
+                    <strong>Height: </strong>
+                    <strong>{{member.datingProfile.height}}</strong>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong>Dating object: </strong>
+                    <strong>{{member.datingProfile.datingObject}}</strong>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong>Where to date: </strong>
+                    <strong>{{member.datingProfile.whereToDate}}</strong>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong>John</strong> deleted My Board1 in
+                    <strong>`Discussions`</strong>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong>Skell</strong> deleted his post Look at Why this
+                    is.. in <strong>`Discussions`</strong>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+         
           <h4 class="mt-2">Location Details:</h4>
           <div class="d-flex flex-row align-items-center">
             <label for="city">City: </label>
@@ -96,12 +174,12 @@
               class="form-control mx-2"
             />
           </div>
+          </div>
         </form>
       </tab>
       <tab heading="Edit Photos">
-            <app-photo-editor [member]="member"></app-photo-editor>
+        <app-photo-editor [member]="member"></app-photo-editor>
       </tab>
-      
     </tabset>
   </div>
 </div>

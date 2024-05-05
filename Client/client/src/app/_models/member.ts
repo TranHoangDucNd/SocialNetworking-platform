@@ -1,3 +1,4 @@
+import { DatingProfile } from './DatingProfile';
 import { photo } from './photo';
 
 export interface Member {
@@ -15,4 +16,5 @@ export interface Member {
   city: string;
   country: string;
   photos: photo[];
+  datingProfile: DatingProfile;
 }

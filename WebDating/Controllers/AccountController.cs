@@ -71,7 +71,7 @@ namespace WebDating.Controllers
                 Gender = user.Gender
             };
         }
-
+        [HttpGet("UserExists")]
         public async Task<bool> UserExists(string username)
         {
             return await _userManager.Users.AnyAsync(x => x.UserName.ToLower() == username.ToLower());

@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using System.Diagnostics;
 using WebDating.DTOs;
 using WebDating.Entities.UserEntities;
 using WebDating.Helpers;
@@ -26,7 +28,7 @@ namespace WebDating.Data
         => await _context.DatingProfiles.Where(d => d.UserId == id)
             .ProjectTo<DatingProfileDto>(_mapper.ConfigurationProvider)
             .SingleOrDefaultAsync();
-            
+
 
         public async Task<MemberDto> GetMemberAsync(string username)
         {
@@ -63,7 +65,7 @@ namespace WebDating.Data
                 userParams.PageNumber,
                 userParams.PageSize);
 
-            foreach(var member in result)
+            foreach (var member in result)
             {
                 member.DatingProfile = await GetDatingProfile(member.Id);
             }
@@ -94,5 +96,16 @@ namespace WebDating.Data
         {
             _context.Users.Update(user);
         }
+
+        public async Task<PagedList<MemberDto>> GetBestMatch(UserParams userParams)
+        {
+            AppUser currentUser = await GetUserByUsernameAsync(userParams.CurrentUserName);
+            if (currentUser is null)
+            {
+
+            }
+            return new PagedList<MemberDto>();
+        }
+
     }
 }

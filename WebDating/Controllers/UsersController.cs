@@ -45,7 +45,13 @@ namespace WebDating.Controllers
         [HttpGet("{username}")]
         public async Task<ActionResult<MemberDto>> GetMember(string username)
         {
-            return await _uow.UserRepository.GetMemberAsync(username);
+            var user = await _uow.UserRepository.GetMemberAsync(username);
+            var dating = await _uow.UserRepository.GetDatingProfile(user.Id);
+
+            user.DatingProfile = _mapper.Map<DatingProfileDto>(dating);
+
+
+            return Ok(user);
         }
 
         [HttpPut]

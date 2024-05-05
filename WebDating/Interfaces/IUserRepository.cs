@@ -12,5 +12,6 @@ namespace WebDating.Interfaces
         Task<MemberDto> GetMemberAsync(string username);
         Task<string> GetUserGender(string userName);
         void UpdateUser(AppUser user);
+        Task<DatingProfileDto> GetDatingProfile(int id);
     }
 }

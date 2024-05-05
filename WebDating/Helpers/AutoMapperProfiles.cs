@@ -6,6 +6,7 @@ using WebDating.Entities.PostEntities;
 using WebDating.Entities.ProfileEntities;
 using WebDating.Entities.UserEntities;
 using WebDating.Extensions;
+using WebDating.Utilities;
 
 namespace WebDating.Helpers
 {
@@ -18,6 +19,8 @@ namespace WebDating.Helpers
                     opt => opt.MapFrom(src => src.Photos.FirstOrDefault(x => x.IsMain).Url))
                 .ForMember(d => d.Age,
                     opt => opt.MapFrom(src => src.DateOfBirth.CaculateAge()))
+                .ForMember(d => d.DatingProfile, 
+                    opt => opt.MapFrom(src => src.DatingProfile))
                 .ReverseMap();
                 
 
@@ -37,6 +40,21 @@ namespace WebDating.Helpers
 
             CreateMap<UserInterest, UserInterestVM>().ReverseMap();
             CreateMap<DatingProfile, DatingProfileVM>().ReverseMap();
+
+            CreateMap<DatingProfile, DatingProfileDto>()
+                .ForMember(dest => dest.WhereToDate,
+                    opt => opt.MapFrom(s => s.WhereToDate.GetDisplayName()))
+                .ForMember(dest => dest.Height,
+                    opt => opt.MapFrom(s => s.Height.GetDisplayName()))
+                .ForMember(dest => dest.DatingObject,
+                    opt => opt.MapFrom(s => s.DatingObject.GetDisplayName()))
+                .ForMember(dest => dest.UserInterests,
+                    opt => opt.MapFrom(s => s.UserInterests.Select(ui => new UserInterestDto
+                    {
+                        Id = ui.Id,
+                        DatingProfileId = ui.DatingProfileId,
+                        InterestName = ui.InterestName.GetDisplayName()
+                    }).ToList()));
 
             CreateMap<Post, PostResponseDto>()
                 .ForMember(dest => dest.Images, o => o.MapFrom(s => s.Images.Select(x => x.Path).ToList()))

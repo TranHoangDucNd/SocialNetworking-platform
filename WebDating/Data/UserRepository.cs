@@ -22,6 +22,12 @@ namespace WebDating.Data
         public async Task<IEnumerable<AppUser>> GetAll()
         => await _context.Users.ToListAsync();
 
+        public async Task<DatingProfileDto> GetDatingProfile(int id)
+        => await _context.DatingProfiles.Where(d => d.UserId == id)
+            .ProjectTo<DatingProfileDto>(_mapper.ConfigurationProvider)
+            .SingleOrDefaultAsync();
+            
+
         public async Task<MemberDto> GetMemberAsync(string username)
         {
             return await _context.Users
@@ -50,13 +56,19 @@ namespace WebDating.Data
 
 
 
-            return await PagedList<MemberDto>
+            var result = await PagedList<MemberDto>
                 .CreateAsync
                 (query.AsNoTracking()
                 .ProjectTo<MemberDto>(_mapper.ConfigurationProvider),
                 userParams.PageNumber,
                 userParams.PageSize);
 
+            foreach(var member in result)
+            {
+                member.DatingProfile = await GetDatingProfile(member.Id);
+            }
+
+            return result;
         }
 
         public async Task<AppUser> GetUserByIdAsync(int id)

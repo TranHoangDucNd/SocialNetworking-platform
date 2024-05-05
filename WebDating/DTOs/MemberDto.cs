@@ -18,5 +18,6 @@ namespace WebDating.DTOs
         public string City { get; set; }
         public string Country { get; set; }
         public List<PhotoDto> Photos { get; set; }
+        public DatingProfileDto DatingProfile { get; set; } = new DatingProfileDto();
     }
 }

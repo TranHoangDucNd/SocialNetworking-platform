@@ -27,13 +27,13 @@
       <span [class.is-online]="(presenceService.onlineUsers$ | async)?.includes(member.userName)">
         <i class="fa fa-user me-2"></i>
       </span>
-      
-      {{ member.knownAs }} 
+
+      {{ member.knownAs }}
     </h6>
     <p class="card-text ms-1 text-muted">
-      Age: {{member.age}} <br> 
+      Age: {{member.age}} <br>
       Where to date:
-       {{ member.datingProfile.whereToDate }}
+       {{ member.datingProfile?.whereToDate }}
        <br>
       Looking for: {{member.lookingFor}}
     </p>

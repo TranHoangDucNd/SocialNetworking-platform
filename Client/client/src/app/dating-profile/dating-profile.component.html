@@ -4,13 +4,13 @@
                   <h4 class="modal-title pull-left">How wonderful ! Welcome to the dating social network on
                       <strong>DATING</strong>
                   </h4>
-                  <button type="button" class="btn-close close pull-right" aria-label="Close" (click)="modalRef?.hide()">
+                  <button type="button" class="btn-close close pull-right" aria-label="Close" (click)="cancel()">
                       <span aria-hidden="true" class="visually-hidden">&times;</span>
                   </button>
             </div>
 
-              
-            <div class="modal-body mat-typography" style="font-family: 'Roboto' !important;">
+
+            <div class="modal-body mat-typography" style="font-family: 'Roboto',serif !important;">
                   <mat-stepper #stepper>
                         <mat-step label="Wellcome">
                               <ol class="list-group list-group-numbered">
@@ -119,6 +119,6 @@
                           </mat-step>
                       </mat-stepper>
             </div>
-            
+
       </ng-template>
 </div>

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, inject, OnInit} from '@angular/core';
 import { BsModalService } from 'ngx-bootstrap/modal';
 
 import { Member } from 'src/app/_models/member';
@@ -7,6 +7,8 @@ import { UserParams } from 'src/app/_models/userParams';
 import { AccountService } from 'src/app/_service/account.service';
 import { MembersService } from 'src/app/_service/members.service';
 import { DatingProfileComponent } from 'src/app/dating-profile/dating-profile.component';
+import {MatDialog} from "@angular/material/dialog";
+import {MemberFilterComponent} from "../../modals/member-filter/member-filter.component";
 
 @Component({
   selector: 'app-member-list',
@@ -22,13 +24,14 @@ export class MemberListComponent implements OnInit {
     { value: 'female', display: 'Females' },
   ];
 
+  _dialog = inject(MatDialog);
+
   constructor(
     private memberService: MembersService,
     private accountService: AccountService,
     private modalService: BsModalService
   ) {
-    this.userParams = this.memberService.getUserParams();
-    this.checkUser();
+
   }
   checkUser() {
     this.accountService.checkDatingProfile().subscribe(
@@ -46,7 +49,21 @@ export class MemberListComponent implements OnInit {
     });
   }
 
+  openFilterModal() {
+    const dialogRef = this._dialog.open(MemberFilterComponent, {
+      width: '50%',
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.loadMembers();
+      }
+    });
+  }
+
   ngOnInit(): void {
+    this.userParams = this.memberService.getUserParams();
+    this.checkUser();
     this.loadMembers();
   }
 

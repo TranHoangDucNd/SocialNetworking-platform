@@ -24,7 +24,7 @@ import { ToastrService } from 'ngx-toastr';
   templateUrl: './dating-profile.component.html',
   styleUrls: ['./dating-profile.component.css'],
 })
-export class DatingProfileComponent {
+export class DatingProfileComponent implements OnInit {
   @ViewChild('DatingProfileTemplate') DatingProfileTemplate!: TemplateRef<any>;
   @ViewChild('interestInput') interestInput!: ElementRef<any>;
   modalRef?: BsModalRef;
@@ -56,7 +56,9 @@ export class DatingProfileComponent {
     private modalService: BsModalService,
     private datingService: DatingService,
     private toastr: ToastrService
-  ) {
+  ) {}
+
+  ngOnInit() {
     this.GetDatingObject();
     this.GetHeight();
     this.GetWhereToDate();
@@ -67,8 +69,8 @@ export class DatingProfileComponent {
         map((topic: string | null | EItem) =>
           typeof topic === 'string'
             ? this.ListUserInterests.filter((item) =>
-                item.displayName.toLowerCase().includes(topic.toLowerCase())
-              ).slice()
+              item.displayName.toLowerCase().includes(topic.toLowerCase())
+            ).slice()
             : this._filterInterest(topic)
         )
       );
@@ -107,15 +109,16 @@ export class DatingProfileComponent {
       }
     );
   }
+
   GetDatingObject() {
-    this.datingService.GetDatingObject().subscribe(
-      (data: any) => {
+    this.datingService.GetDatingObject().subscribe({
+      next: (data: any) => {
         this.DatingObjects = data;
       },
-      (error: any) => {
+      error: (error: any) => {
         console.log(error);
-      }
-    );
+      },
+    });
   }
 
   openModal() {
@@ -222,5 +225,9 @@ export class DatingProfileComponent {
         console.log(error);
       }
     );
+  }
+
+  cancel() {
+    this.modalService.hide();
   }
 }

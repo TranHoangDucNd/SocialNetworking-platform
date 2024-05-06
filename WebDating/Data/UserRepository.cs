@@ -104,7 +104,7 @@ namespace WebDating.Data
             {
 
             }
-            return new PagedList<MemberDto>();
+            return null;
         }
 
     }

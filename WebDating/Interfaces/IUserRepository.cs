@@ -13,5 +13,8 @@ namespace WebDating.Interfaces
         Task<string> GetUserGender(string userName);
         void UpdateUser(AppUser user);
         Task<DatingProfileDto> GetDatingProfile(int id);
+
+
+        Task<PagedList<MemberDto>> GetBestMatch(UserParams userParams);
     }
 }

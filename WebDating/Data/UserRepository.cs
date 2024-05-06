@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
+using AutoMapper.Execution;
 using AutoMapper.QueryableExtensions;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 using WebDating.DTOs;
+using WebDating.Entities.ProfileEntities;
 using WebDating.Entities.UserEntities;
 using WebDating.Helpers;
 using WebDating.Interfaces;
@@ -43,7 +45,7 @@ namespace WebDating.Data
             var query = _context.Users.AsQueryable();
 
             query = query.Where(x => x.UserName.ToLower() != userParams.CurrentUserName.ToLower());
-            query = query.Where(x => x.Gender == userParams.Gender);
+            //query = query.Where(x => x.Gender == userParams.Gender);
 
             var minDob = DateOnly.FromDateTime(DateTime.Today.AddYears(-userParams.MaxAge - 1));
             var maxDob = DateOnly.FromDateTime(DateTime.Today.AddYears(-userParams.MinAge));
@@ -97,15 +99,37 @@ namespace WebDating.Data
             _context.Users.Update(user);
         }
 
+
         public async Task<PagedList<MemberDto>> GetBestMatch(UserParams userParams)
         {
-            AppUser currentUser = await GetUserByUsernameAsync(userParams.CurrentUserName);
-            if (currentUser is null)
+            MemberDto currentUser = await GetMemberAsync(userParams.CurrentUserName);
+            if (currentUser != null)
             {
+               
+                var query = _context.Users.Join(_context.DatingProfiles,
+                                                    acc => acc.Id,
+                                                    profile => profile.UserId,
+                                                    (acc, profile) => new { Account = acc, Profile = profile })
+                                        .Join(_context.UserInterests,
+                                                    a => a.Profile.Id,
+                                                    ui => ui.DatingProfileId,
+                                                    (a, ui) => new { a, ui });
 
+
+                SqlParameter[] sqlParams = new SqlParameter[]
+                {
+                    new SqlParameter("@MinHeight", userParams.MinHeight),
+                    new SqlParameter("@MaxHeight",  userParams.MaxHeight),
+                    new SqlParameter("@Gender", userParams.Gender),
+                    new SqlParameter("@MinAge", userParams.MinAge),
+                    new SqlParameter("@MaxAge", userParams.MaxAge),
+                    new SqlParameter("@City", userParams.City),
+                    new SqlParameter("@Interest", 84),
+                };
+               
+                //var res = _context.Database.SqlQueryRaw("EXEC Search_Best_Match @MinHeight, @MaxHeight, @Gender,@MinAge,@MaxAge, @City, @Interest", sqlParams);
             }
             return null;
         }
-
     }
 }

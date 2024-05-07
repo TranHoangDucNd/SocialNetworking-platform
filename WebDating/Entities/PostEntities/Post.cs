@@ -15,7 +15,6 @@ namespace WebDating.Entities.PostEntities
             //1 bài đăng tạo ra không cần có ảnh nên không phải khởi tạo hashset của image
         }
         [Key]
-        [StringLength(250)]
         public int Id { get; set; }
         public string Content { get; set; }
         [Column(TypeName = "dateTime")]

@@ -49,6 +49,8 @@ import {OverlayModule} from '@angular/cdk/overlay';
 import { AdminModule } from './admin/admin.module';
 import { HasRoleDirective } from './_directives/has-role.directive';
 import { RolesModalComponent } from './modals/roles-modal/roles-modal.component';
+import { ReportComponent } from './report/report.component';
+import { CountlikecommentComponent } from './post/countlikecomment/countlikecomment.component';
 
 @NgModule({
   declarations: [
@@ -71,7 +73,9 @@ import { RolesModalComponent } from './modals/roles-modal/roles-modal.component'
     PersonalpageComponent,
     TimeAgoPipe,
     ChatComponent,
-    RolesModalComponent
+    RolesModalComponent,
+    ReportComponent,
+    CountlikecommentComponent
    
   ],
   providers: [

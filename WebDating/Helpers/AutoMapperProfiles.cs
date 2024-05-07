@@ -63,14 +63,25 @@ namespace WebDating.Helpers
                 .ForPath(dest => dest.UserShort.Image, o=> o.MapFrom(s => s.User.Photos.FirstOrDefault(x => x.IsMain).Url))
                 .ReverseMap();
 
+            CreateMap<Post, ShowPostAdminDto>()
+                .ForMember(dest => dest.Images, o => o.MapFrom(s => s.Images.Select(x => x.Path).ToList()))
+                .ForPath(dest => dest.UserShort.Id, o => o.MapFrom(s => s.UserId))
+                .ForPath(dest => dest.UserShort.FullName, o => o.MapFrom(s => s.User.UserName))
+                .ForPath(dest => dest.UserShort.Image, o => o.MapFrom(s => s.User.Photos.FirstOrDefault(x => x.IsMain).Url));
+
             CreateMap<PostComment, CommentPostDto>()
                 .ForPath(dest => dest.UserShort.Id, o => o.MapFrom(s => s.User.Id))
                 .ForPath(dest => dest.UserShort.FullName, o=> o.MapFrom(s=> s.User.UserName))
                 .ForPath(dest => dest.UserShort.Image, o => o.MapFrom(s => s.User.Photos.FirstOrDefault(x => x.IsMain).Url))
                 .ReverseMap();
 
-            CreateMap<PostReportDto, PostReportDetail>().ReverseMap();
-          
+            CreateMap<PostReportDto, PostReportDetail>()
+                .ReverseMap();
+
+            CreateMap<PostReportDetail, PostReportAdminDto>()
+              .ForMember(dest => dest.Report, opt => opt.MapFrom(x => x.Report.GetDisplayName()));
+              
+
         }
     }
 }

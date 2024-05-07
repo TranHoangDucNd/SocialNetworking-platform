@@ -65,6 +65,8 @@
                       {{ post.createdAt | timeAgo }}
                   </div>
               </div>
+
+              <app-countlikecomment [postId]="post.id"></app-countlikecomment>
           </div>
   
       </div>

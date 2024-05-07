@@ -1,1 +1,35 @@
-<p>managepostreport works!</p>
+<div >
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">Post Reports</h4>
+  </div>
+
+  <div class="tab-content p-3">
+    <div class="tab-pane active show" id="profile">
+      <table
+        class="table table-hover table-striped"   
+      >
+        <tbody>
+            <tr *ngFor="let report of postReports">
+                  <td class="d-flex justify-content-between mt-3 mb-2" >
+                    <div>
+                      <strong>Description: </strong>
+                    <label>Bài đăng có Id: {{report.postId}} - {{ report.description }}</label>
+                    <br />
+                    <strong>Report detail: </strong>
+                    <label>{{report.report}}</label>
+                    </div>
+                    <div class="row" >
+                      <button class="border-0 px-3 d-flex" (click)="openReport(report.postId)"><span class="material-symbols-outlined">
+                        visibility
+                        </span> Xem bài đăng</button>
+                      <button class="border-0 px-3 d-flex " style="color:red;" (click)="deletePost(report.postId)"><span class="material-symbols-outlined">
+                        delete_sweep
+                        </span> Xóa bài đăng</button>
+                    </div>
+                  </td>
+                </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

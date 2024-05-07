@@ -56,3 +56,8 @@ export interface PostReportDto {
   checked: boolean;
   report: number;
 }
+
+export interface CountLikesAndPosts {
+  likes: number
+  comments: number
+}

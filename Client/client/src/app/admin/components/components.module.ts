@@ -4,17 +4,20 @@ import { CustomerroleModule } from './customerrole/customerrole.module';
 import { DashboardModule } from './dashboard/dashboard.module';
 import { ModeratorModule } from './moderator/moderator.module';
 import { ManagepostreportModule } from './managepostreport/managepostreport.module';
+import { PostreportdetailComponent } from './postreportdetail/postreportdetail.component';
 
 
 
 @NgModule({
-  declarations: [],
+  declarations: [
+    PostreportdetailComponent
+  ],
   imports: [
     CommonModule,
     CustomerroleModule,
     DashboardModule,
     ModeratorModule,
-    ManagepostreportModule
+    ManagepostreportModule,
   ]
 })
 export class ComponentsModule { }

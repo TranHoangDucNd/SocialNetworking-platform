@@ -84,6 +84,7 @@ namespace WebDating.Data
         public void DeleteComment(PostComment comment)
         => _context.PostsComments.Remove(comment);
 
+        //Kiểm tra xem user hiện tại đã có trong ds like chưa
         public async Task<PostLike> GetLikeByMultiId(int userId, int postId)
         => await _context.PostLikes.Where(x => x.UserId == userId && x.PostId == postId).FirstOrDefaultAsync();
 
@@ -93,8 +94,11 @@ namespace WebDating.Data
         public void DeletePostLike(PostLike checkLike)
         => _context.PostLikes.Remove(checkLike);
 
-        public async Task<IEnumerable<PostLike>> GetPostLikesByPostId(int postId)
-        => await _context.PostLikes.Where(x => x.PostId == postId).ToListAsync();
+        public async Task<int> GetCountPostLikesByPostId(int postId)
+        => await _context.PostLikes.Where(x => x.PostId == postId).CountAsync();
+
+       public async Task<int> GetCountPostCommentByPostId(int postId)
+        => await _context.PostsComments.Where(x => x.PostId == postId).CountAsync();
 
         public async Task<IEnumerable<PostReportDetail>> GetAllReport()
         => await _context.PostReportDetails.ToListAsync();
@@ -107,5 +111,7 @@ namespace WebDating.Data
 
         public void UpdatePostReport(PostReportDetail check)
         => _context.PostReportDetails.Update(check);
+
+      
     }
 }

@@ -2,33 +2,46 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using WebDating.Data;
 using WebDating.Entities.UserEntities;
+using WebDating.Helpers;
+using WebDating.Interfaces;
 
 namespace WebDating.Controllers
 {
     public class AdminController : BaseController
     {
         private readonly UserManager<AppUser> _userManager;
+        private readonly IAdminService _adminService;
 
-        public AdminController(UserManager<AppUser> userManager)
+        public AdminController(UserManager<AppUser> userManager, IAdminService adminService)
         {
             _userManager = userManager;
+            _adminService = adminService;
         }
         [Authorize(Policy = "RequireAdminRole")]
         [HttpGet("users-with-roles")]
-        public async Task<ActionResult> GetUsersWithRoles()
+        public async Task<ActionResult> GetUsersWithRoles([FromQuery] string userName)
         {
-            var userRole = await _userManager.Users
-                .OrderBy(u => u.UserName)
-                .Select(x => new
-                {
-                    x.Id,
-                    UserName = x.UserName,
-                    Roles = x.UserRoles.Select(x => x.Role.Name).ToList()
-                })
-                .ToListAsync();
+            var query = _userManager
+             .Users.AsQueryable();
 
-            return Ok(userRole);
+            if (!string.IsNullOrEmpty(userName))
+            {
+                var user = await _userManager.FindByNameAsync(userName);
+                if (user == null) return NotFound("Không tìm thấy user!");
+
+                query = query.Where(x => x.UserName.ToLower() == userName.ToLower());
+            }
+
+            var result = await query.Select(x => new
+            {
+                x.Id,
+                UserName = x.UserName,
+                Roles = x.UserRoles.Select(x => x.Role.Name).ToList()
+            }).ToListAsync();
+        
+            return Ok(result);
         }
 
         [Authorize(Policy = "RequireAdminRole")]
@@ -61,5 +74,30 @@ namespace WebDating.Controllers
         {
             return Ok("Admins or moderator can see this");
         }
+
+        [Authorize(Policy = "ManageReport")]
+        [HttpGet("get-reports")]
+        public async Task<ActionResult> GetPostReports()
+        {
+            var result = await _adminService.GetPostReports();
+            return Ok(result);
+        }
+
+        [Authorize(Policy = "ManageReport")]
+        [HttpGet("get-detail-post-report/{postId}")]
+        public async Task<ActionResult> GetDetailPostReport(int postId)
+        {
+            var result = await _adminService.GetPost(postId);
+            return Ok(result);
+        }
+
+        [Authorize(Policy = "ManageReport")]
+        [HttpDelete("delete-post-report/{postId}")]
+        public async Task<ActionResult> DeletePostReport(int postId)
+        {
+            var result = await _adminService.DeletePostReport(postId);
+            return Ok(result);
+        }
+
     }
 }

@@ -1,10 +1,72 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { BsModalService } from 'ngx-bootstrap/modal';
+import { Overlay, ToastrService } from 'ngx-toastr';
+import { Reports } from 'src/app/_models/admin';
+import { PostReportDto, UserShortDto } from 'src/app/_models/PostModels';
+import { User } from 'src/app/_models/user';
+import { AdminService } from 'src/app/_service/admin.service';
+import { PostreportdetailComponent } from '../postreportdetail/postreportdetail.component';
 
 @Component({
   selector: 'app-managepostreport',
   templateUrl: './managepostreport.component.html',
   styleUrls: ['./managepostreport.component.css']
 })
-export class ManagepostreportComponent {
+export class ManagepostreportComponent implements OnInit{
+
+  user!: User;
+  userShort!: UserShortDto;
+  postReports: Reports[] = [];
+  constructor(private adminService: AdminService,
+    private toastr: ToastrService,
+    private modalService: BsModalService,
+    private dialog: MatDialog,
+    private overlay: Overlay
+  ){}
+  ngOnInit(): void {
+    this.getPostReports();
+  }
+
+  getPostReports(){
+    return this.adminService.getPostReports().subscribe(
+      (data: any) =>{
+        console.log(data);
+        if(data.isSuccessed === true){
+          this.postReports = data.resultObj as Reports[];
+          console.log(this.postReports)
+        }
+      }
+    )
+  }
+
+  openReport(postId: number){
+    this.openDialogReportDetail('10ms', '10ms', postId);
+  }
+  
+  openDialogReportDetail(enteranimation: any, exitanimation: any, postId: number){
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.hasBackdrop = false;
+    const popup = this.dialog.open(PostreportdetailComponent,{
+      enterAnimationDuration: enteranimation,
+      exitAnimationDuration: exitanimation,
+      width: '414px',
+      height: '40%',
+      data: {
+        SubId: postId,
+      },
+      backdropClass: 'custom-backdrop',
+    })
+  }
+
+  deletePost(postId: number){
+    this.adminService.deletePost(postId).subscribe(
+      (data: any) =>{
+        if(data.isSuccessed === true){
+          this.postReports = data.resultObj;
+        }
+      }
+    )
+  }
 
 }

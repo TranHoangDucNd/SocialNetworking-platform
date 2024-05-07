@@ -28,6 +28,7 @@ namespace WebDating.Extensions
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IDatingService, DatingService>();
             services.AddScoped<IPostService, PostService>();
+            services.AddScoped<IAdminService, AdminService>();
             return services;
         }
     }

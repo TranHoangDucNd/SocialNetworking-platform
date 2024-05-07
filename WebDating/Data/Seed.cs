@@ -20,6 +20,7 @@ namespace WebDating.Data
                 new AppRole{Name = "Member"},
                 new AppRole{Name = "Admin"},
                 new AppRole{Name = "Moderator"},
+                new AppRole{Name = "ManageReport"},
             };
 
             foreach(var role in roles)
@@ -40,7 +41,7 @@ namespace WebDating.Data
                 UserName = "admin",
             };
             await userManager.CreateAsync(admin, "Pa$$w0rd");
-            await userManager.AddToRolesAsync(admin, new[] {"Admin", "Moderator"});
+            await userManager.AddToRolesAsync(admin, new[] {"Admin", "Moderator", "ManageReport" });
 
         }
     }

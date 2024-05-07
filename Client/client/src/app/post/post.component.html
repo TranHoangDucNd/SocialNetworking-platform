@@ -35,7 +35,7 @@
                                               <a class="dropdown-item" style="cursor: pointer;" (click)="deletePost(post.id)">Xóa bài</a>
                                           </div>
                                           <ng-template #reportPost>
-                                              <a class="dropdown-item" style="cursor: pointer;">Báo cáo</a>
+                                              <a class="dropdown-item" style="cursor: pointer;" (click)="Report(post.id)">Báo cáo</a>
                                           </ng-template>
                                       </div>
           
@@ -79,13 +79,13 @@
                                             </span>
                                 </button>
                              </ng-template>
-
-
-                          </div>
+                            </div>
+                            <br>
                           <div>
                               {{ post.createdAt | timeAgo }}
                           </div>
                       </div>
+                      <app-countlikecomment [postId]="post.id"></app-countlikecomment>
                   </div>
           
               </div>

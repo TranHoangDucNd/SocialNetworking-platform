@@ -1,0 +1,33 @@
+<div style="max-height: 550px; overflow: auto;">
+      <div class="modal-header d-flex justify-content-between align-items-center  mx-auto" style="max-width: 620px;">
+          <div class="d-flex align-items-center ">
+              <h4 class="modal-title pull-left" style="color: #0080FF">
+                  Report the post
+              </h4>
+              <mat-icon style="color: #0080FF" class="ps-1"> edit</mat-icon>
+          </div>
+          <button type="button" class="btn bg-primary text-white" (click)="Report()">
+              Report
+          </button>
+      </div>
+      <div class="modal-body mat-typography ms-auto  me-auto "
+          style="font-family: 'Roboto' !important; max-width: 620px;">
+          <div>
+              Content Report
+              <div class="d-block ">
+                  <mat-radio-group class="" *ngIf="report != null" (change)="postReport.report = $event.value">
+                      <div *ngFor="let option of report">
+                          <mat-radio-button [value]="option.value">
+                              {{ option.displayName }}
+                          </mat-radio-button>
+                      </div>
+                  </mat-radio-group>
+              </div>
+          </div>
+          <textarea type="text" [(ngModel)]="postReport.description" rows="3" class="border-0 px-2 py-2  text-start w-100"
+              style="outline: none;" placeholder="Description..."></textarea>
+  
+      </div>
+  
+  
+  </div>

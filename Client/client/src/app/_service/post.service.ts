@@ -2,7 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
 import { environment } from 'src/environments/environment';
-import { CommentPostDto, PostFpkDto, PostReportDto } from '../_models/PostModels';
+import { CommentPostDto, CountLikesAndPosts, PostFpkDto, PostReportDto } from '../_models/PostModels';
 
 @Injectable({
   providedIn: 'root',
@@ -65,9 +65,31 @@ export class PostService {
     return this.http.post(this.baseUrl + 'Post/Like', postFpk);
   }
   
+  countLikesAndCommentsOfPost(postId: number){
+    return this.http.get<CountLikesAndPosts>(this.baseUrl + 'Post/LikesAndComments/' + postId);
+  }
+
+  // countCommentOfPost(postId: number){
+  //   return this.http.get<number>(this.baseUrl + 'Post/Comment/' +postId);
+  // }
 
   Report(report: PostReportDto){
     const postReport = new FormData();
-    postReport.append
+    postReport.append('userId', report.userId.toString());
+    postReport.append('postId', report.postId.toString());
+    postReport.append('description', report.description);
+    postReport.append('reportDate', report.reportDate.toISOString());
+    postReport.append('checked', report.checked.toString());
+    postReport.append('report', report.report.toString());
+
+    return this.http.post(this.baseUrl + 'Post/Report', postReport);
+
   }
+
+  GetContentReport(){
+    return this.http.get(this.baseUrl + 'Post/ContentReport');
+  }
+  
+
+
 }

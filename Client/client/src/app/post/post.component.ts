@@ -11,6 +11,7 @@ import { UpdatepostComponent } from './updatepost/updatepost.component';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { ChatComponent } from './chat/chat.component';
 import { Overlay } from '@angular/cdk/overlay';
+import { ReportComponent } from '../report/report.component';
 
 @Component({
   selector: 'app-post',
@@ -25,6 +26,10 @@ export class PostComponent implements OnInit {
     postId: 0,
     userId: 0
   }
+
+  posId!: number;
+
+  countLike: number = 0;
 
   constructor(
     private accountService: AccountService,
@@ -44,7 +49,7 @@ export class PostComponent implements OnInit {
   }
   ngOnInit(): void {
     this.getPosts();
-    this.getUserShort()
+    this.getUserShort();
   }
   getPosts() {
     this.postService.getPosts().subscribe(
@@ -128,6 +133,7 @@ export class PostComponent implements OnInit {
     return postLikes.some((postlike) => postlike.userId === this.userShort.id);
   }
 
+
   likeOrDisLike(postId: number){
     this.postLike.postId = postId;
     this.postLike.userId = this.userShort.id;
@@ -137,5 +143,13 @@ export class PostComponent implements OnInit {
       },
       (error: any) => {console.log(error)}
     );
+  }
+
+  Report(id: number){
+    const initialState = {postId: id};
+    this.modalService.show(ReportComponent, {
+      class: 'modal-lg',
+      initialState: initialState
+    })
   }
 }

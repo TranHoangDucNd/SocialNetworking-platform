@@ -216,17 +216,17 @@ namespace WebDating.Services
             return comments;
         }
 
-        public async Task<ResultDto<NumberResponse>> GetLike(PostFpkDto postFpk)
+        public async Task<(int Likes, int Comments)> GetLikesAndCommentsCount(int postId)
         {
-            var postLikes = await _uow.PostRepository.GetPostLikesByPostId(postFpk.PostId);
-            NumberResponse numberResponse = new NumberResponse()
-            {
-                //Kiểm tra xem người dùng hiện tại đã thích bài đăng đó chưa
-                Check = postLikes.Where(x => x.UserId == postFpk.UserId).FirstOrDefault() is not null ? true : false,
-                Quantity = postLikes.Count()
-            };
-            return new SuccessResult<NumberResponse>(numberResponse);
+            var postLikes = await _uow.PostRepository.GetCountPostLikesByPostId(postId);
+            var postComments = await _uow.PostRepository.GetCountPostCommentByPostId(postId);
+
+            var likesCount = postLikes;
+            var commentsCount = postComments;
+
+            return (likesCount, commentsCount);
         }
+
 
         public async Task<ResultDto<List<PostResponseDto>>> AddOrUnLikePost(PostFpkDto postFpk)
         {
@@ -285,5 +285,7 @@ namespace WebDating.Services
             return new SuccessResult<List<PostReportDto>>(_mapper.Map<List<PostReportDto>>(result));
             
         }
+
+     
     }
 }

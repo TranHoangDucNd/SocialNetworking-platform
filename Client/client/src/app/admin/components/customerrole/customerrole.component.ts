@@ -3,6 +3,7 @@ import { User } from 'src/app/_models/user';
 import { AdminService } from 'src/app/_service/admin.service';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { RolesModalComponent } from 'src/app/modals/roles-modal/roles-modal.component';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-customerrole',
@@ -10,31 +11,42 @@ import { RolesModalComponent } from 'src/app/modals/roles-modal/roles-modal.comp
   styleUrls: ['./customerrole.component.css']
 })
 export class CustomerroleComponent implements OnInit{
-
+  userName: string = '';
   users: User[] = [];
   bsModalRef: BsModalRef<RolesModalComponent> = new BsModalRef<RolesModalComponent>();
   availableRoles = [
     'Admin',
     'Moderator',
-    'Member'
+    'Member',
+    'ManageReport'
   ]
 
   constructor(private adminService: AdminService,
-    private modalService: BsModalService
+    private modalService: BsModalService,
+    private toastr: ToastrService
   ){}
   ngOnInit(): void {
-    this.getUserWithRoles();
+    this.findUsersWithRoles();
   }
 
-  getUserWithRoles(){
-    return this.adminService.getUserWithRoles().subscribe({
-      next: data => {
+  findUsersWithRoles(){
+    return this.adminService.findUsersWithRoles(this.userName).subscribe(
+     {
+      next: (data) =>{
         if(data){
-          console.log(data);
           this.users = data;
         }
+      },
+      error: (err) => {
+        this.toastr.error('User name not found!');
       }
-    })
+     }
+    )
+  }
+
+  onSearch(): void {
+    this.userName = '';
+    this.findUsersWithRoles();
   }
 
   openRolesModal(user: User){

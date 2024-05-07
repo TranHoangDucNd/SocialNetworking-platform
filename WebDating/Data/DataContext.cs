@@ -38,6 +38,7 @@ namespace WebDating.Data
         public DbSet<PostSubComment> PostSubComments { get; set; }
         public DbSet<ImagePost> ImagePosts { get; set; }
 
+      
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -141,7 +142,9 @@ namespace WebDating.Data
                 entity.HasOne(d => d.Post)
                     .WithMany(p => p.PostReportDetails)
                     .HasForeignKey(d => d.PostId)
+                    .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("FK__PostRepor__PostI__17036CC0");
+                    
 
                 entity.HasOne(d => d.User)
                     .WithMany(p => p.PostReportDetails)

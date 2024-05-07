@@ -49,6 +49,7 @@ import {OverlayModule} from '@angular/cdk/overlay';
 import { AdminModule } from './admin/admin.module';
 import { HasRoleDirective } from './_directives/has-role.directive';
 import { RolesModalComponent } from './modals/roles-modal/roles-modal.component';
+import {MatButtonToggleModule} from "@angular/material/button-toggle";
 
 @NgModule({
   declarations: [
@@ -72,13 +73,13 @@ import { RolesModalComponent } from './modals/roles-modal/roles-modal.component'
     TimeAgoPipe,
     ChatComponent,
     RolesModalComponent
-   
+
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: LoadingInterceptor, multi: true },
     { provide: RouteReuseStrategy, useClass: CustomRoteReuseStrategy },
-   
+
   ],
   bootstrap: [AppComponent],
   imports: [
@@ -104,7 +105,7 @@ import { RolesModalComponent } from './modals/roles-modal/roles-modal.component'
     MatMenuModule,
     MatTooltipModule,
     OverlayModule,
-    AdminModule
+    AdminModule, MatButtonToggleModule
   ],
 })
 export class AppModule {}

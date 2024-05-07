@@ -1,78 +1,12 @@
-<div class="container mt-3" *ngIf="userParams">
-  <button class="btn btn-primary" (click)="openFilterModal()">Filter</button>
-  <form
-    #form="ngForm"
-    class="d-flex mb-3"
-    (ngSubmit)="loadMembers()"
-    autocomplete="off"
-  >
-    <div class="d-flex mx-2">
-      <label class="col-form-label">Age form: </label>
-      <input
-        type="number"
-        class="form-control ms-1"
-        style="width: 70px"
-        name="minAge"
-        [(ngModel)]="userParams.minAge"
-      />
-    </div>
-
-    <div class="d-flex mx-2">
-      <label class="col-form-label">Age to: </label>
-      <input
-        type="number"
-        class="form-control ms-1"
-        style="width: 70px"
-        name="maxAge"
-        [(ngModel)]="userParams.maxAge"
-      />
-    </div>
-
-    <div class="d-flex px-2">
-      <label class="col-form-label">Show: </label>
-      <select
-        name="gender"
-        style="width: 150px"
-        class="form-select ms-1"
-        [(ngModel)]="userParams.gender"
-      >
-        <option *ngFor="let gender of genderList" [value]="gender.value">
-          {{ gender.display }}
-        </option>
-      </select>
-    </div>
-
-    <button class="btn btn-primary ms-1" type="submit">Apply Filter</button>
-    <button (click)="resetFiters()" class="btn btn-info ms-1" type="submit">
-      Reset Filters
-    </button>
-
-    <div class="col">
-      <div class="btn-group float-end">
-        <button
-          type="button"
-          class="btn btn-primary"
-          name="orderBy"
-          [(ngModel)]="userParams.orderBy"
-          btnRadio="lastActive"
-          (click)="loadMembers()"
-        >
-          Last Active
-        </button>
-
-        <button
-          type="button"
-          class="btn btn-primary"
-          name="orderBy"
-          [(ngModel)]="userParams.orderBy"
-          btnRadio="created"
-          (click)="loadMembers()"
-        >
-          Newest Members
-        </button>
-      </div>
-    </div>
-  </form>
+<div class="container mt-3">
+  <button mat-mini-fab  color="accent" (click)="openFilterModal()"><i class="fa fa-filter"></i></button>
+  <div class="float-end">
+    <p>Sort by:
+      <mat-button-toggle-group name="sortBy" aria-label="Sort by" [(ngModel)]="orderBy">
+        <mat-button-toggle value="lastActive"><i *ngIf="orderBy==='lastActive'" class="fa fa-check"></i> Last Active</mat-button-toggle>
+        <mat-button-toggle value="created"><i *ngIf="orderBy!='lastActive'" class="fa fa-check"></i> Newest Members</mat-button-toggle>
+      </mat-button-toggle-group>
+    </p>
 </div>
 
 <div class="row">

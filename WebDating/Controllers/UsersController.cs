@@ -35,7 +35,7 @@ namespace WebDating.Controllers
         //        userParams.Gender = gender == "female" ? "male" : "female";
         //    }
 
-        //    var users = await _uow.UserRepository.GetMembersAsync(userParams);
+        // var users = await _uow.UserRepository.GetMembersAsync(userParams);
 
         //    Response.AddPaginationHeader(new PaginationHeader(users.CurrentPage, users.PageSize, users.TotalCount, users.TotalPages));
 
@@ -143,8 +143,9 @@ namespace WebDating.Controllers
         [AllowAnonymous]
         public async Task<ActionResult<PagedList<MemberDto>>> GetUsers([FromQuery] UserParams userParams)
         {
-            userParams.CurrentUserName = "user12";
+            userParams.CurrentUserName = User.GetUserName();
             var res = await _uow.UserRepository.GetBestMatch(userParams);
+            Response.AddPaginationHeader(new PaginationHeader(res.CurrentPage, res.PageSize, res.TotalCount, res.TotalPages));
             return Ok(res);
         }
     }

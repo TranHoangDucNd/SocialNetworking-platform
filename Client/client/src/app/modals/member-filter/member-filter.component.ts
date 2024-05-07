@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, inject, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit} from '@angular/core';
 import {MatDialogModule, MatDialogRef} from "@angular/material/dialog";
 import {MatButtonModule} from "@angular/material/button";
 import {
@@ -14,8 +14,10 @@ import {MatInputModule} from "@angular/material/input";
 import {MatSelectModule} from "@angular/material/select";
 import {MatIconModule} from "@angular/material/icon";
 import {NgForOf, NgIf} from "@angular/common";
-
-const FILTER_LOCAL_STORAGE_KEY = 'memberFilter';
+import {MembersService} from "../../_service/members.service";
+import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
+import {UserParams} from "../../_models/userParams";
+import {forkJoin, map} from "rxjs";
 
 @Component({
   selector: 'app-member-filter',
@@ -37,60 +39,71 @@ const FILTER_LOCAL_STORAGE_KEY = 'memberFilter';
 export class MemberFilterComponent implements OnInit {
   _dialogRef = inject(MatDialogRef<MemberFilterComponent>);
   _formBuilder = inject(FormBuilder);
+  _memberService = inject(MembersService);
+  _destroyed = inject(DestroyRef);
 
   isFormValid = true;
   isAgeRangeValid = true;
+  userParams = this._memberService.getUserParams();
 
-  genderList = [
-    { value: 'male', display: 'Males' },
-    { value: 'female', display: 'Females' },
-  ];
+  genderList: any[] = [];
 
-  cities = [
-    { value: 'new york', display: 'New York' },
-    { value: 'london', display: 'London' },
-    { value: 'paris', display: 'Paris' },
-    { value: 'berlin', display: 'Berlin' },
-  ];
-
-  countries = [
-    { value: 'usa', display: 'USA' },
-    { value: 'uk', display: 'UK' },
-    { value: 'france', display: 'France' },
-    { value: 'germany', display: 'Germany' },
-  ];
+  provinces: any[] = [];
 
   filterForm = this._formBuilder.group({
     minAge: new FormControl(18, [Validators.min(18), Validators.max(99)]),
     maxAge: new FormControl(99, [Validators.min(18), Validators.max(99)]),
-    gender: new FormControl(["female"]),
-    city: new FormControl([]),
-    country: new FormControl([]),
+    minHeight: new FormControl(120, [Validators.min(120), Validators.max(200)]),
+    maxHeight: new FormControl(200, [Validators.min(120), Validators.max(200)]),
+    gender: new FormControl(2),
+    province: new FormControl(0)
   }, {
-    validators: this.validateAgeRangeControlsValue('minAge', 'maxAge'),
+    validators: [this.validateAgeRangeControlsValue('minAge', 'maxAge'),
+      this.validateAgeRangeControlsValue('minHeight', 'maxHeight')
+    ]
   });
 
   ngOnInit(): void {
-    this.filterForm?.valueChanges.subscribe((value) => {
+    this.filterForm?.valueChanges
+      .pipe(takeUntilDestroyed(this._destroyed))
+      .subscribe((value) => {
       this.isFormValid = this.filterForm?.valid;
       this.isAgeRangeValid = !this.filterForm?.hasError('ageRangeNotValid');
     });
 
-    const filter = localStorage.getItem(FILTER_LOCAL_STORAGE_KEY);
-    if (filter) {
-      this.filterForm?.patchValue(JSON.parse(filter));
+    this.setOptions()
+
+    if (this.userParams) {
+      this.filterForm?.patchValue(this.userParams);
     }
+  }
+
+  setOptions() {
+    forkJoin([
+      this._memberService.getGenders(),
+      this._memberService.getProvinces()
+    ]).subscribe({
+      next: (response) => {
+        if (response) {
+          this.genderList = response[0];
+          this.provinces = response[1];
+        }
+      }
+    })
   }
 
   resetFilter() {
     this.filterForm?.reset();
-    localStorage.removeItem(FILTER_LOCAL_STORAGE_KEY);
+    this._memberService.resetUserParams();
+    this.filterForm?.patchValue(this._memberService.getUserParams());
   }
 
   applyFilter() {
     if (this.filterForm?.valid) {
-      localStorage.setItem(FILTER_LOCAL_STORAGE_KEY, JSON.stringify(this.filterForm?.value));
-      this._dialogRef.close(this.filterForm?.value);
+      const userParams = this.filterForm?.value as UserParams;
+
+      this._memberService.setUserParams(userParams);
+      this._dialogRef.close(userParams);
     }
   }
 

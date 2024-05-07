@@ -1,11 +1,8 @@
 ﻿using AutoMapper;
-using AutoMapper.Execution;
 using AutoMapper.QueryableExtensions;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
-using System.Diagnostics;
 using WebDating.DTOs;
-using WebDating.Entities.ProfileEntities;
 using WebDating.Entities.UserEntities;
 using WebDating.Helpers;
 using WebDating.Interfaces;
@@ -112,7 +109,7 @@ namespace WebDating.Data
                 }
                 IEnumerable<int> listInterest = _context.UserInterests.Where(it => it.DatingProfileId == profile.Id)
                      .Select(it => (int)it.InterestName);
-                userParams.Gender = Gender.Female;
+                // userParams.Gender = Gender.Female;
 
                 string @interest = string.Join(",", listInterest);
                 SqlParameter[] sqlParams = new SqlParameter[]
@@ -122,7 +119,7 @@ namespace WebDating.Data
                     new SqlParameter("@Gender", userParams.Gender),
                     new SqlParameter("@MinAge", userParams.MinAge),
                     new SqlParameter("@MaxAge", userParams.MaxAge),
-                    new SqlParameter("@City", profile.WhereToDate),
+                    new SqlParameter("@City", userParams.Province),
                     new SqlParameter("@Interest",@interest),
                 };
 
@@ -134,6 +131,7 @@ namespace WebDating.Data
                     "created" => query.OrderByDescending(x => x.Created),
                     _ => query.OrderByDescending(x => x.LastActive)
                 };
+                
                 var result = await PagedList<MemberDto>
                 .CreateAsync
                 (query.AsNoTracking()

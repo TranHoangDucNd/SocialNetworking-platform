@@ -12,6 +12,6 @@ namespace WebDating.Helpers
         public Height MinHeight { get; set; }
         public Height MaxHeight { get; set; }
         public string OrderBy { get; set; } = "lastActive";
-        public Provice City { get; set; }
+        public Provice Province { get; set; }
     }
 }

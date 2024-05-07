@@ -15,10 +15,14 @@ export class MembersService {
   baseUrl = environment.apiUrl;
   members: Member[] = [];
   user: User | undefined;
-  userParams: UserParams | undefined;
+  userParams: UserParams;
   memberCache = new Map();
+  provinces: any[] = [];
+  genders : any[] = [];
+
 
   constructor(private http: HttpClient, private accountService: AccountService) {
+    this.userParams = new UserParams();
     this.accountService.currentUser$.pipe(take(1)).subscribe({
       next: user =>{
         if(user){
@@ -30,7 +34,7 @@ export class MembersService {
   }
 
   getUserParams(){
-    return this.userParams;
+    return this.userParams ? this.userParams : new UserParams(this.user);
   }
 
   setUserParams(userParams: UserParams){
@@ -45,6 +49,26 @@ export class MembersService {
     return;
   }
 
+  getProvinces(){
+    if (this.provinces.length > 0) return of(this.provinces);
+    return this.http.get<any>(this.baseUrl + 'Values/provinces').pipe(
+      map(response =>{
+        this.provinces = response;
+        return response;
+      })
+    )
+  }
+
+  getGenders(){
+    if (this.genders.length > 0) return of(this.genders);
+    return this.http.get<any>(this.baseUrl + 'Values/genders').pipe(
+      map(response =>{
+        this.genders = response;
+        return response;
+      })
+    )
+  }
+
 
   getMembers(userParams: UserParams) {
 
@@ -56,6 +80,9 @@ export class MembersService {
 
     params = params.append('minAge', userParams.minAge);
     params = params.append('maxAge', userParams.maxAge);
+    params = params.append('minHeight', userParams.minHeight);
+    params = params.append('maxHeight', userParams.maxHeight);
+    params = params.append('province', userParams.province);
     params = params.append('gender', userParams.gender);
     params = params.append('orderBy', userParams.orderBy);
 
@@ -72,7 +99,7 @@ export class MembersService {
     const member = [...this.memberCache.values()]
       .reduce((arr, elem) => arr.concat(elem.result), [])
       .find((member: Member) => member.userName == userName)
-    
+
     if(member) return of(member);
 
     return this.http.get<Member>(this.baseUrl + 'users/' + userName)

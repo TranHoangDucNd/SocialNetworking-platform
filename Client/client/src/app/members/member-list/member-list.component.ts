@@ -9,6 +9,7 @@ import { MembersService } from 'src/app/_service/members.service';
 import { DatingProfileComponent } from 'src/app/dating-profile/dating-profile.component';
 import {MatDialog} from "@angular/material/dialog";
 import {MemberFilterComponent} from "../../modals/member-filter/member-filter.component";
+import {forkJoin} from "rxjs";
 
 @Component({
   selector: 'app-member-list',
@@ -18,11 +19,10 @@ import {MemberFilterComponent} from "../../modals/member-filter/member-filter.co
 export class MemberListComponent implements OnInit {
   members: Member[] = [];
   pagination: Pagination | undefined;
-  userParams: UserParams | undefined;
-  genderList = [
-    { value: 'male', display: 'Males' },
-    { value: 'female', display: 'Females' },
-  ];
+  userParams: UserParams = new UserParams();
+  orderBy = 'lastActive';
+  pageSize = 5;
+  pageNumber = 1;
 
   _dialog = inject(MatDialog);
 
@@ -56,6 +56,7 @@ export class MemberListComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
+        this.userParams = result;
         this.loadMembers();
       }
     });
@@ -63,12 +64,34 @@ export class MemberListComponent implements OnInit {
 
   ngOnInit(): void {
     this.userParams = this.memberService.getUserParams();
+    this.getOptionValues();
     this.checkUser();
     this.loadMembers();
   }
 
+  getOptionValues() {
+    forkJoin([this.memberService.getProvinces(), this.memberService.getGenders()]).subscribe({
+      next: (response) => {
+        if (response) {
+          this.memberService.provinces = response[0];
+          this.memberService.genders = response[1];
+        }
+      }
+    });
+  }
+
+  handleSortChange(event: any) {
+    if (this.userParams && this.userParams.orderBy !== event) {
+      this.userParams.orderBy = event;
+      this.loadMembers();
+    }
+  }
+
   loadMembers() {
     if (this.userParams) {
+      this.userParams.pageNumber = this.pageNumber;
+      this.userParams.pageSize = this.pageSize;
+      this.userParams.orderBy = this.orderBy;
       this.memberService.setUserParams(this.userParams);
       this.memberService.getMembers(this.userParams).subscribe({
         next: (response) => {
@@ -81,12 +104,8 @@ export class MemberListComponent implements OnInit {
     }
   }
 
-  resetFiters() {
-    this.userParams = this.memberService.resetUserParams();
-    this.loadMembers();
-  }
-
   pageChanged(event: any) {
+    this.pageNumber = event.page;
     if (this.userParams && this.userParams?.pageNumber !== event.page) {
       this.userParams.pageNumber = event.page;
       this.memberService.setUserParams(this.userParams);

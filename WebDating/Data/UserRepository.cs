@@ -105,17 +105,16 @@ namespace WebDating.Data
             MemberDto currentUser = await GetMemberAsync(userParams.CurrentUserName);
             if (currentUser != null)
             {
-               
-                var query = _context.Users.Join(_context.DatingProfiles,
-                                                    acc => acc.Id,
-                                                    profile => profile.UserId,
-                                                    (acc, profile) => new { Account = acc, Profile = profile })
-                                        .Join(_context.UserInterests,
-                                                    a => a.Profile.Id,
-                                                    ui => ui.DatingProfileId,
-                                                    (a, ui) => new { a, ui });
+                var profile = _context.DatingProfiles.FirstOrDefault(it => it.UserId == currentUser.Id);
+                if (profile is null)
+                {
+                    return new PagedList<MemberDto>(Enumerable.Empty<MemberDto>(), 0, userParams.PageNumber, userParams.PageSize);
+                }
+                IEnumerable<int> listInterest = _context.UserInterests.Where(it => it.DatingProfileId == profile.Id)
+                     .Select(it => (int)it.InterestName);
+                userParams.Gender = Gender.Female;
 
-
+                string @interest = string.Join(",", listInterest);
                 SqlParameter[] sqlParams = new SqlParameter[]
                 {
                     new SqlParameter("@MinHeight", userParams.MinHeight),
@@ -123,13 +122,33 @@ namespace WebDating.Data
                     new SqlParameter("@Gender", userParams.Gender),
                     new SqlParameter("@MinAge", userParams.MinAge),
                     new SqlParameter("@MaxAge", userParams.MaxAge),
-                    new SqlParameter("@City", userParams.City),
-                    new SqlParameter("@Interest", 84),
+                    new SqlParameter("@City", profile.WhereToDate),
+                    new SqlParameter("@Interest",@interest),
                 };
-               
-                //var res = _context.Database.SqlQueryRaw("EXEC Search_Best_Match @MinHeight, @MaxHeight, @Gender,@MinAge,@MaxAge, @City, @Interest", sqlParams);
+
+                List<int> listTds = _context.Database.SqlQueryRaw<int>("EXEC Search_Best_Match @MinHeight, @MaxHeight, @Gender,@MinAge,@MaxAge, @City, @Interest", sqlParams).ToList();
+                var query = _context.Users.AsQueryable();
+                query = query.Where(it => listTds.Contains(it.Id));
+                query = userParams.OrderBy switch
+                {
+                    "created" => query.OrderByDescending(x => x.Created),
+                    _ => query.OrderByDescending(x => x.LastActive)
+                };
+                var result = await PagedList<MemberDto>
+                .CreateAsync
+                (query.AsNoTracking()
+                .ProjectTo<MemberDto>(_mapper.ConfigurationProvider),
+                userParams.PageNumber,
+                userParams.PageSize);
+
+                foreach (var member in result)
+                {
+                    member.DatingProfile = await GetDatingProfile(member.Id);
+                }
+
+                return result;
             }
-            return null;
+            return new PagedList<MemberDto>(Enumerable.Empty<MemberDto>(), 0, userParams.PageNumber, userParams.PageSize);
         }
     }
 }

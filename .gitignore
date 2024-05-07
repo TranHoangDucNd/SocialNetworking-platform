@@ -32,6 +32,10 @@ bld/
 [Ll]og/
 bin
 obj
+./bin
+./obj
+bin/
+obj/
 
 
 # Visual Studio 2015/2017 cache/options directory
@@ -435,5 +439,3 @@ $RECYCLE.BIN/
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
-
-/WebDating/appsettings.json

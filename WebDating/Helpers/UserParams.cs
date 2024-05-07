@@ -13,8 +13,5 @@ namespace WebDating.Helpers
         public Height MaxHeight { get; set; }
         public string OrderBy { get; set; } = "lastActive";
         public Provice City { get; set; }
-
-        public int Page { get; set; }
-        public int PageSize { get; set; }
     }
 }

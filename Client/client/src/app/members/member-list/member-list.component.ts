@@ -1,4 +1,4 @@
-import {Component, inject, OnInit} from '@angular/core';
+import {Component, inject, OnDestroy, OnInit} from '@angular/core';
 import { BsModalService } from 'ngx-bootstrap/modal';
 
 import { Member } from 'src/app/_models/member';
@@ -16,7 +16,7 @@ import {forkJoin} from "rxjs";
   templateUrl: './member-list.component.html',
   styleUrls: ['./member-list.component.css'],
 })
-export class MemberListComponent implements OnInit {
+export class MemberListComponent implements OnInit, OnDestroy {
   members: Member[] = [];
   pagination: Pagination | undefined;
   userParams: UserParams = new UserParams();
@@ -69,6 +69,10 @@ export class MemberListComponent implements OnInit {
     this.loadMembers();
   }
 
+  ngOnDestroy() {
+    this.memberService.memberCache.clear();
+  }
+
   getOptionValues() {
     forkJoin([this.memberService.getProvinces(), this.memberService.getGenders()]).subscribe({
       next: (response) => {
@@ -81,8 +85,8 @@ export class MemberListComponent implements OnInit {
   }
 
   handleSortChange(event: any) {
-    if (this.userParams && this.userParams.orderBy !== event) {
-      this.userParams.orderBy = event;
+    if (this.userParams && this.userParams.orderBy !== event.value) {
+      this.userParams.orderBy = event.value;
       this.loadMembers();
     }
   }

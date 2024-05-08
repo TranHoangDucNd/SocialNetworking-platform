@@ -3,6 +3,7 @@ using AutoMapper.QueryableExtensions;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using WebDating.DTOs;
+using WebDating.Entities.ProfileEntities;
 using WebDating.Entities.UserEntities;
 using WebDating.Helpers;
 using WebDating.Interfaces;
@@ -100,53 +101,54 @@ namespace WebDating.Data
         public async Task<PagedList<MemberDto>> GetBestMatch(UserParams userParams)
         {
             MemberDto currentUser = await GetMemberAsync(userParams.CurrentUserName);
-            if (currentUser != null)
+            if (currentUser == null)
             {
-                var profile = _context.DatingProfiles.FirstOrDefault(it => it.UserId == currentUser.Id);
-                if (profile is null)
-                {
-                    return new PagedList<MemberDto>(Enumerable.Empty<MemberDto>(), 0, userParams.PageNumber, userParams.PageSize);
-                }
-                IEnumerable<int> listInterest = _context.UserInterests.Where(it => it.DatingProfileId == profile.Id)
-                     .Select(it => (int)it.InterestName);
-                // userParams.Gender = Gender.Female;
+                return new PagedList<MemberDto>(Enumerable.Empty<MemberDto>(), 0, userParams.PageNumber,
+                    userParams.PageSize);
+            }
 
-                string @interest = string.Join(",", listInterest);
-                SqlParameter[] sqlParams = new SqlParameter[]
-                {
-                    new SqlParameter("@MinHeight", userParams.MinHeight),
-                    new SqlParameter("@MaxHeight",  userParams.MaxHeight),
-                    new SqlParameter("@Gender", userParams.Gender),
-                    new SqlParameter("@MinAge", userParams.MinAge),
-                    new SqlParameter("@MaxAge", userParams.MaxAge),
-                    new SqlParameter("@City", userParams.Province),
-                    new SqlParameter("@Interest",@interest),
-                };
+            var profile = _context.DatingProfiles.FirstOrDefault(it => it.UserId == currentUser.Id);
+            if (profile is null)
+            {
+                return new PagedList<MemberDto>(Enumerable.Empty<MemberDto>(), 0, userParams.PageNumber, userParams.PageSize);
+            }
+            IEnumerable<int> listInterest = _context.UserInterests.Where(it => it.DatingProfileId == profile.Id)
+                .Select(it => (int)it.InterestName);
 
-                List<int> listTds = _context.Database.SqlQueryRaw<int>("EXEC Search_Best_Match @MinHeight, @MaxHeight, @Gender,@MinAge,@MaxAge, @City, @Interest", sqlParams).ToList();
-                var query = _context.Users.AsQueryable();
-                query = query.Where(it => listTds.Contains(it.Id));
-                query = userParams.OrderBy switch
-                {
-                    "created" => query.OrderByDescending(x => x.Created),
-                    _ => query.OrderByDescending(x => x.LastActive)
-                };
+            string @interest = string.Join(",", listInterest);
+            SqlParameter[] sqlParams = new SqlParameter[]
+            {
+                new SqlParameter("@MinHeight", userParams.MinHeight),
+                new SqlParameter("@MaxHeight",  userParams.MaxHeight),
+                new SqlParameter("@Gender", userParams.Gender == Gender.EveryOne ? DBNull.Value : userParams.Gender == Gender.Female ? "female" : "male"),
+                new SqlParameter("@MinAge", userParams.MinAge),
+                new SqlParameter("@MaxAge", userParams.MaxAge),
+                new SqlParameter("@City", userParams.Province),
+                new SqlParameter("@Interest",@interest),
+            };
+
+            List<int> listTds = _context.Database.SqlQueryRaw<int>("EXEC Search_Best_Match @MinHeight, @MaxHeight, @Gender,@MinAge,@MaxAge, @City, @Interest", sqlParams).ToList();
+            var query = _context.Users.AsQueryable();
+            query = query.Where(it => listTds.Contains(it.Id) && it.UserName != userParams.CurrentUserName);
+            query = userParams.OrderBy switch
+            {
+                "created" => query.OrderByDescending(x => x.Created),
+                _ => query.OrderByDescending(x => x.LastActive)
+            };
                 
-                var result = await PagedList<MemberDto>
+            var result = await PagedList<MemberDto>
                 .CreateAsync
                 (query.AsNoTracking()
-                .ProjectTo<MemberDto>(_mapper.ConfigurationProvider),
-                userParams.PageNumber,
-                userParams.PageSize);
+                        .ProjectTo<MemberDto>(_mapper.ConfigurationProvider),
+                    userParams.PageNumber,
+                    userParams.PageSize);
 
-                foreach (var member in result)
-                {
-                    member.DatingProfile = await GetDatingProfile(member.Id);
-                }
-
-                return result;
+            foreach (var member in result)
+            {
+                member.DatingProfile = await GetDatingProfile(member.Id);
             }
-            return new PagedList<MemberDto>(Enumerable.Empty<MemberDto>(), 0, userParams.PageNumber, userParams.PageSize);
+
+            return result;
         }
     }
 }

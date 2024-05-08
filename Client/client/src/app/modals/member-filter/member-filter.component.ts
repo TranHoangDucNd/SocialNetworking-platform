@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inject, OnInit} from '@angular/core';
 import {MatDialogModule, MatDialogRef} from "@angular/material/dialog";
 import {MatButtonModule} from "@angular/material/button";
 import {
@@ -41,6 +41,7 @@ export class MemberFilterComponent implements OnInit {
   _formBuilder = inject(FormBuilder);
   _memberService = inject(MembersService);
   _destroyed = inject(DestroyRef);
+  _cdr = inject(ChangeDetectorRef);
 
   isFormValid = true;
   isAgeRangeValid = true;
@@ -87,6 +88,7 @@ export class MemberFilterComponent implements OnInit {
         if (response) {
           this.genderList = response[0];
           this.provinces = response[1];
+          this._cdr.markForCheck();
         }
       }
     })

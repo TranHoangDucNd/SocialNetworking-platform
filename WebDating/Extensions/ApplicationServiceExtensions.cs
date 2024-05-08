@@ -14,7 +14,7 @@ namespace WebDating.Extensions
 
             services.AddDbContext<DataContext>(opt =>
             {
-                opt.UseSqlServer(config.GetConnectionString("DefaultConnection"));
+                opt.UseSqlServer(config.GetConnectionString("Dating"));
             });
 
             services.AddCors();

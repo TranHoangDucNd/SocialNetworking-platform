@@ -51,6 +51,7 @@ import { HasRoleDirective } from './_directives/has-role.directive';
 import { RolesModalComponent } from './modals/roles-modal/roles-modal.component';
 import { ReportComponent } from './report/report.component';
 import { CountlikecommentComponent } from './post/countlikecomment/countlikecomment.component';
+import {MatButtonToggleModule} from "@angular/material/button-toggle";
 
 @NgModule({
   declarations: [
@@ -76,13 +77,13 @@ import { CountlikecommentComponent } from './post/countlikecomment/countlikecomm
     RolesModalComponent,
     ReportComponent,
     CountlikecommentComponent
-   
+
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: LoadingInterceptor, multi: true },
     { provide: RouteReuseStrategy, useClass: CustomRoteReuseStrategy },
-   
+
   ],
   bootstrap: [AppComponent],
   imports: [
@@ -108,7 +109,7 @@ import { CountlikecommentComponent } from './post/countlikecomment/countlikecomm
     MatMenuModule,
     MatTooltipModule,
     OverlayModule,
-    AdminModule
+    AdminModule, MatButtonToggleModule
   ],
 })
 export class AppModule {}

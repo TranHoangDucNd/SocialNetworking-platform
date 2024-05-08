@@ -1,8 +1,9 @@
 <div class="row">
-      <div class="d-flex">
-            <input type="text" [(ngModel)]="userName" placeholder="Search by Username">
-            <button class="btn btn-primary mx-2" (click)="findUsersWithRoles()">Search</button>
-            <button class="btn btn-secondary" (click)="onSearch()">Reset filter</button>
+      <div class="d-flex justify-content-start">
+            <input type="text" class="rounded-pill custom-input" [(ngModel)]="userName" placeholder="Enter user name" (keyup.enter)="findUsersWithRoles()" >
+            <button class="btn btn-clear-wrapper" (click)="onSearch()"><span class="material-symbols-outlined">
+                  refresh
+                  </span></button>
       </div>
       <table class="table">
             <thead>

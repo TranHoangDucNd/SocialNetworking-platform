@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebDating.Data;
+using WebDating.DTOs;
 using WebDating.Entities.UserEntities;
 using WebDating.Helpers;
 using WebDating.Interfaces;
@@ -99,5 +100,19 @@ namespace WebDating.Controllers
             return Ok(result);
         }
 
+        [Authorize(Policy = "ModeratePhotoRole")]
+        [HttpPut("LockAndUnlockAccount")]
+        public async Task<ActionResult> LockAndUnlockAC([FromBody] LockAccountDto lockdto)
+        {
+            await _adminService.SetLock(lockdto);
+            return Ok();
+        }
+        [Authorize(Policy = "ModeratePhotoRole")]
+        [HttpGet("GetMembersByAmin")]
+        public async Task<ActionResult> GetMembersByAdmin([FromQuery] string username)
+        {
+            var result = await _adminService.GetUsersByAdmin(username);
+            return Ok(result);
+        }
     }
 }

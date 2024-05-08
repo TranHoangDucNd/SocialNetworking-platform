@@ -2,5 +2,6 @@
       <a mat-list-item role="listitem" routerLink="/admin"  *appHasRole="['Admin']">Dashboard</a>
       <a mat-list-item role="listitem" routerLink="customerroles" *appHasRole="['Admin']">Manage user roles</a>
       <a mat-list-item role="listitem" routerLink="managepostreport" *appHasRole="['Admin','ManageReport']">Manage reports</a>
+      <a mat-list-item role="listitem" routerLink="moderator" *appHasRole="['Admin','ModeratePhotoRole']">Manage user accounts</a>
 </mat-list>
     

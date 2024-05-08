@@ -3,7 +3,7 @@ import { User } from '../_models/user';
 import { environment } from 'src/environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { PostReportDto } from '../_models/PostModels';
-import { Reports } from '../_models/admin';
+import { LockUser, MembersLock, Reports } from '../_models/admin';
 
 @Injectable({
   providedIn: 'root',
@@ -15,9 +15,6 @@ export class AdminService {
 
   findUsersWithRoles(username: string){
     return this.http.get<User[]>(this.baseUrl + 'admin/users-with-roles?userName=' + username);
-  }
-  getUsersWithRoles(){
-    return this.http.get<User[]>(this.baseUrl + 'admin/users-with-roles');
   }
   updateUserRoles(username: string, roles: string[]){
     return this.http.post<string[]>(this.baseUrl + 'admin/edit-roles/' + username + '?roles=' + roles, {});
@@ -33,5 +30,12 @@ export class AdminService {
 
   deletePost(postId: number){
     return this.http.delete(this.baseUrl + 'admin/delete-post-report/' +postId)
+  }
+
+  getMembersLockAdmin(username: string){
+    return this.http.get<MembersLock[]>(this.baseUrl + 'admin/GetMembersByAmin?username=' + username);
+  }
+  setLockMember(setLock: LockUser){
+    return this.http.put(this.baseUrl + 'admin/LockAndUnlockAccount', setLock);
   }
 }

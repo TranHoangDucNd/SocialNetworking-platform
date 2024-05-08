@@ -62,6 +62,8 @@ namespace WebDating.Controllers
             var result = await _userManager.CheckPasswordAsync(user, loginDto.Password);
             if (!result) return Unauthorized("Invalid Password");
 
+            if (user.Lock) return BadRequest("Account has been locked");
+
             return new UserDto
             {
                 UserName = user.UserName.ToLower(),
@@ -84,5 +86,7 @@ namespace WebDating.Controllers
             var result = await _userManager.FindByNameAsync(User.Identity.Name);
             return Ok(result.IsUpdatedDatingProfile);
         }
+
+
     }
 }

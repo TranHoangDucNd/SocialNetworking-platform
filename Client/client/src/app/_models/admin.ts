@@ -20,3 +20,14 @@ export interface UserShortDto {
   fullName: string;
   image: string;
 }
+
+export interface MembersLock {
+  id: number
+  userName: string
+  photoUrl: string
+  lock: boolean
+}
+export interface LockUser {
+  userName: string
+  check: boolean
+}

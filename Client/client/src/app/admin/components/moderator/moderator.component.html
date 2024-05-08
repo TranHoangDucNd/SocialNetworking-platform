@@ -1,1 +1,48 @@
-<p>moderator works!</p>
+<div class="row">
+      <div class="d-flex justify-content-start">
+            <input type="text" [(ngModel)]="username" class="rounded-pill custom-input" (keyup.enter)="getMembersByAdmin()" placeholder="Enter user name">
+            <button class="btn btn-clear-wrapper" (click)="resetFilter()"><span class="material-symbols-outlined">
+                  refresh
+                  </span></button>
+      </div>
+      <table class="table">
+            <thead>
+                  <tr>
+                        <th scope="col" style="width: 30%;">Accounts</th>
+                        <th scope="col" style="width: 30%;" class="text-center">Account Lock Status</th>
+                        <th scope="col" class="text-center" style="width: 40%;">Activate/Deactivate Account</th>
+                  </tr> 
+            </thead>
+            <tbody>
+                  <tr *ngFor="let member of members">
+                        <td>
+                              <div class="d-flex">
+                                    <img src="{{member.photoUrl}}" style="width: 30px; height: 30px;" class="rounded-circle" alt="">
+                                    <p class="mx-2">{{member.userName}}</p>
+                              </div>
+                        </td>
+                        <td class="text-center">
+                              <div *ngIf="(member.lock); else unl">
+                                    <p  class="align-middle" style="color: red;">User account is locked</p> 
+                              </div>
+                              <ng-template #unl>
+                                    <p style="color: #00FF00;">Account Activation Status</p>
+                              </ng-template>
+                        </td>
+      
+                        <td class="text-center">
+                              <div>
+                                    <button class="btn btn-primary me-2" (click)="unlock(member.userName)"><span class="material-symbols-outlined">
+                                          lock_open_right
+                                          </span></button>  
+                                    <button class="btn btn-danger " (click)="lock(member.userName)"><span class="material-symbols-outlined">
+                                          lock
+                                          </span></button>
+                                    
+                              </div>
+                        </td>
+      
+                  </tr>
+            </tbody>
+      </table>
+</div>

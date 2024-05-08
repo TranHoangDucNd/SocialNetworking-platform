@@ -1,0 +1,6 @@
+.custom-input {
+      padding-left: 10px;
+  }
+  .row{
+      --bs-gutter-x: 0.5rem;
+}

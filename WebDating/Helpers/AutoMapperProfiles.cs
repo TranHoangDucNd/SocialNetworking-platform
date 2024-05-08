@@ -80,7 +80,9 @@ namespace WebDating.Helpers
 
             CreateMap<PostReportDetail, PostReportAdminDto>()
               .ForMember(dest => dest.Report, opt => opt.MapFrom(x => x.Report.GetDisplayName()));
-              
+
+            CreateMap<AppUser, MembersLockDto>()
+                .ForMember(dest => dest.PhotoUrl, opt => opt.MapFrom(s => s.Photos.FirstOrDefault(x => x.IsMain).Url));
 
         }
     }

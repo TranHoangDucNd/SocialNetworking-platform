@@ -44,16 +44,23 @@ namespace WebDating.Helpers
             CreateMap<DatingProfile, DatingProfileDto>()
                 .ForMember(dest => dest.WhereToDate,
                     opt => opt.MapFrom(s => s.WhereToDate.GetDisplayName()))
+                .ForMember(dest => dest.WhereToDateCode,
+                    opt => opt.MapFrom(s => s.WhereToDate))
                 .ForMember(dest => dest.Height,
                     opt => opt.MapFrom(s => s.Height.GetDisplayName()))
+                .ForMember(dest => dest.HeightCode,
+                    opt => opt.MapFrom(s => s.Height))
                 .ForMember(dest => dest.DatingObject,
                     opt => opt.MapFrom(s => s.DatingObject.GetDisplayName()))
+                .ForMember(dest => dest.DatingObjectCode,
+                    opt => opt.MapFrom(s => s.DatingObject))
                 .ForMember(dest => dest.UserInterests,
                     opt => opt.MapFrom(s => s.UserInterests.Select(ui => new UserInterestDto
                     {
                         Id = ui.Id,
                         DatingProfileId = ui.DatingProfileId,
-                        InterestName = ui.InterestName.GetDisplayName()
+                        InterestName = ui.InterestName.GetDisplayName(),
+                        InterestNameCode = ui.InterestName
                     }).ToList()));
 
             CreateMap<Post, PostResponseDto>()

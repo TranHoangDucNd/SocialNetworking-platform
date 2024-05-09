@@ -21,7 +21,7 @@ export class MemberListComponent implements OnInit, OnDestroy {
   pagination: Pagination | undefined;
   userParams: UserParams = new UserParams();
   orderBy = 'lastActive';
-  pageSize = 5;
+  pageSize = 4;
   pageNumber = 1;
 
   _dialog = inject(MatDialog);

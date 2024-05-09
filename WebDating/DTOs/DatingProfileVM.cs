@@ -17,10 +17,13 @@ namespace WebDating.DTOs
         public int Id { get; set; }
         // Đối tượng hẹn hò
         public string DatingObject { get; set; }
+        public Gender DatingObjectCode { get; set; }
         // Chiều cao
         public string Height { get; set; }
+        public Height HeightCode { get; set; }
         // Địa điểm muốn hẹn hò - Tỉnh thành
         public string WhereToDate { get; set; }
+        public Provice WhereToDateCode { get; set; }
         // Sở thích
         public List<UserInterestDto> UserInterests { get; set; }
     }

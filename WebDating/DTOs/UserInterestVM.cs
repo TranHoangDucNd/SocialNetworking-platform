@@ -14,5 +14,6 @@ namespace WebDating.DTOs
         public int Id { get; set; }
         public int DatingProfileId { get; set; }
         public string InterestName { get; set; }
+        public Interest InterestNameCode { get; set; }
     }
 }

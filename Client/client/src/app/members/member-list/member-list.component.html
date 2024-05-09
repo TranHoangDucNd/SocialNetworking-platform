@@ -1,4 +1,4 @@
-<div class="container">
+<div class="my-3 mx-5">
   <button mat-mini-fab color="primary" (click)="openFilterModal()"><i class="fa fa-filter"></i></button>
   <div class="float-end">
     <p>Sort by:
@@ -9,8 +9,8 @@
     </p>
 </div>
 
-<div class="row mt-5 mb-3">
-  <div class="col-2" *ngFor="let member of members">
+<div class="container row mt-5 mb-3">
+  <div class="col-3" *ngFor="let member of members">
     <app-member-card [member]="member"></app-member-card>
   </div>
 </div>

@@ -1,36 +1,41 @@
-<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-primary">
+<nav class="navbar navbar-expand-md navbar-light fixed-top bg-primary">
   <div class="container">
-    <a class="navbar-brand" href="#" routerLink="/" routerLinkActive="active">Dating</a>
+    <a class="navbar-brand text-info" id="datingLink" routerLink="/" routerLinkActive="active">Dating</a>
     <div class="collapse navbar-collapse" id="navbarCollapse">
       <ul class="navbar-nav me-auto mb-2 mb-md-0">
-       <ng-container *ngIf="accountService.currentUser$ | async">
-        <li class="nav-item">
-          <a class="nav-link " routerLink="/members" routerLinkActive="active">Matches</a>
-        </li>
+<!--       <ng-container *ngIf="accountService.currentUser$ | async">-->
+<!--        <li class="nav-item">-->
+<!--          <a class="nav-link " routerLink="/members" routerLinkActive="active">Matches</a>-->
+<!--        </li>-->
 
-        <li class="nav-item">
-          <a class="nav-link" routerLink="/lists" routerLinkActive="active">Likes</a>
-        </li>
+<!--        <li class="nav-item">-->
+<!--          <a class="nav-link" routerLink="/lists" routerLinkActive="active">Likes</a>-->
+<!--        </li>-->
 
-        <li class="nav-item">
-          <a class="nav-link" routerLink="/messages" routerLinkActive="active">Messages</a>
-        </li>
-        <li *appHasRole="['Admin', 'Moderator','ManageReport']" class="nav-item">
-          <a class="nav-link" routerLink="/admin" routerLinkActive="active">Admin</a>
-        </li>
-        
-       </ng-container>
+<!--        <li class="nav-item">-->
+<!--          <a class="nav-link" routerLink="/messages" routerLinkActive="active">Messages</a>-->
+<!--        </li>-->
+<!--        <li  class="nav-item">-->
+<!--          <a class="nav-link" routerLink="/admin" routerLinkActive="active">Admin</a>-->
+<!--        </li>-->
+
+<!--       </ng-container>-->
       </ul>
 
       <div class="dropdown" *ngIf="(accountService.currentUser$ | async) as user" dropdown>
-        <img src="{{user.photoUrl || './assets/user.png'}}" alt="User photo" 
-        routerLink="/personalpage/{{user.userName}}">
-        <a class="dropdown-toggle text-light text-decoration-none ms-2" dropdownToggle>Welcome {{user.knownAs}}</a>
-        <div class="dropdown-menu" *dropdownMenu>
-          <a class="dropdown-item" routerLink="/member/edit">Edit profile</a>
-          <a class="dropdown-item" (click)="logout()">Logout</a>
-        </div>
-        
+        <img src="{{user.photoUrl || './assets/user.png'}}" alt="User photo" style="border-radius: 50%; width: 40px; height: 40px;cursor: pointer"
+             routerLink="/personalpage/{{user.userName}}">
+        <a class="dropdown-toggle text-light text-decoration-none ms-2" [matMenuTriggerFor]="menu">Welcome <b>{{user.knownAs}}</b></a>
+        <mat-menu xPosition="after" #menu="matMenu">
+          <button routerLink="/member/edit" mat-menu-item>
+            <i class="fa fa-edit"> </i>
+            <span> Edit profile</span>
+          </button>
+          <button (click)="logout()" mat-menu-item>
+            <i class="fa fa-sign-out"></i>
+            <span> Logout</span>
+          </button>
+        </mat-menu>
       </div>
     </div>
   </div>

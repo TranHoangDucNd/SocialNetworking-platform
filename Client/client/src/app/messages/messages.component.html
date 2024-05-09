@@ -1,3 +1,4 @@
+<div class="container">
 <div class="mb-4 d-flex">
   <div class="btn-group" name="container">
       <button class="btn btn-primary" btnRadio="Unread"
@@ -31,8 +32,8 @@
       </thead>
       <tbody class="align-middle">
           <tr [hidden]="loading" *ngFor="let message of messages"
-              routerLink="{{container === 'Outbox' 
-              ? '/members/' + message.recipientUsername 
+              routerLink="{{container === 'Outbox'
+              ? '/members/' + message.recipientUsername
               : '/members/' + message.senderUsername}}" [queryParams]="{tab: 'Messages'}">
               <td>{{message.content}}</td>
               <td>
@@ -72,4 +73,5 @@
       firstText="&laquo;"
       lastText="&raquo;">
   </pagination>
+</div>
 </div>

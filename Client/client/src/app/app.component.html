@@ -2,6 +2,36 @@
 
 <app-nav></app-nav>
 
-<div class="container" style="margin-top: 100px">
-      <router-outlet></router-outlet>
-  </div>
+<mat-sidenav-container class="example-container" >
+  <mat-sidenav #sidenav mode="side" opened class="example-sidenav" [fixedInViewport]="false" *ngIf="accountService.currentUser$ | async">
+    <mat-nav-list>
+      <mat-list-item routerLink="/members">
+        <span class="full-width">Matches</span>
+      </mat-list-item>
+      <mat-list-item routerLink="/lists">
+        <span class="full-width">Likes</span>
+      </mat-list-item>
+      <mat-list-item routerLink="/messages">
+        <span class="full-width">Messages</span>
+      </mat-list-item>
+      <mat-list-item routerLink="/admin" *appHasRole="['Admin', 'Moderator','ManageReport']">
+        <span class="full-width">Admin</span>
+      </mat-list-item>
+    </mat-nav-list>
+  </mat-sidenav>
+
+  <mat-sidenav-content>
+    <div *ngIf="accountService.currentUser$ | async"><button mat-button (click)="sidenav?.toggle()">
+      <mat-icon>menu</mat-icon>
+    </button></div>
+
+    <router-outlet></router-outlet>
+
+  </mat-sidenav-content>
+</mat-sidenav-container>
+
+
+<!--<div class="container" style="margin-top: 100px">-->
+<!--  <router-outlet></router-outlet>-->
+<!--</div>-->
+

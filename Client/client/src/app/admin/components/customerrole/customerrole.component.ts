@@ -4,6 +4,8 @@ import { AdminService } from 'src/app/_service/admin.service';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { RolesModalComponent } from 'src/app/modals/roles-modal/roles-modal.component';
 import { ToastrService } from 'ngx-toastr';
+import {MatTableDataSource} from "@angular/material/table";
+import {PageEvent} from "@angular/material/paginator";
 
 @Component({
   selector: 'app-customerrole',
@@ -11,6 +13,7 @@ import { ToastrService } from 'ngx-toastr';
   styleUrls: ['./customerrole.component.css']
 })
 export class CustomerroleComponent implements OnInit{
+  displayedColumns: string[] = ['userName', 'roles', 'action'];
   userName: string = '';
   users: User[] = [];
   bsModalRef: BsModalRef<RolesModalComponent> = new BsModalRef<RolesModalComponent>();
@@ -20,6 +23,7 @@ export class CustomerroleComponent implements OnInit{
     'Member',
     'ManageReport'
   ]
+  dataSource: MatTableDataSource<User> = new MatTableDataSource<User>(this.users);
 
   constructor(private adminService: AdminService,
     private modalService: BsModalService,
@@ -35,6 +39,7 @@ export class CustomerroleComponent implements OnInit{
       next: (data) =>{
         if(data){
           this.users = data;
+          this.dataSource = new MatTableDataSource(this.users);
         }
       },
       error: (err) => {
@@ -44,10 +49,10 @@ export class CustomerroleComponent implements OnInit{
     )
   }
 
-  onSearch(): void {
-    this.userName = '';
-    this.findUsersWithRoles();
-  }
+  // onSearch(): void {
+  //   this.userName = '';
+  //   this.findUsersWithRoles();
+  // }
 
   openRolesModal(user: User){
 
@@ -76,8 +81,12 @@ export class CustomerroleComponent implements OnInit{
     return JSON.stringify(arr1.sort()) === JSON.stringify(arr2.sort());
   }
 
+  applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
 
-
-
-  
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage();
+    }
+  }
 }

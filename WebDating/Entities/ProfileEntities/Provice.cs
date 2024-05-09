@@ -4,7 +4,8 @@ namespace WebDating.Entities.ProfileEntities
 {
     public enum Provice
     {
-
+        [Display(Name = "Tất cả")]
+        NotSet,
         [Display(Name = "Tp. Hà Nội")]
         HaNoi,
         [Display(Name = "Tp. Hồ Chí Minh")]

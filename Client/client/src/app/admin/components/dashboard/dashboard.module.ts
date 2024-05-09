@@ -9,6 +9,9 @@ import { RouterModule } from '@angular/router';
   declarations: [
     DashboardComponent
   ],
+  exports: [
+    DashboardComponent
+  ],
   imports: [
     CommonModule,
     RouterModule.forChild([

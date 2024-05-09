@@ -35,15 +35,18 @@ const routes: Routes = [
       { path: 'datingprofile', component: DatingProfileComponent },
 
       {
-        path: "admin", component: LayoutComponent, children: [
-          {path: "", component: DashboardComponent},
-          {path: "customerroles", loadChildren: ()=> import("./admin/components/customerrole/customerrole.module")
-          .then(module => module.CustomerroleModule)},
-          {path: "managepostreport", loadChildren: ()=> import("./admin/components/managepostreport/managepostreport.module")
-          .then(module => module.ManagepostreportModule)},
-          {path: "moderator", loadChildren: ()=> import("./admin/components/moderator/moderator.module")
-          .then(module => module.ModeratorModule)},
-        ], canActivate: [adminGuard]
+        path: "admin",
+        component: LayoutComponent,
+        // children: [
+        //   {path: "", component: DashboardComponent},
+        //   {path: "customerroles", loadChildren: ()=> import("./admin/components/customerrole/customerrole.module")
+        //   .then(module => module.CustomerroleModule)},
+        //   {path: "managepostreport", loadChildren: ()=> import("./admin/components/managepostreport/managepostreport.module")
+        //   .then(module => module.ManagepostreportModule)},
+        //   {path: "moderator", loadChildren: ()=> import("./admin/components/moderator/moderator.module")
+        //   .then(module => module.ModeratorModule)},
+        // ],
+        canActivate: [adminGuard]
       },
     ],
   },

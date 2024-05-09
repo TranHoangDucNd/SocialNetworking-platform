@@ -1,48 +1,52 @@
-<div class="row">
-      <div class="d-flex justify-content-start">
-            <input type="text" [(ngModel)]="username" class="rounded-pill custom-input" (keyup.enter)="getMembersByAdmin()" placeholder="Enter user name">
-            <button class="btn btn-clear-wrapper" (click)="resetFilter()"><span class="material-symbols-outlined">
-                  refresh
-                  </span></button>
-      </div>
-      <table class="table">
-            <thead>
-                  <tr>
-                        <th scope="col" style="width: 30%;">Accounts</th>
-                        <th scope="col" style="width: 30%;" class="text-center">Account Lock Status</th>
-                        <th scope="col" class="text-center" style="width: 40%;">Activate/Deactivate Account</th>
-                  </tr> 
-            </thead>
-            <tbody>
-                  <tr *ngFor="let member of members">
-                        <td>
-                              <div class="d-flex">
-                                    <img src="{{member.photoUrl}}" style="width: 30px; height: 30px;" class="rounded-circle" alt="">
-                                    <p class="mx-2">{{member.userName}}</p>
-                              </div>
-                        </td>
-                        <td class="text-center">
-                              <div *ngIf="(member.lock); else unl">
-                                    <p  class="align-middle" style="color: red;">User account is locked</p> 
-                              </div>
-                              <ng-template #unl>
-                                    <p style="color: #00FF00;">Account Activation Status</p>
-                              </ng-template>
-                        </td>
-      
-                        <td class="text-center">
-                              <div>
-                                    <button class="btn btn-primary me-2" (click)="unlock(member.userName)"><span class="material-symbols-outlined">
-                                          lock_open_right
-                                          </span></button>  
-                                    <button class="btn btn-danger " (click)="lock(member.userName)"><span class="material-symbols-outlined">
-                                          lock
-                                          </span></button>
-                                    
-                              </div>
-                        </td>
-      
-                  </tr>
-            </tbody>
-      </table>
+<div class="row mx-5 my-3">
+  <mat-form-field>
+    <mat-label>Find User</mat-label>
+    <input matInput (keyup)="applyFilter($event)" placeholder="Ex. Lisa" #input>
+  </mat-form-field>
+
+  <div class="mat-elevation-z8">
+    <table mat-table [dataSource]="dataSource" matSort>
+
+      <ng-container matColumnDef="userName">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Accounts </th>
+        <td mat-cell *matCellDef="let row">
+          <img src="{{row.photoUrl || './assets/user.png'}}" alt="User photo" style="border-radius: 50%; width: 40px; height: 40px;">
+          {{row.userName}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="lock">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Account Lock Status </th>
+        <td mat-cell *matCellDef="let row">
+          <mat-chip *ngIf="row.lock" style="background-color: #ef6e6e;">
+            Locked
+          </mat-chip>
+          <mat-chip *ngIf="!row.lock" style="background-color: #88fa45">
+            Active
+          </mat-chip>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="action">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Action </th>
+        <td mat-cell *matCellDef="let row">
+          <button mat-mini-fab color="primary" *ngIf="row.lock" (click)="unlock(row.userName)" matTooltip="Unlock Account">
+            <mat-icon>lock_open</mat-icon>
+          </button>
+          <button mat-mini-fab color="warn" *ngIf="!row.lock" (click)="lock(row.userName)" matTooltip="Lock Account">
+            <mat-icon>lock</mat-icon>
+          </button>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+      <!-- Row shown when there is no matching data. -->
+      <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell" colspan="3">No data matching the filter "{{input.value}}"</td>
+      </tr>
+    </table>
+
+  </div>
 </div>
+
+

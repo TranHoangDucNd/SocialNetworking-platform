@@ -1,13 +1,13 @@
 <div class="w-100">
       <div class="w-100">
             <div class="d-flex align-items-center">
-                  <img src="{{userShort != undefined && userShort.image != undefined ? userShort.image : ''}}" alt=""
+                  <img src="{{userShort != undefined && userShort.image != undefined ? userShort.image : './assets/user.png'}}" alt=""
                   style="width: 36px; height: 36px; object-fit: cover;" class="rounded-circle ">
 
                   <button type="text" class=" border-top-0 border-start-0 border-end-0 text-start "
                   (click)="openCreatePostModal()"
                   style="background-color: white;padding: 8px 16px;width: 100%; border: 1px solid #ccc;">
-                  What's on your mind, {{user.knownAs}}
+                    What's on your mind, <b>{{user.knownAs}}</b>
                   </button>
             </div>
 
@@ -38,7 +38,7 @@
                                               <a class="dropdown-item" style="cursor: pointer;" (click)="Report(post.id)">Báo cáo</a>
                                           </ng-template>
                                       </div>
-          
+
                                   </div>
                               </div>
                               <div>
@@ -87,7 +87,7 @@
                       </div>
                       <app-countlikecomment [postId]="post.id"></app-countlikecomment>
                   </div>
-          
+
               </div>
       </div>
 </div>

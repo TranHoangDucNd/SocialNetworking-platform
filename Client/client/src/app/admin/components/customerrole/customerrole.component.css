@@ -1,6 +1,12 @@
-.row{
-      --bs-gutter-x: 0.5rem;
+table {
+  width: 100%;
 }
-.custom-input{
-      padding-left: 10px;
+
+.mat-mdc-form-field {
+  font-size: 14px;
+  width: 100%;
+}
+
+td, th {
+  width: 33%;
 }

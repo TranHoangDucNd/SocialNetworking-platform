@@ -1,13 +1,19 @@
-.admin-container {
-  width: 99%;
-  height: 780px;
-  margin: 10px;
-  border: 1px solid #555;
-  /* The background property is added to clearly distinguish the borders between drawer and main
-                 content */
-  background: #eee;
+.mat-tab-group {
+  flex-direction: row;
 }
-
-.admin-left {
-  width: 240px;
+.mat-tab-header {
+  border-bottom: none;
+}
+.mat-tab-header-pagination {
+  display: none !important;
+}
+.mat-tab-labels {
+  flex-direction: column;
+}
+.mat-ink-bar {
+  height: 100%;
+  left: 98% !important;
+}
+.mat-tab-body-wrapper {
+  flex: 1 1 auto;
 }

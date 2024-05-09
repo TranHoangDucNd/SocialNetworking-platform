@@ -123,7 +123,7 @@ namespace WebDating.Data
                 new SqlParameter("@Gender", userParams.Gender == Gender.EveryOne ? DBNull.Value : userParams.Gender == Gender.Female ? "female" : "male"),
                 new SqlParameter("@MinAge", userParams.MinAge),
                 new SqlParameter("@MaxAge", userParams.MaxAge),
-                new SqlParameter("@City", userParams.Province),
+                new SqlParameter("@City", userParams.Province is <= 0 ? DBNull.Value : userParams.Province),
                 new SqlParameter("@Interest",@interest),
             };
 

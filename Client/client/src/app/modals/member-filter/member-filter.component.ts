@@ -57,7 +57,7 @@ export class MemberFilterComponent implements OnInit {
     minHeight: new FormControl(120, [Validators.min(120), Validators.max(200)]),
     maxHeight: new FormControl(200, [Validators.min(120), Validators.max(200)]),
     gender: new FormControl(2),
-    province: new FormControl(0)
+    province: new FormControl(0),
   }, {
     validators: [this.validateAgeRangeControlsValue('minAge', 'maxAge'),
       this.validateAgeRangeControlsValue('minHeight', 'maxHeight')
@@ -97,7 +97,8 @@ export class MemberFilterComponent implements OnInit {
   resetFilter() {
     this.filterForm?.reset();
     this._memberService.resetUserParams();
-    this.filterForm?.patchValue(this._memberService.getUserParams());
+    const userParams = this._memberService.getUserParams();
+    this.filterForm?.patchValue(this.userParams);
   }
 
   applyFilter() {

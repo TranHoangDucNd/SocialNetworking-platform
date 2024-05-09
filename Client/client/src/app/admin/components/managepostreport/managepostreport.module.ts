@@ -9,6 +9,9 @@ import { RouterModule } from '@angular/router';
   declarations: [
     ManagepostreportComponent
   ],
+  exports: [
+    ManagepostreportComponent
+  ],
   imports: [
     CommonModule,
     RouterModule.forChild([

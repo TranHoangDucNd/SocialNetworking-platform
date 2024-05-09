@@ -52,6 +52,10 @@ import { RolesModalComponent } from './modals/roles-modal/roles-modal.component'
 import { ReportComponent } from './report/report.component';
 import { CountlikecommentComponent } from './post/countlikecomment/countlikecomment.component';
 import {MatButtonToggleModule} from "@angular/material/button-toggle";
+import {NgOptimizedImage} from "@angular/common";
+import {MatSidenavModule} from "@angular/material/sidenav";
+import {MatTreeModule} from "@angular/material/tree";
+import {MatListModule} from "@angular/material/list";
 
 @NgModule({
   declarations: [
@@ -109,7 +113,7 @@ import {MatButtonToggleModule} from "@angular/material/button-toggle";
     MatMenuModule,
     MatTooltipModule,
     OverlayModule,
-    AdminModule, MatButtonToggleModule
+    AdminModule, MatButtonToggleModule, NgOptimizedImage, MatSidenavModule, MatTreeModule, MatListModule
   ],
 })
 export class AppModule {}

@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "E:\\Đồ án tốt nghiệp\\Try-Hard\\WebDating\\WebDating.csproj": {}
+    "D:\\Workspace\\freelance\\Try-Hard\\WebDating\\WebDating.csproj": {}
   },
   "projects": {
-    "E:\\Đồ án tốt nghiệp\\Try-Hard\\WebDating\\WebDating.csproj": {
+    "D:\\Workspace\\freelance\\Try-Hard\\WebDating\\WebDating.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\Đồ án tốt nghiệp\\Try-Hard\\WebDating\\WebDating.csproj",
+        "projectUniqueName": "D:\\Workspace\\freelance\\Try-Hard\\WebDating\\WebDating.csproj",
         "projectName": "WebDating",
-        "projectPath": "E:\\Đồ án tốt nghiệp\\Try-Hard\\WebDating\\WebDating.csproj",
-        "packagesPath": "C:\\Users\\ADMIN\\.nuget\\packages\\",
-        "outputPath": "E:\\Đồ án tốt nghiệp\\Try-Hard\\WebDating\\obj\\",
+        "projectPath": "D:\\Workspace\\freelance\\Try-Hard\\WebDating\\WebDating.csproj",
+        "packagesPath": "C:\\Users\\Admin\\.nuget\\packages\\",
+        "outputPath": "D:\\Workspace\\freelance\\Try-Hard\\WebDating\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\ADMIN\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Admin\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -79,6 +79,18 @@
             "Swashbuckle.AspNetCore": {
               "target": "Package",
               "version": "[6.4.0, )"
+            },
+            "Swashbuckle.AspNetCore.Swagger": {
+              "target": "Package",
+              "version": "[6.5.0, )"
+            },
+            "Swashbuckle.AspNetCore.SwaggerGen": {
+              "target": "Package",
+              "version": "[6.5.0, )"
+            },
+            "Swashbuckle.AspNetCore.SwaggerUI": {
+              "target": "Package",
+              "version": "[6.5.0, )"
             },
             "System.IdentityModel.Tokens.Jwt": {
               "target": "Package",

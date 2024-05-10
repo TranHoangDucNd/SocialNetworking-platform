@@ -230,8 +230,8 @@ namespace WebDating.Services
 
         public async Task<ResultDto<List<PostResponseDto>>> AddOrUnLikePost(PostFpkDto postFpk)
         {
-            var checkLike =  await _uow.PostRepository.GetLikeByMultiId(postFpk.UserId, postFpk.PostId);
-            if(checkLike is null)
+            var checkLike = await _uow.PostRepository.GetLikeByMultiId(postFpk.UserId, postFpk.PostId);
+            if (checkLike is null)
             {
                 PostLike postLike = new()
                 {
@@ -252,7 +252,7 @@ namespace WebDating.Services
         public async Task<bool> Report(PostReportDto postReport)
         {
             var check = await _uow.PostRepository.GetReport(postReport.UserId, postReport.PostId);
-            if(check is not null)
+            if (check is not null)
             {
                 check.Report = postReport.Report;
                 check.Description = postReport.Description;
@@ -283,9 +283,15 @@ namespace WebDating.Services
         {
             var result = await _uow.PostRepository.GetAllReport();
             return new SuccessResult<List<PostReportDto>>(_mapper.Map<List<PostReportDto>>(result));
-            
+
         }
 
-     
+        #region Comment
+        public ResultDto<List<CommentDto>> GetCommentOfPost(int postId)
+        {
+            var comments = _uow.CommentRepository.GetByPostId(postId);
+            return new SuccessResult<List<CommentDto>>(_mapper.Map<List<CommentDto>>(comments));
+        }
+        #endregion
     }
 }

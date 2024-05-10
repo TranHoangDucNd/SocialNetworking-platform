@@ -37,8 +37,10 @@ namespace WebDating.Data
         public DbSet<PostReportDetail> PostReportDetails { get; set; }
         public DbSet<PostSubComment> PostSubComments { get; set; }
         public DbSet<ImagePost> ImagePosts { get; set; }
+        public virtual DbSet<Comment> Comments { get; set; }
+        public virtual DbSet<ReactionLog> ReactionLogs { get; set; }
 
-      
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -144,7 +146,7 @@ namespace WebDating.Data
                     .HasForeignKey(d => d.PostId)
                     .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("FK__PostRepor__PostI__17036CC0");
-                    
+
 
                 entity.HasOne(d => d.User)
                     .WithMany(p => p.PostReportDetails)
@@ -164,6 +166,14 @@ namespace WebDating.Data
                     .HasForeignKey(d => d.UserId)
                     .HasConstraintName("FK__PostSubCo__UserI__123EB7A3");
             });
+
+            builder.Entity<ReactionLog>(e =>
+            {
+                e.HasOne(c => c.Comment)
+                .WithMany(r => r.ReactionLogs)
+                .HasForeignKey(k => k.CommentId);
+            });
+
         }
 
     }

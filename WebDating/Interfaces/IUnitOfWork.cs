@@ -8,6 +8,7 @@
         IDatingRepository DatingRepository { get; }
         IPostRepository PostRepository { get; }
         IAdminRepository AdminRepository { get; }
+        ICommentRepository CommentRepository { get; }
         Task<bool> Complete();
         bool CompleteNotAsync();
         bool HasChanges();

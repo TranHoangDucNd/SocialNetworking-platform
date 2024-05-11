@@ -4,6 +4,6 @@
     {
         public int Id { get; set; }
         public string Content { get; set; } = string.Empty;
-        public List<IFormFile>? Image { get; set; }
+        public List<IFormFile> Image { get; set; }
     }
 }

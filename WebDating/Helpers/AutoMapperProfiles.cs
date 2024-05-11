@@ -19,10 +19,10 @@ namespace WebDating.Helpers
                     opt => opt.MapFrom(src => src.Photos.FirstOrDefault(x => x.IsMain).Url))
                 .ForMember(d => d.Age,
                     opt => opt.MapFrom(src => src.DateOfBirth.CaculateAge()))
-                .ForMember(d => d.DatingProfile, 
+                .ForMember(d => d.DatingProfile,
                     opt => opt.MapFrom(src => src.DatingProfile))
                 .ReverseMap();
-                
+
 
             CreateMap<Photo, PhotoDto>();
             CreateMap<RegisterDto, AppUser>();
@@ -64,10 +64,12 @@ namespace WebDating.Helpers
                     }).ToList()));
 
             CreateMap<Post, PostResponseDto>()
+                .ForMember(dest => dest.LikeNumber, o => o.MapFrom(m => m.ReactionLogs.Count()))
+                .ForMember(dest => dest.CommentNumber, o => o.MapFrom(m => m.Comments.Count()))
                 .ForMember(dest => dest.Images, o => o.MapFrom(s => s.Images.Select(x => x.Path).ToList()))
                 .ForPath(dest => dest.UserShort.Id, o => o.MapFrom(s => s.User.Id))
-                .ForPath(dest => dest.UserShort.FullName, o=> o.MapFrom(s=> s.User.UserName))
-                .ForPath(dest => dest.UserShort.Image, o=> o.MapFrom(s => s.User.Photos.FirstOrDefault(x => x.IsMain).Url))
+                .ForPath(dest => dest.UserShort.FullName, o => o.MapFrom(s => s.User.UserName))
+                .ForPath(dest => dest.UserShort.Image, o => o.MapFrom(s => s.User.Photos.FirstOrDefault(x => x.IsMain).Url))
                 .ReverseMap();
 
             CreateMap<Post, ShowPostAdminDto>()
@@ -78,7 +80,7 @@ namespace WebDating.Helpers
 
             CreateMap<PostComment, CommentPostDto>()
                 .ForPath(dest => dest.UserShort.Id, o => o.MapFrom(s => s.User.Id))
-                .ForPath(dest => dest.UserShort.FullName, o=> o.MapFrom(s=> s.User.UserName))
+                .ForPath(dest => dest.UserShort.FullName, o => o.MapFrom(s => s.User.UserName))
                 .ForPath(dest => dest.UserShort.Image, o => o.MapFrom(s => s.User.Photos.FirstOrDefault(x => x.IsMain).Url))
                 .ReverseMap();
 

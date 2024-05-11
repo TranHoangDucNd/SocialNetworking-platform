@@ -60,7 +60,7 @@ namespace WebDating.Controllers
             var username = User.GetUserName();
             var user = await _uow.UserRepository.GetUserByUsernameAsync(username);
             if (user == null) return NotFound();
-
+            
             _mapper.Map(memberUpdateDto, user);
 
             if (await _uow.Complete()) return NoContent();

@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SignalR;
+using System.Collections.Generic;
+using WebDating.Data.Migrations;
 using WebDating.DTOs;
 using WebDating.DTOs.Post;
 using WebDating.Entities;
@@ -29,15 +31,16 @@ namespace WebDating.Services
             _photoService = photoService;
             _commentHubContext = commentHubContext;
         }
-        public async Task<ResultDto<PostResponseDto>> Create(CreatePostDto requestDto, string name)
+        public async Task<ResultDto<PostResponseDto>> Create(CreatePostDto requestDto, string username)
         {
             try
             {
-                var user = await _userManager.FindByNameAsync(name);
-                var post = new Post() { Content = requestDto.Content };
-                post.CreatedAt = DateTime.Now;
-                post.IsDeleted = false;
-                post.UserId = user.Id;
+                var user = await _uow.UserRepository.GetUserByUsernameAsync(username);
+                Post post = new Post
+                {
+                    Content = requestDto.Content,
+                    UserId = user.Id,
+                };
 
                 await _uow.PostRepository.Insert(post);
                 await _uow.Complete();
@@ -50,13 +53,12 @@ namespace WebDating.Services
                         var img = new ImagePost(post.Id, image.SecureUrl.AbsoluteUri, image.PublicId);
                         await _uow.PostRepository.InsertImagePost(img);
                     }
-                    await _uow.Complete();
 
                 }
+                await _uow.Complete();
 
                 var result = _mapper.Map<PostResponseDto>(post);
                 return new SuccessResult<PostResponseDto>(result);
-
             }
             catch (Exception ex)
             {
@@ -108,12 +110,11 @@ namespace WebDating.Services
             });
         }
 
-        public async Task<ResultDto<PostResponseDto>> Update(CreatePostDto requestDto, string name)
+        public async Task<ResultDto<PostResponseDto>> Update(CreatePostDto requestDto, string username)
         {
             try
             {
-                var user = await _userManager.FindByNameAsync(name);
-                var post = await _uow.PostRepository.GetById(requestDto.Id);
+                Post post = await _uow.PostRepository.GetById(requestDto.Id);
 
                 post.Content = requestDto.Content;
                 _uow.PostRepository.Update(post);
@@ -129,9 +130,8 @@ namespace WebDating.Services
                         var img = new ImagePost(post.Id, image.SecureUrl.AbsoluteUri, image.PublicId);
                         await _uow.PostRepository.InsertImagePost(img);
                     }
-
-                    await _uow.Complete();
                 }
+                await _uow.Complete();
 
                 var result = _mapper.Map<PostResponseDto>(post);
                 return new SuccessResult<PostResponseDto>(result);
@@ -142,79 +142,103 @@ namespace WebDating.Services
                 return new ErrorResult<PostResponseDto>(ex.Message);
             }
         }
-        public async Task<ResultDto<List<CommentPostDto>>> CreateComment(CommentPostDto comment, int userId)
-        {
-            var post = await _uow.PostRepository.GetById(comment.PostId);
-            if (post == null)
-            {
-                return new
-                    ErrorResult<List<CommentPostDto>>("Không tìm thấy bài đọc bạn bình luận, nó có thể đã bị xóa");
-            }
+        //public async Task<ResultDto<List<CommentPostDto>>> CreateComment(CommentPostDto dto)
+        //{
+        //    var post = await _uow.PostRepository.GetById(dto.PostId);
+        //    if (post is null)
+        //    {
+        //        return new
+        //            ErrorResult<List<CommentPostDto>>("Không tìm thấy bài đọc bạn bình luận, nó có thể đã bị xóa");
+        //    }
 
 
-            var postComment = new PostComment()
-            {
-                PostId = post.Id,
-                UserId = comment.UserId,
-                Content = comment.Content
-            };
-            postComment.UpdatedAt = DateTime.UtcNow;
+        //    //var postComment = new PostComment()
+        //    //{
+        //    //    PostId = post.Id,
+        //    //    UserId = comment.UserId,
+        //    //    Content = comment.Content
+        //    //};
+        //    //postComment.UpdatedAt = DateTime.UtcNow;
 
-            await _uow.PostRepository.InsertComment(postComment);
-            await _uow.Complete();
+        //    //await _uow.PostRepository.InsertComment(postComment);
+        //    //await _uow.Complete();
 
-            var comments = await GetComment(post);
-            await _commentHubContext.Clients.All.SendAsync("ReceiveComment", comments);
-            return comments;
+        //    //var comments = await GetComment(post);
+        //    //await _commentHubContext.Clients.All.SendAsync("ReceiveComment", comments);
 
-        }
 
-        public async Task<ResultDto<List<CommentPostDto>>> GetComment(Post post)
-        {
-            var users = await _uow.UserRepository.GetAll();
-            var postComments = await _uow.PostRepository.GetCommentsByPostId(post.Id);
-            return new SuccessResult<List<CommentPostDto>>(_mapper.Map<List<CommentPostDto>>(postComments));
-        }
+        //    #region New
+        //    Comment newComment = new Comment
+        //    {
+        //        UserId = dto.UserId,
+        //        PostId = post.Id,
+        //        Content = dto.Content,
+
+        //    };
+        //    if (dto.ParentCommentId != 0)
+        //    {
+        //        Comment parentComment = _uow.CommentRepository.GetById(dto.ParentCommentId);
+        //        if (parentComment != null)
+        //        {
+        //            newComment.ParentId = dto.ParentCommentId;
+        //            newComment.Level = parentComment.Level + 1;
+        //            if (newComment.Level > 3)
+        //            {
+        //                newComment.Level = 3;
+        //                newComment.ParentId = parentComment.ParentId;
+        //            }
+        //        }
+        //    }
+        //    _uow.CommentRepository.Insert(newComment);
+        //    await _uow.Complete();
+        //    #endregion
+        //    return new ResultDto<List<CommentPostDto>>();
+        //}
+
+
+
+
+
 
         public async Task<Post> GetById(int postId)
         => await _uow.PostRepository.GetById(postId);
 
-        public async Task<ResultDto<List<CommentPostDto>>> UpdateComment(CommentPostDto comment)
-        {
-            var postComment = await _uow.PostRepository.GetCommentById(comment.Id);
-            var post = await _uow.PostRepository.GetById(comment.PostId);
-            if (postComment == null)
-            {
-                return new ErrorResult<List<CommentPostDto>>("Không tìm thấy bài đọc bạn bình luận");
-            }
-            postComment.Content = comment.Content;
-            postComment.UpdatedAt = DateTime.UtcNow;
+        //public async Task<ResultDto<List<CommentPostDto>>> UpdateComment(CommentPostDto comment)
+        //{
+        //    var postComment = await _uow.PostRepository.GetCommentById(comment.Id);
+        //    var post = await _uow.PostRepository.GetById(comment.PostId);
+        //    if (postComment == null)
+        //    {
+        //        return new ErrorResult<List<CommentPostDto>>("Không tìm thấy bài đọc bạn bình luận");
+        //    }
+        //    postComment.Content = comment.Content;
+        //    postComment.UpdatedAt = DateTime.UtcNow;
 
-            _uow.PostRepository.UpdateComment(postComment);
-            await _uow.Complete();
+        //    _uow.PostRepository.UpdateComment(postComment);
+        //    await _uow.Complete();
 
-            var comments = await GetComment(post);
-            await _commentHubContext.Clients.All.SendAsync("ReceiveComment", comments);
+        //    var comments = await GetComments(comment.PostId);
+        //    await _commentHubContext.Clients.All.SendAsync("ReceiveComment", comments);
 
-            return comments;
-        }
-        public async Task<ResultDto<List<CommentPostDto>>> DeleteComment(int id)
-        {
-            var comment = await _uow.PostRepository.GetCommentById(id);
-            var post = await _uow.PostRepository.GetById(comment.PostId);
+        //    return comments;
+        //}
+        //public async Task<ResultDto<List<CommentPostDto>>> DeleteComment(int id)
+        //{
+        //    var comment = await _uow.PostRepository.GetCommentById(id);
+        //    var post = await _uow.PostRepository.GetById(comment.PostId);
 
-            if (comment == null)
-            {
-                return new ErrorResult<List<CommentPostDto>>("Không tìm thấy bình luận");
-            }
+        //    if (comment == null)
+        //    {
+        //        return new ErrorResult<List<CommentPostDto>>("Không tìm thấy bình luận");
+        //    }
 
-            _uow.PostRepository.DeleteComment(comment);
-            await _uow.Complete();
+        //    _uow.PostRepository.DeleteComment(comment);
+        //    await _uow.Complete();
 
-            var comments = await GetComment(post);
-            await _commentHubContext.Clients.All.SendAsync("ReceiveComment", comments);
-            return comments;
-        }
+        //    var comments = await GetComments(comment.PostId);
+        //    await _commentHubContext.Clients.All.SendAsync("ReceiveComment", comments);
+        //    return comments;
+        //}
 
         public async Task<(int Likes, int Comments)> GetLikesAndCommentsCount(int postId)
         {
@@ -291,6 +315,206 @@ namespace WebDating.Services
         {
             var comments = _uow.CommentRepository.GetByPostId(postId);
             return new SuccessResult<List<CommentDto>>(_mapper.Map<List<CommentDto>>(comments));
+        }
+
+        public async Task<ResultDto<string>> DeleteComment(int id)
+        {
+            _uow.CommentRepository.Delete(id);
+            bool success = await _uow.Complete();
+            return success ? new SuccessResult<string>("Thành công") : new ErrorResult<string>("Lỗi khi xóa");
+        }
+
+        public async Task<ResultDto<string>> UpdateComment(CommentPostDto dto)
+        {
+            var post = await _uow.PostRepository.GetById(dto.PostId);
+            if (post is null)
+            {
+                return new ErrorResult<string>("Không tìm thấy bài đọc bạn bình luận");
+            }
+            var comment = _uow.CommentRepository.GetById((int)dto.Id);
+            comment.Content = dto.Content;
+            comment.UpdatedAt = DateTime.UtcNow;
+
+            _uow.CommentRepository.Update(comment);
+            bool success = await _uow.Complete();
+
+            var comments = await GetComments(comment.PostId);
+            await _commentHubContext.Clients.All.SendAsync("ReceiveComment", comments);
+
+            return success ? new SuccessResult<string>("Thành công") : new ErrorResult<string>("Lỗi khi cập nhật");
+        }
+
+        public async Task<ResultDto<string>> CreateComment(CommentPostDto dto)
+        {
+            var post = await _uow.PostRepository.GetById(dto.PostId);
+            if (post is null)
+            {
+                return new ErrorResult<string>("Không tìm thấy bài đọc bạn bình luận, nó có thể đã bị xóa");
+            }
+
+
+            #region New
+            Comment newComment = new Comment
+            {
+                UserId = dto.UserId,
+                PostId = post.Id,
+                Content = dto.Content,
+
+            };
+            if (dto.ParentCommentId != 0)
+            {
+                Comment parentComment = _uow.CommentRepository.GetById(dto.ParentCommentId);
+                if (parentComment != null)
+                {
+                    newComment.ParentId = dto.ParentCommentId;
+                    newComment.Level = parentComment.Level + 1;
+                    if (newComment.Level > 3)
+                    {
+                        newComment.Level = 3;
+                        newComment.ParentId = parentComment.ParentId;
+                    }
+                }
+            }
+            _uow.CommentRepository.Insert(newComment);
+            bool success = await _uow.Complete();
+            return success ? new SuccessResult<string>("Thành công") : new ErrorResult<string>("Lỗi khi comment");
+            #endregion
+        }
+
+        public async Task<ResultDto<List<CommentVM>>> GetComments(int postId)
+        {
+            var comments = await _uow.CommentRepository.GetByPostId(postId);
+            List<CommentVM> models = createCommentVM(postId, 0, comments, 1);
+
+            return new SuccessResult<List<CommentVM>>(models);
+        }
+
+        List<CommentVM> createCommentVM(int postId, int parentCommentId, List<Comment> comments, int level)
+        {
+            List<CommentVM> items = new List<CommentVM>();
+            if (level > 3)
+                return items;
+            IEnumerable<Comment> commentByLevel = comments.Where(it => it.ParentId == parentCommentId && it.Level == level);
+            foreach (Comment cmt in commentByLevel)
+            {
+                CommentVM item = new CommentVM()
+                {
+                    Id = cmt.Id,
+                    Content = cmt.Content,
+                    PostId = postId,
+                    UserId = cmt.UserId,
+                    ParentCommentId = cmt.ParentId,
+                    CreateAt = cmt.CreatedAt.ToString("HH:mm:ss"),
+                };
+                item.Stats = cmt.ReactionLogs.GroupBy(it => it.ReactionType)
+                    .ToDictionary(it => it.Key, it => it.Count());
+                item.Descendants = createCommentVM(postId, cmt.Id, comments, level + 1);
+                items.Add(item);
+            }
+            return items;
+        }
+
+
+        private List<CommentVM> createCommentVM(int postId, int parentCommentId, List<Comment> descendants, IEnumerable<ReactionLog> reactions)
+        {
+            List<CommentVM> items = new List<CommentVM>();
+            IEnumerable<Comment> childs = descendants.Where(it => it.ParentId == parentCommentId);
+            foreach (Comment child in childs)
+            {
+                CommentVM item = new CommentVM()
+                {
+                    Id = child.Id,
+                    Content = child.Content,
+                    PostId = postId,
+                    UserId = child.UserId,
+                    ParentCommentId = child.ParentId,
+                    CreateAt = child.CreatedAt.ToString("HH:mm:ss"),
+                };
+                item.Stats = reactions
+                    .Where(it => it.CommentId == child.Id)
+                    .ToDictionary(it => it.ReactionType, it => 1);
+                List<Comment> replyComments = descendants
+                    .Where(it => it.ParentId == child.Id)
+                    .ToList();
+                while (replyComments.Count > 0)
+                {
+                    item.Descendants = createCommentVM(postId, child.Id, replyComments, reactions);
+                }
+                items.Add(item);
+            }
+            return items;
+        }
+        #endregion
+
+
+        #region Thả react
+        public async Task<ResultDto<string>> ReactComment(ReactionRequest request)
+        {
+            ReactionLog react = _uow.ReactionLogRepository.GetReactUserByComment(request.UserId, request.TargetId);
+            if (react is null)
+            {
+                react = new ReactionLog
+                {
+                    UserId = request.UserId,
+                    CommentId = request.TargetId,
+                    ReactionType = request.ReactionType,
+                    Target = ReactTarget.Comment,
+                };
+                _uow.ReactionLogRepository.Insert(react);
+            }
+            else
+            {
+                _uow.ReactionLogRepository.Remove(react);
+            }
+
+            bool success = await _uow.Complete();
+            return success ? new SuccessResult<string>("Thành công") : new ErrorResult<string>("Lỗi tương tác cảm xúc bình luận");
+        }
+        public async Task<ResultDto<string>> ReactPost(ReactionRequest request)
+        {
+            ReactionLog react = _uow.ReactionLogRepository.GetReactUserByPost(request.UserId, request.TargetId);
+            if (react is null)
+            {
+                react = new ReactionLog
+                {
+                    UserId = request.UserId,
+                    PostId = request.TargetId,
+                    ReactionType = request.ReactionType,
+                    Target = ReactTarget.Post,
+                };
+                _uow.ReactionLogRepository.Insert(react);
+            }
+            else
+            {
+                _uow.ReactionLogRepository.Remove(react);
+            }
+            bool success = await _uow.Complete();
+            return success ? new SuccessResult<string>("Thành công") : new ErrorResult<string>("Lỗi tương tác cảm xúc bài viết");
+        }
+
+        public async Task<ResultDto<List<ReactionLogVM>>> GetDetailReaction(int targetId)
+        {
+            List<ReactionLogVM> vms = new List<ReactionLogVM>();
+            List<ReactionLog> reactions = await _uow.ReactionLogRepository.GetDetailReaction(targetId);
+
+            List<AppUser> userCommented = await _uow.UserRepository.GetMany(reactions.Select(it => it.UserId));
+            foreach (var react in reactions)
+            {
+                var user = userCommented.Find(it => it.Id == react.UserId);
+                if (user != null)
+                {
+                    var vm = new ReactionLogVM()
+                    {
+                        Type = react.ReactionType,
+                        DisplayName = Convert.ToString(react.ReactionType),
+                        UserFullName = user.KnownAs,
+                        UserId = user.Id,
+                    };
+                    vms.Add(vm);
+                }
+
+            }
+            return new SuccessResult<List<ReactionLogVM>>() { ResultObj = vms };
         }
         #endregion
     }

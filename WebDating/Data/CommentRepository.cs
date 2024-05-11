@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Reflection.Metadata;
 using WebDating.Entities.PostEntities;
 using WebDating.Entities.UserEntities;
 using WebDating.Interfaces;
@@ -22,12 +23,17 @@ namespace WebDating.Data
 
         public Comment GetById(int commentId)
         {
-            return _context.Comments.Find(commentId);
+            Comment cmt = _context.Comments.Find(commentId);
+            _context.Entry(cmt).Collection(p => p.ReactionLogs).Load();
+            return cmt;
         }
 
-        public IEnumerable<Comment> GetByPostId(int postId)
+        public async Task<List<Comment>> GetByPostId(int postId)
         {
-            return _context.Comments.Where(it => it.PostId == postId);
+            return await _context.Comments
+                .Include(it => it.ReactionLogs)
+                .Where(it => it.PostId == postId)
+                .ToListAsync();
         }
 
         public void Insert(Comment comment)
@@ -54,5 +60,26 @@ namespace WebDating.Data
             return reacts.GroupBy(it => it.ReactionType)
                  .ToDictionary(it => it.Key, it => it.Count());
         }
+
+        public async Task<List<Comment>> GetCommentRecursive(int commentId)
+        {
+            List<Comment> comments = new List<Comment>();
+            List<Comment> childComments = await _context.Comments
+                .Include(it => it.ReactionLogs)
+                .Where(it => it.ParentId == commentId)
+                .ToListAsync();
+            foreach (Comment child in childComments)
+            {
+                comments.Add(child);
+                var tmp = await GetCommentRecursive(child.Id);
+                comments.AddRange(tmp);
+                //comments.AddRange(_context.Comments
+                //    .Where(it => it.ParentId == child.ParentId)
+                //    .ToList());
+            }
+            return comments;
+        }
+
+
     }
 }

@@ -16,19 +16,19 @@ namespace WebDating.Entities.PostEntities
         /// <summary>
         /// Cấp của comment, tạm lưu chưa xử lý
         /// </summary>
-        public int Level { get; set; }
+        public int Level { get; set; } = 1;
         public int PostId { get; set; }
         public int UserId { get; set; }
         public string Content { get; set; }
         [Column(TypeName = "dateTime")]
-        public DateTime CreatedAt { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         [Column(TypeName = "dateTime")]//chỉ định kiểu dl trong db là dateTime
-        public DateTime UpdatedAt { get; set; }
-       
+        public DateTime? UpdatedAt { get; set; }
+
         /// <summary>
         /// 1-n relationship: 1 Comment thì có danh sách các reation histories
         /// </summary>
+        public virtual Post Post { get; set; }
         public virtual List<ReactionLog> ReactionLogs { get; set; }
-        public int TotalReactions => ReactionLogs.Count();
     }
 }

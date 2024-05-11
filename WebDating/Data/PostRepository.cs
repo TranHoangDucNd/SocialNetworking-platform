@@ -26,7 +26,8 @@ namespace WebDating.Data
 
         public async Task<IEnumerable<Post>> GetAll()
         => await _context.Posts
-            .Include(x => x.PostLikes)
+            //.Include(x => x.PostLikes)
+            .Include(x => x.ReactionLogs)
             .Include(x => x.Images)
             .Include(x => x.User)
             .ThenInclude(x => x.Photos)
@@ -36,13 +37,19 @@ namespace WebDating.Data
 
 
         public async Task<Post> GetById(int id)
-        => await _context.Posts.Where(x => x.Id == id).Include(x => x.Images).FirstOrDefaultAsync();
+        => await _context.Posts
+            .Where(x => x.Id == id)
+            .Include(x => x.Images)
+            .Include(x => x.ReactionLogs)
+            .Include(x => x.Comments)
+            .FirstOrDefaultAsync();
 
 
         public async Task<IEnumerable<Post>> GetMyPost(int id)
         => await _context.Posts.Where(x => x.User.Id == id)
             .OrderByDescending(x => x.CreatedAt)
-            .Include(x => x.PostLikes)
+            //.Include(x => x.PostLikes)
+            .Include(x => x.ReactionLogs)
             .Include(x => x.Images)
             .Include(x => x.User)
             .ThenInclude(x => x.Photos)
@@ -97,8 +104,8 @@ namespace WebDating.Data
         public async Task<int> GetCountPostLikesByPostId(int postId)
         => await _context.PostLikes.Where(x => x.PostId == postId).CountAsync();
 
-       public async Task<int> GetCountPostCommentByPostId(int postId)
-        => await _context.PostsComments.Where(x => x.PostId == postId).CountAsync();
+        public async Task<int> GetCountPostCommentByPostId(int postId)
+         => await _context.PostsComments.Where(x => x.PostId == postId).CountAsync();
 
         public async Task<IEnumerable<PostReportDetail>> GetAllReport()
         => await _context.PostReportDetails.ToListAsync();
@@ -112,6 +119,6 @@ namespace WebDating.Data
         public void UpdatePostReport(PostReportDetail check)
         => _context.PostReportDetails.Update(check);
 
-      
+
     }
 }

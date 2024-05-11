@@ -104,19 +104,19 @@ namespace WebDating.Data
                 .HasConstraintName("FK__Post__UserId__778AC167");
             });
 
-            builder.Entity<PostComment>(entity =>
-            {
-                entity.HasOne(x => x.Post)
-                .WithMany(x => x.PostComments)
-                .HasForeignKey(x => x.PostId)
-                .HasConstraintName("FK__PostComme__PostI__0F624AF8");
+            //builder.Entity<PostComment>(entity =>
+            //{
+            //    entity.HasOne(x => x.Post)
+            //    .WithMany(x => x.PostComments)
+            //    .HasForeignKey(x => x.PostId)
+            //    .HasConstraintName("FK__PostComme__PostI__0F624AF8");
 
-                entity.HasOne(x => x.User)
-                .WithMany(x => x.PostComments)
-                .HasForeignKey(x => x.UserId)
-                .HasConstraintName("FK__PostComme__UserI__10566F31");
+            //    entity.HasOne(x => x.User)
+            //    .WithMany(x => x.PostComments)
+            //    .HasForeignKey(x => x.UserId)
+            //    .HasConstraintName("FK__PostComme__UserI__10566F31");
 
-            });
+            //});
 
             builder.Entity<PostLike>(entity =>
             {
@@ -167,6 +167,13 @@ namespace WebDating.Data
                     .HasConstraintName("FK__PostSubCo__UserI__123EB7A3");
             });
 
+            builder.Entity<Comment>(e =>
+            {
+                e.HasOne(c => c.Post)
+                .WithMany(p => p.Comments)
+                .HasForeignKey(k => k.PostId);
+            });
+
             builder.Entity<ReactionLog>(e =>
             {
                 e.HasOne(c => c.Comment)
@@ -174,7 +181,15 @@ namespace WebDating.Data
                 .HasForeignKey(k => k.CommentId);
             });
 
-        }
+            builder.Entity<ReactionLog>(e =>
+            {
+                e.HasOne(c => c.Post)
+                .WithMany(r => r.ReactionLogs)
+                .HasForeignKey(k => k.PostId);
+            });
 
+            builder.Entity<ReactionLog>()
+                .ToTable(t => t.HasCheckConstraint("CheckForeignKeyCount", "(CommentId IS NOT NULL AND PostId IS NULL) OR (CommentId IS NULL AND PostId IS NOT NULL)"));
+        }
     }
 }

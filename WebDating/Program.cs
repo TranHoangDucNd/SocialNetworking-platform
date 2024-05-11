@@ -1,6 +1,8 @@
 
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
+using System.Reflection;
 using WebDating.Data;
 using WebDating.Entities.UserEntities;
 using WebDating.Extensions;
@@ -15,7 +17,38 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddApplicationServices(builder.Configuration);
 builder.Services.AddIdentityServices(builder.Configuration);
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Version = "v1",
+        Title = "WebDating API",
+        Description = "An ASP.NET Core Web API for managing WebDating items",
+    });
+
+
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        In = ParameterLocation.Header,
+        Description = "Please insert JWT with Bearer into field",
+        Name = "Authorization",
+        Type = SecuritySchemeType.ApiKey
+    });
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement {
+       {
+         new OpenApiSecurityScheme
+         {
+           Reference = new OpenApiReference
+           {
+             Type = ReferenceType.SecurityScheme,
+             Id = "Bearer"
+           }
+          },
+          new string[] { }
+        }
+  });
+    
+});
 var app = builder.Build();
 app.UseSwagger();
 app.UseSwaggerUI();

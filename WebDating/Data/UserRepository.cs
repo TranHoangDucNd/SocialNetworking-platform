@@ -135,7 +135,7 @@ namespace WebDating.Data
                 "created" => query.OrderByDescending(x => x.Created),
                 _ => query.OrderByDescending(x => x.LastActive)
             };
-                
+
             var result = await PagedList<MemberDto>
                 .CreateAsync
                 (query.AsNoTracking()
@@ -150,5 +150,13 @@ namespace WebDating.Data
 
             return result;
         }
+
+        public async Task<List<AppUser>> GetMany(IEnumerable<int> ids)
+        {
+            return await _context.Users
+                .Where(it => ids.Contains(it.Id))
+                .ToListAsync();
+        }
+
     }
 }

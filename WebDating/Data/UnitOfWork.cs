@@ -25,10 +25,13 @@ namespace WebDating.Data
         public IPostRepository PostRepository => new PostRepository(_context);
 
         public IAdminRepository AdminRepository => new AdminRepository(_context);
+        public ICommentRepository CommentRepository => new CommentRepository(_context);
+
+        public IReactionLogRepository ReactionLogRepository => new ReactionLogRepository(_context);
 
         public async Task<bool> Complete()
         {
-           return await _context.SaveChangesAsync() > 0;
+            return await _context.SaveChangesAsync() > 0;
         }
 
         public bool CompleteNotAsync()

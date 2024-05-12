@@ -43,6 +43,7 @@ namespace WebDating.Controllers
 
             return new UserDto
             {
+                Id = user.Id,
                 UserName = user.UserName,
                 Token = await _tokenService.CreateToken(user),
                 KnownAs = user.KnownAs,
@@ -66,6 +67,7 @@ namespace WebDating.Controllers
 
             return new UserDto
             {
+                Id = user.Id,
                 UserName = user.UserName.ToLower(),
                 Token = await _tokenService.CreateToken(user),
                 PhotoUrl = user.Photos.FirstOrDefault(x => x.IsMain)?.Url,

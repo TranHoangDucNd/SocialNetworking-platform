@@ -2,28 +2,45 @@
 
 <app-nav></app-nav>
 
-<mat-sidenav-container class="example-container" >
-  <mat-sidenav #sidenav mode="side" opened class="example-sidenav" [fixedInViewport]="false" *ngIf="accountService.currentUser$ | async">
+<mat-sidenav-container class="example-container">
+  <mat-sidenav #sidenav mode="side" opened class="example-sidenav" [fixedInViewport]="false"
+               *ngIf="accountService.currentUser$ | async" style="background-color: #ffffff">
     <mat-nav-list>
+      <mat-list-item routerLink="/">
+        <i class="fa fa-home"> </i>
+        <span class="full-width"> New Posts</span>
+      </mat-list-item>
+      <mat-divider></mat-divider>
+      <mat-list-item routerLink="/personalpage/{{user?.userName}}">
+        <i class="fa fa-user"> </i>
+        <span class="full-width"> My Posts</span>
+      </mat-list-item>
       <mat-list-item routerLink="/members">
-        <span class="full-width">Matches</span>
+        <i class="fa fa-users"> </i>
+        <span class="full-width"> Matches</span>
       </mat-list-item>
       <mat-list-item routerLink="/lists">
-        <span class="full-width">Likes</span>
+        <i class="fa fa-heart"> </i>
+        <span class="full-width"> Likes</span>
       </mat-list-item>
       <mat-list-item routerLink="/messages">
-        <span class="full-width">Messages</span>
+        <i class="fa fa-envelope"> </i>
+        <span class="full-width"> Messages</span>
       </mat-list-item>
+      <mat-divider></mat-divider>
       <mat-list-item routerLink="/admin" *appHasRole="['Admin', 'Moderator','ManageReport']">
-        <span class="full-width">Admin</span>
+        <i class="fa fa-cog"> </i>
+        <span class="full-width"> Admin</span>
       </mat-list-item>
     </mat-nav-list>
   </mat-sidenav>
 
-  <mat-sidenav-content>
-    <div *ngIf="accountService.currentUser$ | async"><button mat-button (click)="sidenav?.toggle()">
-      <mat-icon>menu</mat-icon>
-    </button></div>
+  <mat-sidenav-content style="background-color: #f4f6f6">
+    <div *ngIf="accountService.currentUser$ | async">
+      <button mat-button (click)="sidenav?.toggle()">
+        <mat-icon>menu</mat-icon>
+      </button>
+    </div>
 
     <router-outlet></router-outlet>
 

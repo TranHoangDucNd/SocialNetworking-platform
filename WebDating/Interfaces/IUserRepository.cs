@@ -7,6 +7,9 @@ namespace WebDating.Interfaces
     public interface IUserRepository : IBaseGetAllRepository<AppUser>
     {
         Task<AppUser> GetUserByUsernameAsync(string username);
+        Task<AppUser> GetUserByUsernameAsync(int userId);
+        Task UpdateUser(MemberUpdateDto memberUpdateDto);
+        Task<IEnumerable<AppUser>> GetAllUserWithPhotosAsync();
         Task<PagedList<MemberDto>> GetMembersAsync(UserParams userParams);
         Task<AppUser> GetUserByIdAsync(int id);
         Task<MemberDto> GetMemberAsync(string username);

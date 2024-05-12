@@ -84,6 +84,49 @@ namespace WebDating.Data
                 .Include(p => p.Photos)
                 .SingleOrDefaultAsync(x => x.UserName == username);
         }
+        
+        public async Task<AppUser> GetUserByUsernameAsync(int userId)
+        {
+            return await _context.Users
+                .Include(p => p.Photos)
+                .SingleOrDefaultAsync(x => x.Id == userId);
+        }
+        
+        public async Task UpdateUser(MemberUpdateDto memberUpdateDto)
+        {
+            var user = await _context.Users
+                .SingleOrDefaultAsync(x => x.UserName == memberUpdateDto.Username);
+            
+            if (user == null) return;
+            
+            var profile = await _context.DatingProfiles
+                .Include(it => it.UserInterests)
+                .SingleOrDefaultAsync(x => x.UserId == user.Id);
+            
+            user.Introduction = memberUpdateDto.Introduction;
+            user.LookingFor = memberUpdateDto.LookingFor;
+            user.City = memberUpdateDto.City;
+            user.Country = memberUpdateDto.Country;
+            
+            
+
+            profile.DatingObject = memberUpdateDto.DatingObject;
+            profile.Height = memberUpdateDto.Height;
+            profile.WhereToDate = memberUpdateDto.WhereToDate;
+            profile.UserInterests = memberUpdateDto.DatingProfile.UserInterests.Select(it => new UserInterest
+            {
+                DatingProfileId = profile.Id,
+                InterestName = it.InterestNameCode,
+                DatingProfile = profile,
+            }).DistinctBy(it => it.InterestName).ToList();
+            _context.Users.Update(user);
+            _context.DatingProfiles.Update(profile);
+        }
+        
+        public async Task<IEnumerable<AppUser>> GetAllUserWithPhotosAsync()
+        {
+            return await _context.Users.Include(p => p.Photos).ToListAsync();
+        }
 
         public async Task<string> GetUserGender(string userName)
         {

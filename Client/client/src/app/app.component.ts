@@ -16,6 +16,7 @@ export class AppComponent implements OnInit {
   showSubmenu: boolean = false;
   isShowing = false;
   showSubSubMenu: boolean = false;
+  user: User | null = null;
 
   constructor(public accountService: AccountService){}
   ngOnInit(): void {
@@ -26,6 +27,7 @@ export class AppComponent implements OnInit {
     const userString = localStorage.getItem('user');
     if(!userString) return;
     const user: User = JSON.parse(userString);
+    this.user = user;
     this.accountService.setCurrentUser(user);
   }
 

@@ -57,15 +57,12 @@ namespace WebDating.Controllers
         [HttpPut]
         public async Task<ActionResult> UpdateUser(MemberUpdateDto memberUpdateDto)
         {
-            var username = User.GetUserName();
-            var user = await _uow.UserRepository.GetUserByUsernameAsync(username);
-            if (user == null) return NotFound();
-            
-            _mapper.Map(memberUpdateDto, user);
+           
+            await _uow.UserRepository.UpdateUser(memberUpdateDto);
 
             if (await _uow.Complete()) return NoContent();
 
-            return BadRequest("Failed update");
+            return BadRequest("Failed to update user!");
         }
 
         [HttpPost("add-photo")]

@@ -1,8 +1,17 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import {HttpClient, HttpParams} from '@angular/common/http';
+import {Injectable} from '@angular/core';
 
-import { environment } from 'src/environments/environment';
-import { CommentPostDto, CountLikesAndPosts, PostFpkDto, PostReportDto } from '../_models/PostModels';
+import {environment} from 'src/environments/environment';
+import {
+  CommentPostDto,
+  CountLikesAndPosts,
+  CreateCommentDto,
+  IReactionRequest,
+  PostFpkDto,
+  PostReportDto,
+  UserShortDto
+} from '../_models/PostModels';
+import {of} from "rxjs";
 
 @Injectable({
   providedIn: 'root',
@@ -10,10 +19,32 @@ import { CommentPostDto, CountLikesAndPosts, PostFpkDto, PostReportDto } from '.
 export class PostService {
   baseUrl = environment.apiUrl;
   hubUrl = environment.hubUrl;
-  constructor(private http: HttpClient) {}
+  #allUserShort: any;
+  #userShort: any;
+
+  constructor(private http: HttpClient) {
+  }
 
   getUserShort() {
-    return this.http.get(this.baseUrl + 'Post/UserShort');
+    if (!this.#userShort) {
+      return this.http.get<any>(this.baseUrl + 'Post/UserShort')
+    }
+    return of(this.#userShort);
+  }
+
+  setUserShort(userShort: any) {
+    this.#userShort = userShort;
+  }
+
+  getAllUsersShort() {
+    if (!this.#allUserShort) {
+      return this.http.get<UserShortDto[]>(this.baseUrl + 'Post/AllUserShorts')
+    }
+    return of(this.#allUserShort);
+  }
+
+  setAllUsersShort(allUserShort: any) {
+    this.#allUserShort = allUserShort;
   }
 
   getAll() {
@@ -24,56 +55,78 @@ export class PostService {
     return this.http.get(this.baseUrl + 'Post/' + id);
   }
 
-  getPosts(){
+  getPosts() {
     return this.http.get(this.baseUrl + 'Post');
   }
 
   UpdatePost(requestDto: FormData) {
     return this.http.put(this.baseUrl + 'Post', requestDto);
   }
+
   CreatePost(requestDto: FormData) {
-    return this.http.post(this.baseUrl + 'Post', requestDto);
+    return this.http.post(this.baseUrl + 'Post/create-post', requestDto);
   }
-  deletePost(id: number){
+
+  deletePost(id: number) {
     return this.http.delete(this.baseUrl + 'Post/delete/' + id);
   }
 
-  getPostComment(postId: any){
+  updatePostReaction(request: IReactionRequest) {
+    return this.http.post(this.baseUrl + 'Post/update-post-reaction', request);
+  }
+
+  updateCommentReaction(request: IReactionRequest) {
+    return this.http.post(this.baseUrl + 'Post/update-comment-reaction', request);
+  }
+
+  getDetailReaction(targetId: number) {
+    return this.http.get(this.baseUrl + 'Post/get-detail-reaction?targetId=' + targetId);
+  }
+
+  getPostComment(postId: any) {
     return this.http.get(this.baseUrl + 'Post/Chat?PostId=' + postId);
   }
 
-  getChatSignalR(): string{
+  getChatSignalR(): string {
     return this.hubUrl + 'commentHub';
   }
 
-  CreatePostComment(data: CommentPostDto){
+  CreatePostComment(data: CommentPostDto) {
     return this.http.post(this.baseUrl + 'Post/Chat', data)
   }
 
-  UpdatePostComment(data: CommentPostDto){
+  UpdatePostComment(data: CommentPostDto) {
     return this.http.put(this.baseUrl + 'Post/Chat', data);
   }
 
-  DeleteComment(id: number){
-    return this.http.delete(this.baseUrl + 'Post/Chat?commentId='+id);
+  DeleteComment(id: number) {
+    return this.http.delete(this.baseUrl + 'Post/Chat?commentId=' + id);
   }
 
-  likeOrDisLike(postFpk: PostFpkDto){
+  likeOrDisLike(postFpk: PostFpkDto) {
     const params = new HttpParams()
-    .set('postId', postFpk.postId)
-    .set('userId', postFpk.userId)
+      .set('postId', postFpk.postId)
+      .set('userId', postFpk.userId)
     return this.http.post(this.baseUrl + 'Post/Like', postFpk);
   }
-  
-  countLikesAndCommentsOfPost(postId: number){
+
+  countLikesAndCommentsOfPost(postId: number) {
     return this.http.get<CountLikesAndPosts>(this.baseUrl + 'Post/LikesAndComments/' + postId);
   }
 
-  // countCommentOfPost(postId: number){
-  //   return this.http.get<number>(this.baseUrl + 'Post/Comment/' +postId);
-  // }
+  createComment(input: CreateCommentDto) {
+    return this.http.post(this.baseUrl + 'Post/create-comment', input);
+  }
 
-  Report(report: PostReportDto){
+  deleteComment(commentId: number) {
+    return this.http.delete(this.baseUrl + 'Post/delete-comment?commentId=' + commentId);
+  }
+
+  getAllCommentsOfPost(postId: number) {
+    return this.http.get<any>(this.baseUrl + 'Post/get-comments-of-post?postId=' + postId);
+  }
+
+  Report(report: PostReportDto) {
     const postReport = new FormData();
     postReport.append('userId', report.userId.toString());
     postReport.append('postId', report.postId.toString());
@@ -86,10 +139,9 @@ export class PostService {
 
   }
 
-  GetContentReport(){
+  GetContentReport() {
     return this.http.get(this.baseUrl + 'Post/ContentReport');
   }
-  
 
 
 }

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SignalR;
 using System.Collections.Generic;
+using System.Globalization;
 using WebDating.Data.Migrations;
 using WebDating.DTOs;
 using WebDating.DTOs.Post;
@@ -105,9 +106,23 @@ namespace WebDating.Services
             return new SuccessResult<UserShortDto>(new UserShortDto()
             {
                 Id = username.Id,
-                FullName = username.KnownAs,
+                FullName = username.UserName,
+                KnownAs = username.KnownAs,
                 Image = username.Photos.Select(x => x.Url).FirstOrDefault()
             });
+        }
+        
+        public async Task<ResultDto<List<UserShortDto>>> GetAllUserInfo()
+        {
+            var users = await _uow.UserRepository.GetAllUserWithPhotosAsync();
+            var listUserShort = users.Select(user => new UserShortDto()
+            {
+                Id = user.Id, 
+                FullName = user.UserName,
+                KnownAs = user.KnownAs ?? string.Empty,
+                Image = user.Photos.Select(x => x.Url).FirstOrDefault() ?? string.Empty
+            }).ToList();
+            return new SuccessResult<List<UserShortDto>>(listUserShort);
         }
 
         public async Task<ResultDto<PostResponseDto>> Update(CreatePostDto requestDto, string username)
@@ -404,7 +419,7 @@ namespace WebDating.Services
                     PostId = postId,
                     UserId = cmt.UserId,
                     ParentCommentId = cmt.ParentId,
-                    CreateAt = cmt.CreatedAt.ToString("HH:mm:ss"),
+                    CreateAt = cmt.CreatedAt.ToString(CultureInfo.InvariantCulture),
                 };
                 item.Stats = cmt.ReactionLogs.GroupBy(it => it.ReactionType)
                     .ToDictionary(it => it.Key, it => it.Count());
@@ -428,7 +443,7 @@ namespace WebDating.Services
                     PostId = postId,
                     UserId = child.UserId,
                     ParentCommentId = child.ParentId,
-                    CreateAt = child.CreatedAt.ToString("HH:mm:ss"),
+                    CreateAt = child.CreatedAt.ToString(CultureInfo.InvariantCulture),
                 };
                 item.Stats = reactions
                     .Where(it => it.CommentId == child.Id)
@@ -464,7 +479,10 @@ namespace WebDating.Services
             }
             else
             {
-                _uow.ReactionLogRepository.Remove(react);
+                if (react.ReactionType == request.ReactionType)
+                    _uow.ReactionLogRepository.Remove(react);
+                else
+                    react.ReactionType = request.ReactionType;
             }
 
             bool success = await _uow.Complete();
@@ -486,7 +504,10 @@ namespace WebDating.Services
             }
             else
             {
-                _uow.ReactionLogRepository.Remove(react);
+                if (react.ReactionType == request.ReactionType)
+                    _uow.ReactionLogRepository.Remove(react);
+                else
+                    react.ReactionType = request.ReactionType;
             }
             bool success = await _uow.Complete();
             return success ? new SuccessResult<string>("Thành công") : new ErrorResult<string>("Lỗi tương tác cảm xúc bài viết");

@@ -3,161 +3,161 @@
     <h1>Your profile</h1>
   </div>
   <div class="col-8">
-<!--    <div class="alert alert-info pb-0" *ngIf="editForm.dirty">-->
-<!--      <p>-->
-<!--        <strong>Information: </strong>You have made changes. Any unsaved changes-->
-<!--        will be lost-->
-<!--      </p>-->
-<!--    </div>-->
+    <!--    <div class="alert alert-info pb-0" *ngIf="editForm.dirty">-->
+    <!--      <p>-->
+    <!--        <strong>Information: </strong>You have made changes. Any unsaved changes-->
+    <!--        will be lost-->
+    <!--      </p>-->
+    <!--    </div>-->
   </div>
 
   <div class="col-4 mt-2">
-        <div class="card-body">
-          <ul class="list-group shadow-none">
-            <li class="list-group-item text-center">
-              <div class="user-box">
-                <img
-                  src="{{ member.photoUrl || './assets/user.png' }}"
-                  alt="{{ member.knownAs }}"
-                />
-              </div>
-              <h5 class="mb-1">{{ member.userName }}</h5>
+    <div class="card-body">
+      <ul class="list-group shadow-none">
+        <li class="list-group-item text-center">
+          <div class="user-box">
+            <img
+              src="{{ member.photoUrl || './assets/user.png' }}"
+              alt="{{ member.knownAs }}"
+            />
+          </div>
+          <h5 class="mb-1">{{ member.userName }}</h5>
+        </li>
+        <li class="list-group-item">
+          <div>
+            <strong>Last active: </strong>
+            <p>{{ member.lastActive | timeago }}</p>
+          </div>
+        </li>
+        <li class="list-group-item">
+          <div>
+            <strong>Interests: </strong>
+            <li *ngFor="let i of member.datingProfile.userInterests" class="badge badge-dark badge-pill">
+              {{ i.interestName }}
             </li>
-            <li class="list-group-item">
-              <div>
-                <strong>Last active: </strong>
-                <p>{{ member.lastActive | timeago }}</p>
-              </div>
-            </li>
-            <li class="list-group-item">
-              <div>
-                <strong>Interests: </strong>
-                <li *ngFor="let i of member.datingProfile.userInterests" class="badge badge-dark badge-pill">
-                  {{ i.interestName }}
-                </li>
-              </div>
-            </li>
-            <li class="list-group-item">
-              <div>
-                <strong>Age: </strong>
-                <p>{{ member.age }}</p>
-              </div>
-            </li>
-            <li class="list-group-item">
-              <div>
-                <strong>Member since: </strong>
-                <p>{{ member.created | date : "dd MMM yyyy" }}</p>
-              </div>
-            </li>
-            <li class="list-group-item">
-              <div class="text-center">
-                <a
-                  href="#"
-                  class="btn-social btn-facebook waves-effect waves-light m-1"
-                ><i class="fa fa-facebook"></i
-                ></a>
-                <a
-                  href="#"
-                  class="btn-social btn-google-plus waves-effect waves-light m-1"
-                ><i class="fa fa-google-plus"></i
-                ></a>
-                <a
-                  href="#"
-                  class="list-inline-item btn-social btn-behance waves-effect waves-light"
-                ><i class="fa fa-behance"></i
-                ></a>
-                <a
-                  href="#"
-                  class="list-inline-item btn-social btn-dribbble waves-effect waves-light"
-                ><i class="fa fa-dribbble"></i
-                ></a>
-              </div>
-            </li>
-          </ul>
-        </div>
-<!--        <div class="card-footer">-->
-<!--          <button-->
-<!--            type="submit"-->
-<!--            form="editForm"-->
-<!--            [disabled]="!editForm.dirty"-->
-<!--            class="btn btn-success col-12"-->
-<!--          >-->
-<!--            Save changes-->
-<!--          </button>-->
-<!--        </div>-->
+          </div>
+        </li>
+        <li class="list-group-item">
+          <div>
+            <strong>Age: </strong>
+            <p>{{ member.age }}</p>
+          </div>
+        </li>
+        <li class="list-group-item">
+          <div>
+            <strong>Member since: </strong>
+            <p>{{ member.created | date : "dd MMM yyyy" }}</p>
+          </div>
+        </li>
+        <li class="list-group-item">
+          <div class="text-center">
+            <a
+              href="#"
+              class="btn-social btn-facebook waves-effect waves-light m-1"
+            ><i class="fa fa-facebook"></i
+            ></a>
+            <a
+              href="#"
+              class="btn-social btn-google-plus waves-effect waves-light m-1"
+            ><i class="fa fa-google-plus"></i
+            ></a>
+            <a
+              href="#"
+              class="list-inline-item btn-social btn-behance waves-effect waves-light"
+            ><i class="fa fa-behance"></i
+            ></a>
+            <a
+              href="#"
+              class="list-inline-item btn-social btn-dribbble waves-effect waves-light"
+            ><i class="fa fa-dribbble"></i
+            ></a>
+          </div>
+        </li>
+      </ul>
+    </div>
+    <!--        <div class="card-footer">-->
+    <!--          <button-->
+    <!--            type="submit"-->
+    <!--            form="editForm"-->
+    <!--            [disabled]="!editForm.dirty"-->
+    <!--            class="btn btn-success col-12"-->
+    <!--          >-->
+    <!--            Save changes-->
+    <!--          </button>-->
+    <!--        </div>-->
   </div>
 
   <div class="col-8">
     <tabset class="member-tabset">
       <tab heading="About">
-<!--        <form #editForm="ngForm" id="editForm" (ngSubmit)="updateMember()">-->
-<!--          <div class="row">-->
-<!--          <div class="col-md-6">-->
-<!--            <h4 class="mt-2">Description</h4>-->
-<!--            <textarea-->
-<!--              name="introduction"-->
-<!--              class="form-control"-->
-<!--              [(ngModel)]="member.introduction"-->
-<!--              rows="4"-->
-<!--            ></textarea>-->
-<!--            <h4 class="mt-2">Looking for</h4>-->
-<!--            <textarea-->
-<!--              name="lookingFor"-->
-<!--              class="form-control"-->
-<!--              [(ngModel)]="member.lookingFor"-->
-<!--              rows="4"-->
-<!--            ></textarea>-->
-<!--            <h4 class="mt-2">Interests</h4>-->
-<!--            <textarea-->
-<!--              name="interests"-->
-<!--              class="form-control"-->
-<!--              [(ngModel)]="member.interests"-->
-<!--              rows="4"-->
-<!--            ></textarea>-->
-<!--          </div>-->
+        <!--        <form #editForm="ngForm" id="editForm" (ngSubmit)="updateMember()">-->
+        <!--          <div class="row">-->
+        <!--          <div class="col-md-6">-->
+        <!--            <h4 class="mt-2">Description</h4>-->
+        <!--            <textarea-->
+        <!--              name="introduction"-->
+        <!--              class="form-control"-->
+        <!--              [(ngModel)]="member.introduction"-->
+        <!--              rows="4"-->
+        <!--            ></textarea>-->
+        <!--            <h4 class="mt-2">Looking for</h4>-->
+        <!--            <textarea-->
+        <!--              name="lookingFor"-->
+        <!--              class="form-control"-->
+        <!--              [(ngModel)]="member.lookingFor"-->
+        <!--              rows="4"-->
+        <!--            ></textarea>-->
+        <!--            <h4 class="mt-2">Interests</h4>-->
+        <!--            <textarea-->
+        <!--              name="interests"-->
+        <!--              class="form-control"-->
+        <!--              [(ngModel)]="member.interests"-->
+        <!--              rows="4"-->
+        <!--            ></textarea>-->
+        <!--          </div>-->
 
-<!--          <div class="col-md-6">-->
-<!--            <h6>Interests</h6>-->
-<!--            <li *ngFor="let i of member.datingProfile.userInterests" class="badge badge-dark badge-pill">-->
-<!--              {{ i.interestName }}-->
-<!--            </li>-->
-<!--            <hr />-->
-<!--            <table class="table table-hover table-striped">-->
-<!--              <tbody>-->
+        <!--          <div class="col-md-6">-->
+        <!--            <h6>Interests</h6>-->
+        <!--            <li *ngFor="let i of member.datingProfile.userInterests" class="badge badge-dark badge-pill">-->
+        <!--              {{ i.interestName }}-->
+        <!--            </li>-->
+        <!--            <hr />-->
+        <!--            <table class="table table-hover table-striped">-->
+        <!--              <tbody>-->
 
-<!--              </tbody>-->
-<!--            </table>-->
-<!--          </div>-->
+        <!--              </tbody>-->
+        <!--            </table>-->
+        <!--          </div>-->
 
-<!--          <h4 class="mt-2">Location Details:</h4>-->
-<!--          <div class="d-flex flex-row align-items-center">-->
-<!--            <label for="city">City: </label>-->
-<!--            <input-->
-<!--              type="text"-->
-<!--              [(ngModel)]="member.city"-->
-<!--              name="city"-->
-<!--              id="city"-->
-<!--              class="form-control mx-2"-->
-<!--            />-->
+        <!--          <h4 class="mt-2">Location Details:</h4>-->
+        <!--          <div class="d-flex flex-row align-items-center">-->
+        <!--            <label for="city">City: </label>-->
+        <!--            <input-->
+        <!--              type="text"-->
+        <!--              [(ngModel)]="member.city"-->
+        <!--              name="city"-->
+        <!--              id="city"-->
+        <!--              class="form-control mx-2"-->
+        <!--            />-->
 
-<!--            <label for="country">Country: </label>-->
-<!--            <input-->
-<!--              type="text"-->
-<!--              [(ngModel)]="member.country"-->
-<!--              name="country"-->
-<!--              id="country"-->
-<!--              class="form-control mx-2"-->
-<!--            />-->
-<!--          </div>-->
-<!--          </div>-->
-<!--        </form>-->
-        <form [formGroup]="editProfileForm">
+        <!--            <label for="country">Country: </label>-->
+        <!--            <input-->
+        <!--              type="text"-->
+        <!--              [(ngModel)]="member.country"-->
+        <!--              name="country"-->
+        <!--              id="country"-->
+        <!--              class="form-control mx-2"-->
+        <!--            />-->
+        <!--          </div>-->
+        <!--          </div>-->
+        <!--        </form>-->
+        <form [formGroup]="editProfileForm" class="py-2 px-4">
           <div class="row">
             <mat-form-field class="col col-6">
               <mat-label>Height</mat-label>
               <mat-select formControlName="height">
                 <div *ngFor="let option of Heights">
-                  <mat-option [value]="option.value">{{ option.displayName}}</mat-option>
+                  <mat-option [value]="option.value">{{ option.displayName }}</mat-option>
                 </div>
               </mat-select>
             </mat-form-field>
@@ -167,7 +167,8 @@
               <mat-select formControlName="whereToDate">
                 <div *ngFor="let option of WhereToDates">
                   <mat-option [value]="option.value">
-                    {{ option.displayName}}</mat-option>
+                    {{ option.displayName }}
+                  </mat-option>
                 </div>
               </mat-select>
             </mat-form-field>
@@ -177,7 +178,8 @@
               <mat-select formControlName="datingObject">
                 <div *ngFor="let option of genderList">
                   <mat-option [value]="option.key">
-                    {{ option.value}}</mat-option>
+                    {{ option.value }}
+                  </mat-option>
                 </div>
               </mat-select>
             </mat-form-field>
@@ -185,7 +187,7 @@
             <mat-form-field class="col col-6">
               <mat-chip-grid #chipGrid aria-label="Chọn 1 chủ đề">
                 <mat-chip-row *ngFor="let title of ChooseUserInterests" (removed)="removeTopic(title)">
-                  {{title.displayName}}
+                  {{ title.displayName }}
                   <button matChipRemove [attr.aria-label]="'remove ' + title.displayName">
                     <mat-icon>cancel</mat-icon>
                   </button>
@@ -197,10 +199,11 @@
               <input #interestInput placeholder="Search your interest..." [formControl]="interestCtrl"
                      [matChipInputFor]="chipGrid" [matAutocomplete]="auto"
                      [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-                     (matChipInputTokenEnd)="addTopic($event)" />
-              <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selectedTopic($event)" formControlName="interests">
+                     (matChipInputTokenEnd)="addTopic($event)"/>
+              <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selectedTopic($event)"
+                                formControlName="interests">
                 <mat-option *ngFor="let item of filteredInterest | async" [value]="item.displayName">
-                  {{item.displayName}}
+                  {{ item.displayName }}
                 </mat-option>
               </mat-autocomplete>
             </mat-form-field>

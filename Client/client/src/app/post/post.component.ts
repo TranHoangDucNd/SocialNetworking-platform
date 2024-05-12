@@ -39,6 +39,9 @@ export class PostComponent implements OnInit {
     private overlay: Overlay,
     private dialog: MatDialog
   ) {
+
+  }
+  ngOnInit(): void {
     this.accountService.currentUser$.pipe(take(1)).subscribe({
       next: (user) => {
         if (user) {
@@ -46,15 +49,12 @@ export class PostComponent implements OnInit {
         }
       },
     });
-  }
-  ngOnInit(): void {
     this.getPosts();
     this.getUserShort();
   }
   getPosts() {
     this.postService.getPosts().subscribe(
       (data: any) => {
-        console.log(data);
         if (data.isSuccessed === true) {
           this.posts = data.resultObj as PostResponseDto[];
         }
@@ -68,8 +68,9 @@ export class PostComponent implements OnInit {
   getUserShort() {
     this.postService.getUserShort().subscribe(
       (data: any) =>{
-        console.log(data);
+        this.postService.setUserShort(data);
         this.userShort = data.resultObj;
+
       },
       (error: any) =>{
         console.log(error);

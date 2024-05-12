@@ -55,9 +55,16 @@ namespace WebDating.Controllers
         }
 
         [HttpGet("UserShort")]
-        public async Task<IActionResult> GetUserInfor()
+        public async Task<IActionResult> GetUserInfo()
         {
             var result = await _postService.GetUserShort(User.Identity.Name);
+            return Ok(result);
+        }
+        
+        [HttpGet("AllUserShorts")]
+        public async Task<IActionResult> GetAllUserInfo()
+        {
+            var result = await _postService.GetAllUserInfo();
             return Ok(result);
         }
 
@@ -126,6 +133,7 @@ namespace WebDating.Controllers
         [Route("update-comment-reaction")]
         public async Task<IActionResult> UpdateCommentReaction(ReactionRequest request)
         {
+            request.UserId = User.GetUserId();
             var res = await _postService.ReactComment(request);
             return Ok(res);
         }
@@ -135,12 +143,13 @@ namespace WebDating.Controllers
         [Route("update-post-reaction")]
         public async Task<IActionResult> UpdatePostReaction(ReactionRequest request)
         {
+            request.UserId = User.GetUserId();
             var res = await _postService.ReactPost(request);
             return Ok(res);
         }
 
 
-        [HttpPost]
+        [HttpGet]
         [Route("get-detail-reaction")]
         public async Task<IActionResult> GetDetailReaction(int targetId)
         {

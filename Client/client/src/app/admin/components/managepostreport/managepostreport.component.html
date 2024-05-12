@@ -1,35 +1,46 @@
-<div >
-  <div class="modal-header">
-    <h4 class="modal-title pull-left">Post report list</h4>
-  </div>
+<div class="row mx-5 my-3">
+  <mat-form-field>
+    <mat-label>Find Report</mat-label>
+    <input matInput (keyup)="applyFilter($event)" placeholder="Ex. Lisa" #input>
+  </mat-form-field>
 
-  <div class="tab-content p-3">
-    <div class="tab-pane active show" id="profile">
-      <table
-        class="table table-hover table-striped"   
-      >
-        <tbody>
-            <tr *ngFor="let report of postReports">
-                  <td class="d-flex justify-content-between mt-3 mb-2" >
-                    <div>
-                      <strong>Description: </strong>
-                    <label>Bài đăng có Id: {{report.postId}} - {{ report.description }}</label>
-                    <br />
-                    <strong>Report detail: </strong>
-                    <label>{{report.report}}</label>
-                    </div>
-                    <div class="row" >
-                      <button class="border-0 px-3 d-flex" (click)="openReport(report.postId)"><span class="material-symbols-outlined">
-                        visibility
-                        </span> Xem bài đăng</button>
-                      <button class="border-0 px-3 d-flex " style="color:red;" (click)="deletePost(report.postId)"><span class="material-symbols-outlined">
-                        delete_sweep
-                        </span> Xóa bài đăng</button>
-                    </div>
-                  </td>
-                </tr>
-        </tbody>
-      </table>
-    </div>
+  <div class="mat-elevation-z8">
+    <table mat-table [dataSource]="dataSource" matSort>
+
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> PostId </th>
+        <td mat-cell *matCellDef="let row">{{row.postId}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="report">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Report </th>
+        <td mat-cell *matCellDef="let row">{{row.report}}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="description">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Description </th>
+        <td mat-cell *matCellDef="let row">{{row.description}}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="action">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Action </th>
+        <td mat-cell *matCellDef="let row">
+          <button mat-mini-fab color="primary" (click)="openReport(row.postId)" matTooltip="Xem bài đăng">
+            <mat-icon>visibility</mat-icon>
+          </button>
+          <button mat-mini-fab class="mx-1" color="warn" (click)="deletePost(row.postId)" matTooltip="Xóa bài đăng">
+            <mat-icon>delete_forever</mat-icon>
+          </button>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+      <!-- Row shown when there is no matching data. -->
+      <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell" colspan="3">No data matching the filter "{{input.value}}"</td>
+      </tr>
+    </table>
+
   </div>
 </div>

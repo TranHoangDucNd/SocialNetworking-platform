@@ -11,12 +11,12 @@ img{
 #datingLink {
   font-size: 1.2rem;
   text-decoration: none;
-  color: #ffa602 !important;
+  color: #fc72a5 !important;
   transition: color 0.3s ease;
 }
 
 #datingLink:hover {
-  color: #fde3fc !important;
+  color: #fe036a !important;
   transition: transform 0.5s linear;
 }
 

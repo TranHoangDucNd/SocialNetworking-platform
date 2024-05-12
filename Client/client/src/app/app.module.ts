@@ -56,6 +56,11 @@ import {NgOptimizedImage} from "@angular/common";
 import {MatSidenavModule} from "@angular/material/sidenav";
 import {MatTreeModule} from "@angular/material/tree";
 import {MatListModule} from "@angular/material/list";
+import {MatCardModule} from "@angular/material/card";
+import {MatExpansionModule} from "@angular/material/expansion";
+import {PostCommentComponent} from "./post/post-comment/post-comment.component";
+import { PostCardComponent } from './post/post-card/post-card.component';
+import { PostCommentBoxComponent } from './post/post-comment-box/post-comment-box.component';
 
 @NgModule({
   declarations: [
@@ -80,7 +85,10 @@ import {MatListModule} from "@angular/material/list";
     ChatComponent,
     RolesModalComponent,
     ReportComponent,
-    CountlikecommentComponent
+    CountlikecommentComponent,
+    PostCommentComponent,
+    PostCardComponent,
+    PostCommentBoxComponent
 
   ],
   providers: [
@@ -113,7 +121,7 @@ import {MatListModule} from "@angular/material/list";
     MatMenuModule,
     MatTooltipModule,
     OverlayModule,
-    AdminModule, MatButtonToggleModule, NgOptimizedImage, MatSidenavModule, MatTreeModule, MatListModule
+    AdminModule, MatButtonToggleModule, NgOptimizedImage, MatSidenavModule, MatTreeModule, MatListModule, MatCardModule, MatExpansionModule
   ],
 })
 export class AppModule {}

@@ -66,7 +66,7 @@ export class ChatComponent implements OnInit {
         }
       }
     });
-    
+
     this.postId = data.SubId;
   }
   ngOnInit(): void {

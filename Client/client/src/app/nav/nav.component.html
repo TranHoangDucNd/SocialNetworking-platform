@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-md navbar-light fixed-top bg-primary">
+<nav class="navbar navbar-expand-md navbar-light fixed-top" style="background-color: #fdd9e5 !important;">
   <div class="container">
     <a class="navbar-brand text-info" id="datingLink" routerLink="/" style="font-size: x-large" routerLinkActive="active">DATING</a>
     <div class="collapse navbar-collapse" id="navbarCollapse">
@@ -8,7 +8,7 @@
       <div class="dropdown" *ngIf="(accountService.currentUser$ | async) as user" dropdown>
         <img src="{{user.photoUrl || './assets/user.png'}}" alt="User photo" style="border-radius: 50%; width: 40px; height: 40px;cursor: pointer"
              routerLink="/personalpage/{{user.userName}}">
-        <a class="dropdown-toggle text-light text-decoration-none ms-2" [matMenuTriggerFor]="menu">Welcome <b>{{user.knownAs}}</b></a>
+        <a class="dropdown-toggle text-dark text-decoration-none ms-2" [matMenuTriggerFor]="menu">Welcome <b>{{user.knownAs}}</b></a>
         <mat-menu xPosition="after" #menu="matMenu">
           <button routerLink="/member/edit" mat-menu-item>
             <i class="fa fa-edit"> </i>

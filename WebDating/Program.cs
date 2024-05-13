@@ -47,7 +47,7 @@ builder.Services.AddSwaggerGen(options =>
           new string[] { }
         }
   });
-    
+
 });
 var app = builder.Build();
 app.UseSwagger();
@@ -69,6 +69,7 @@ app.MapControllers();
 app.MapHub<PresenceHub>("hubs/presence");//"hubs/presence" giúp client tìm th?y tên trung tâm PresenceHub
 app.MapHub<MessageHub>("hubs/message");
 app.MapHub<CommentSignalR>("hubs/commentHub");
+app.MapHub<NotificationHub>("hubs/notifications");
 
 using var scope = app.Services.CreateScope();
 var services = scope.ServiceProvider;

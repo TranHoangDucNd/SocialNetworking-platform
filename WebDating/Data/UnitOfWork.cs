@@ -28,6 +28,7 @@ namespace WebDating.Data
         public ICommentRepository CommentRepository => new CommentRepository(_context);
 
         public IReactionLogRepository ReactionLogRepository => new ReactionLogRepository(_context);
+        public INotificationRepository NotificationRepository => new NotificationRepository(_context);
 
         public async Task<bool> Complete()
         {

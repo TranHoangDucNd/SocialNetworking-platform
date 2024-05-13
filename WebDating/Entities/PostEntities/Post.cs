@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using WebDating.Entities.NotificationEntities;
 using WebDating.Entities.UserEntities;
 
 namespace WebDating.Entities.PostEntities
@@ -30,5 +31,6 @@ namespace WebDating.Entities.PostEntities
         public ICollection<PostReportDetail> PostReportDetails { get; set; }
         public virtual ICollection<ReactionLog> ReactionLogs { get; set; }
         public virtual ICollection<Comment> Comments { get; set; }
+        public virtual ICollection<Notification> Notifications { get; set; }
     }
 }

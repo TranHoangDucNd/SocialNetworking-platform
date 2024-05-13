@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection.Emit;
 using WebDating.Entities.MessageEntities;
+using WebDating.Entities.NotificationEntities;
 using WebDating.Entities.PostEntities;
 using WebDating.Entities.ProfileEntities;
 using WebDating.Entities.UserEntities;
@@ -39,6 +40,7 @@ namespace WebDating.Data
         public DbSet<ImagePost> ImagePosts { get; set; }
         public virtual DbSet<Comment> Comments { get; set; }
         public virtual DbSet<ReactionLog> ReactionLogs { get; set; }
+        public virtual DbSet<Notification> Notifications { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -96,6 +98,8 @@ namespace WebDating.Data
 
             //Post
 
+
+            #region Post
             builder.Entity<Post>(entity =>
             {
                 entity.HasOne(d => d.User)
@@ -166,7 +170,10 @@ namespace WebDating.Data
                     .HasForeignKey(d => d.UserId)
                     .HasConstraintName("FK__PostSubCo__UserI__123EB7A3");
             });
+            #endregion
 
+
+            #region Post Comment
             builder.Entity<Comment>(e =>
             {
                 e.HasOne(c => c.Post)
@@ -180,7 +187,9 @@ namespace WebDating.Data
                 .WithMany(r => r.ReactionLogs)
                 .HasForeignKey(k => k.CommentId);
             });
+            #endregion
 
+            #region Reaction
             builder.Entity<ReactionLog>(e =>
             {
                 e.HasOne(c => c.Post)
@@ -190,6 +199,29 @@ namespace WebDating.Data
 
             builder.Entity<ReactionLog>()
                 .ToTable(t => t.HasCheckConstraint("CheckForeignKeyCount", "(CommentId IS NOT NULL AND PostId IS NULL) OR (CommentId IS NULL AND PostId IS NOT NULL)"));
+            #endregion
+
+            #region Notification
+            builder.Entity<Notification>()
+                .HasOne(n => n.User)
+                .WithMany(u => u.Notifications)
+                .HasForeignKey(f => f.NotifyToUserId);
+            builder.Entity<Notification>()
+               .HasOne(n => n.Post)
+               .WithMany(u => u.Notifications)
+               .HasForeignKey(f => f.PostId);
+            builder.Entity<Notification>()
+              .HasOne(n => n.Comment)
+              .WithMany(u => u.Notifications)
+              .HasForeignKey(f => f.CommentId);
+
+
+            //builder.Entity<ReactionLog>()
+            //    .ToTable(t => t.HasCheckConstraint("CheckForeignKeyCount", "(CommentId IS NOT NULL AND PostId IS NULL) OR (CommentId IS NULL AND PostId IS NOT NULL)"));
+            #endregion
+
+
+
         }
     }
 }

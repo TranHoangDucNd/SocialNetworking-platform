@@ -3,6 +3,7 @@ using WebDating.Entities.MessageEntities;
 using WebDating.Entities.PostEntities;
 using WebDating.Entities.ProfileEntities;
 using System.ComponentModel.DataAnnotations.Schema;
+using WebDating.Entities.NotificationEntities;
 namespace WebDating.Entities.UserEntities
 {
     public class AppUser : IdentityUser<int>
@@ -35,5 +36,6 @@ namespace WebDating.Entities.UserEntities
         public ICollection<PostComment> PostComments { get; set; }
         public ICollection<PostSubComment> PostSubComments { get; set; }
         public ICollection<PostReportDetail> PostReportDetails { get; set; }
+        public virtual ICollection<Notification> Notifications { get; set; }
     }
 }

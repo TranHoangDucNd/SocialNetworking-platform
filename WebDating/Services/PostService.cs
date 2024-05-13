@@ -1,13 +1,16 @@
 ﻿using AutoMapper;
+using Azure.Core;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SignalR;
 using System.Collections.Generic;
+using System.Xml.Linq;
 using System.Globalization;
 using WebDating.Data.Migrations;
 using WebDating.DTOs;
 using WebDating.DTOs.Post;
 using WebDating.Entities;
+using WebDating.Entities.NotificationEntities;
 using WebDating.Entities.PostEntities;
 using WebDating.Entities.UserEntities;
 using WebDating.Interfaces;
@@ -22,15 +25,17 @@ namespace WebDating.Services
         private readonly UserManager<AppUser> _userManager;
         private readonly IPhotoService _photoService;
         private readonly IHubContext<CommentSignalR> _commentHubContext;
+        private readonly IHubContext<NotificationHub> _notificationHubContext;
 
         public PostService(IMapper mapper, IUnitOfWork uow, UserManager<AppUser> userManager,
-            IPhotoService photoService, IHubContext<CommentSignalR> commentHubContext)
+            IPhotoService photoService, IHubContext<CommentSignalR> commentHubContext, IHubContext<NotificationHub> notificationHub)
         {
             _mapper = mapper;
             _uow = uow;
             _userManager = userManager;
             _photoService = photoService;
             _commentHubContext = commentHubContext;
+            _notificationHubContext = notificationHub;
         }
         public async Task<ResultDto<PostResponseDto>> Create(CreatePostDto requestDto, string username)
         {
@@ -111,13 +116,13 @@ namespace WebDating.Services
                 Image = username.Photos.Select(x => x.Url).FirstOrDefault()
             });
         }
-        
+
         public async Task<ResultDto<List<UserShortDto>>> GetAllUserInfo()
         {
             var users = await _uow.UserRepository.GetAllUserWithPhotosAsync();
             var listUserShort = users.Select(user => new UserShortDto()
             {
-                Id = user.Id, 
+                Id = user.Id,
                 FullName = user.UserName,
                 KnownAs = user.KnownAs ?? string.Empty,
                 Image = user.Photos.Select(x => x.Url).FirstOrDefault() ?? string.Empty
@@ -346,7 +351,7 @@ namespace WebDating.Services
             {
                 return new ErrorResult<string>("Không tìm thấy bài đọc bạn bình luận");
             }
-            var comment = _uow.CommentRepository.GetById((int)dto.Id);
+            var comment = _uow.CommentRepository.GetById(dto.Id);
             comment.Content = dto.Content;
             comment.UpdatedAt = DateTime.UtcNow;
 
@@ -369,13 +374,18 @@ namespace WebDating.Services
 
 
             #region New
+
+            NotificationType notificationType = NotificationType.CommentPost;
+            int notificationToUserId = post.UserId;
             Comment newComment = new Comment
             {
                 UserId = dto.UserId,
                 PostId = post.Id,
                 Content = dto.Content,
-
             };
+
+
+
             if (dto.ParentCommentId != 0)
             {
                 Comment parentComment = _uow.CommentRepository.GetById(dto.ParentCommentId);
@@ -388,10 +398,39 @@ namespace WebDating.Services
                         newComment.Level = 3;
                         newComment.ParentId = parentComment.ParentId;
                     }
+                    notificationType = NotificationType.ReplyComment;
+                    notificationToUserId = parentComment.UserId;
                 }
             }
             _uow.CommentRepository.Insert(newComment);
+
+
+            Notification notification = null;
+            ///Chỉ khi nào target user và user tạo comment khác nhau thì mới thông báo (không tự thông báo cho chính mình)
+            if (dto.UserId != notificationToUserId)
+            {
+                var currentUser = await _uow.UserRepository.GetUserByIdAsync(dto.UserId);
+                if (currentUser != null)
+                {
+                    notification = new Notification()
+                    {
+                        NotifyFromUserId = dto.UserId,
+                        NotifyToUserId = notificationToUserId,
+                        PostId = post.Id,
+                        Type = notificationType,
+                        Content = generateNotificatioContent(currentUser.KnownAs, NotificationType.CommentPost),
+                    };
+                    _uow.NotificationRepository.Insert(notification);
+                }
+            }
+
             bool success = await _uow.Complete();
+            if (success && notification != null)
+            {
+                Task t = sendNotificationData(notificationToUserId, notification);
+            }
+
+
             return success ? new SuccessResult<string>("Thành công") : new ErrorResult<string>("Lỗi khi comment");
             #endregion
         }
@@ -461,21 +500,47 @@ namespace WebDating.Services
         }
         #endregion
 
-
         #region Thả react
         public async Task<ResultDto<string>> ReactComment(ReactionRequest request)
         {
             ReactionLog react = _uow.ReactionLogRepository.GetReactUserByComment(request.UserId, request.TargetId);
+            Notification notification = null;
+            int notificationToUserId = 0;
             if (react is null)
             {
+                Comment comment = _uow.CommentRepository.GetById(request.TargetId);
+                if (comment is null)
+                {
+                    return new ErrorResult<string>("Bình luận đã bị xóa hoặc không hiển thị với bạn");
+                }
+                AppUser targetUser = await _uow.UserRepository.GetUserByIdAsync(comment.UserId);
+                if (targetUser is null)
+                {
+                    return new ErrorResult<string>("Nội dung không tồn tại");
+                }
+
                 react = new ReactionLog
                 {
                     UserId = request.UserId,
-                    CommentId = request.TargetId,
+                    CommentId = comment.Id,
                     ReactionType = request.ReactionType,
                     Target = ReactTarget.Comment,
                 };
                 _uow.ReactionLogRepository.Insert(react);
+                notificationToUserId = comment.UserId;
+
+                AppUser currentUser = await _uow.UserRepository.GetUserByIdAsync(request.UserId);
+
+                notification = new Notification()
+                {
+                    NotifyFromUserId = request.UserId,
+                    NotifyToUserId = notificationToUserId,
+                    CommentId = comment.Id,
+                    PostId = comment.PostId,
+                    Type = NotificationType.ReactionComment,
+                    Content = generateNotificatioContent(currentUser.KnownAs, NotificationType.ReactionComment),
+                };
+                _uow.NotificationRepository.Insert(notification);
             }
             else
             {
@@ -486,13 +551,33 @@ namespace WebDating.Services
             }
 
             bool success = await _uow.Complete();
+
+            if (success && notification != null)
+            {
+                Task t = sendNotificationData(notificationToUserId, notification);
+            }
+
+
             return success ? new SuccessResult<string>("Thành công") : new ErrorResult<string>("Lỗi tương tác cảm xúc bình luận");
         }
         public async Task<ResultDto<string>> ReactPost(ReactionRequest request)
         {
             ReactionLog react = _uow.ReactionLogRepository.GetReactUserByPost(request.UserId, request.TargetId);
+            Notification notification = null;
+            int notificationToUserId = 0;
             if (react is null)
             {
+
+                Post post = await _uow.PostRepository.GetById(request.TargetId);
+                if (post is null)
+                {
+                    return new ErrorResult<string>("Bài viết đã bị xóa hoặc không hiển thị với bạn");
+                }
+                AppUser targetUser = await _uow.UserRepository.GetUserByIdAsync(post.UserId);
+                if (targetUser is null)
+                {
+                    return new ErrorResult<string>("Nội dung không tồn tại");
+                }
                 react = new ReactionLog
                 {
                     UserId = request.UserId,
@@ -501,6 +586,20 @@ namespace WebDating.Services
                     Target = ReactTarget.Post,
                 };
                 _uow.ReactionLogRepository.Insert(react);
+
+
+                AppUser currentUser = await _uow.UserRepository.GetUserByIdAsync(request.UserId);
+                notificationToUserId = post.Id;
+                notification = new Notification()
+                {
+                    NotifyFromUserId = request.UserId,
+                    NotifyToUserId = notificationToUserId,
+                    Type = NotificationType.ReactionPost,
+                    Content = generateNotificatioContent(currentUser.KnownAs, NotificationType.ReactionPost),
+                    PostId = post.Id,
+                };
+                _uow.NotificationRepository.Insert(notification);
+
             }
             else
             {
@@ -510,6 +609,10 @@ namespace WebDating.Services
                     react.ReactionType = request.ReactionType;
             }
             bool success = await _uow.Complete();
+            if (success && notification != null)
+            {
+                Task t = sendNotificationData(notificationToUserId, notification);
+            }
             return success ? new SuccessResult<string>("Thành công") : new ErrorResult<string>("Lỗi tương tác cảm xúc bài viết");
         }
 
@@ -537,6 +640,41 @@ namespace WebDating.Services
             }
             return new SuccessResult<List<ReactionLogVM>>() { ResultObj = vms };
         }
+        #endregion
+
+        #region Notification
+        private string generateNotificatioContent(string fullname, NotificationType notificationType)
+        {
+            if (notificationType == NotificationType.ReactionPost)
+            {
+                return string.Format("{0} vừa bày tỏ cảm xúc về bài viết của bạn", fullname);
+            }
+            else if (notificationType == NotificationType.CommentPost)
+            {
+                return string.Format("{0} vừa bình luận bài viết của bạn", fullname);
+            }
+            else if (notificationType == NotificationType.ReplyComment)
+            {
+                return string.Format("{0} vừa trả lời bình luận của bạn", fullname);
+            }
+            else if (notificationType == NotificationType.ReactionComment)
+            {
+                return string.Format("{0} vừa bày tỏ cảm xúc về bình luận của bạn", fullname);
+            }
+            return string.Empty;
+        }
+        #endregion
+
+        #region SignalR
+        private async Task sendData(string eventName, int userId, object data)
+        {
+            await _notificationHubContext.Clients.User(Convert.ToString(userId)).SendAsync(eventName, data);
+        }
+        private async Task sendNotificationData(int userId, Notification notification)
+        {
+            await sendData("SendNotification", userId, notification);
+        }
+
         #endregion
     }
 }

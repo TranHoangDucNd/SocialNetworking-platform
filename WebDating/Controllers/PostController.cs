@@ -60,7 +60,7 @@ namespace WebDating.Controllers
             var result = await _postService.GetUserShort(User.Identity.Name);
             return Ok(result);
         }
-        
+
         [HttpGet("AllUserShorts")]
         public async Task<IActionResult> GetAllUserInfo()
         {
@@ -93,6 +93,7 @@ namespace WebDating.Controllers
             var result = await _postService.CreateComment(comment);
             return Ok(result);
         }
+
         [HttpGet]
         [Route("Chat")]
         [Route("get-comments-of-post")]
@@ -113,6 +114,7 @@ namespace WebDating.Controllers
             {
                 return BadRequest();
             }
+            comment.UserId = id;
             var result = await _postService.UpdateComment(comment);
             return Ok(result);
         }

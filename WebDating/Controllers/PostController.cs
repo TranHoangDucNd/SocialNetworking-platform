@@ -152,10 +152,18 @@ namespace WebDating.Controllers
 
 
         [HttpGet]
-        [Route("get-detail-reaction")]
-        public async Task<IActionResult> GetDetailReaction(int targetId)
+        [Route("get-post-reaction-detail")]
+        public async Task<IActionResult> GetPostReactionDetail(int targetId)
         {
-            var res = await _postService.GetDetailReaction(targetId);
+            var res = await _postService.GetDetailReaction(targetId, true);
+            return Ok(res);
+        }
+        
+        [HttpGet]
+        [Route("get-comment-reaction-detail")]
+        public async Task<IActionResult> GetCommentReactionDetail(int targetId)
+        {
+            var res = await _postService.GetDetailReaction(targetId, false);
             return Ok(res);
         }
 

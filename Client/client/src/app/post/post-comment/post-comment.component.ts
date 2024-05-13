@@ -67,7 +67,7 @@ export class PostCommentComponent implements OnInit {
   }
 
   getReactions() {
-    this.postService.getDetailReaction(this.comment?.id as number).subscribe({
+    this.postService.getCommentReactionDetail(this.comment?.id as number).subscribe({
       next: (data: any) => {
         this.reactionCount = data.resultObj.length;
         if (data.resultObj.length === 0 || !data.resultObj.some((reaction: {

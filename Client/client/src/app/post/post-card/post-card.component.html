@@ -45,28 +45,34 @@
       </div>
     </div>
     <mat-divider></mat-divider>
-    <div class="col col-12 d-flex justify-content-between">
-      <div>{{ reactionCount }} Reactions</div>
-      <a (click)="openComment()" style="cursor: pointer">{{ commentCount }} Comments</a>
-    </div>
   </mat-card-content>
-  <mat-card-actions>
-    <button mat-icon-button matTooltip="Like" class="like-button" (mouseenter)="showReactions=true"
-            (mouseleave)="showReactions=false" (click)="handleReaction('like')">
-      <span *ngIf="currentReaction">{{ currentReaction }}</span>
-      <mat-icon *ngIf="!currentReaction">thumb_up</mat-icon>
-      <div class="reactions" *ngIf="showReactions">
-        <div class="reaction" (click)="handleReaction('like')">👍</div>
-        <div class="reaction" (click)="handleReaction('love')">😍</div>
-        <div class="reaction" (click)="handleReaction('haha')">😆</div>
-        <div class="reaction" (click)="handleReaction('wow')">😲</div>
-        <div class="reaction" (click)="handleReaction('sad')">😢</div>
-        <div class="reaction" (click)="handleReaction('angry')">😡</div>
+  <mat-card-actions class="d-flex justify-content-between">
+    <div>
+      <button mat-icon-button matTooltip="Like" class="like-button" (mouseenter)="showReactions=true"
+              (mouseleave)="showReactions=false" (click)="handleReaction('like')">
+        <span *ngIf="currentReaction">{{ currentReaction }}</span>
+        <mat-icon *ngIf="!currentReaction">thumb_up</mat-icon>
+        <div class="reactions" *ngIf="showReactions">
+          <div class="reaction" (click)="handleReaction('like')">👍</div>
+          <div class="reaction" (click)="handleReaction('love')">😍</div>
+          <div class="reaction" (click)="handleReaction('haha')">😆</div>
+          <div class="reaction" (click)="handleReaction('wow')">😲</div>
+          <div class="reaction" (click)="handleReaction('sad')">😢</div>
+          <div class="reaction" (click)="handleReaction('angry')">😡</div>
+        </div>
+      </button>
+      <button mat-icon-button matTooltip="Comment" (click)="openComment()">
+        <mat-icon>chat_bubble_outline</mat-icon>
+      </button>
+    </div>
+    <div>
+      <div class="col col-12 d-flex justify-content-end">
+        <span>{{ reactionCount }} Reactions</span>
+        <span class="mx-2">·</span>
+        <span><a (click)="openComment()" style="cursor: pointer">{{ commentCount }} Comments</a></span>
       </div>
-    </button>
-    <button mat-icon-button matTooltip="Comment" (click)="openComment()">
-      <mat-icon>chat_bubble_outline</mat-icon>
-    </button>
+    </div>
+
   </mat-card-actions>
   <mat-expansion-panel [expanded]="commentOpened" hideToggle>
     <ng-template matExpansionPanelContent>

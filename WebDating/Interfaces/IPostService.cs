@@ -39,7 +39,7 @@ namespace WebDating.Interfaces
         /// <returns></returns>
         Task<ResultDto<string>> ReactPost(ReactionRequest request);
 
-        Task<ResultDto<List<ReactionLogVM>>> GetDetailReaction(int targetId);
+        Task<ResultDto<List<ReactionLogVM>>> GetDetailReaction(int targetId, bool isPost);
         #endregion
 
 

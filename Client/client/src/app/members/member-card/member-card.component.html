@@ -1,41 +1,87 @@
-<div class="card mb-4" *ngIf="member">
-  <div class="card-img-wrapper">
-    <img
-      src="{{ member.photoUrl ||  './assets/user.png' }}"
-      alt="{{ member.knownAs }}"
-      class="card-img-top"
-    />
-    <ul class="list-inline member-icons animate text-center">
-      <li class="list-inline-item">
-        <button routerLink="/members/{{member.userName}}" class="btn btn-primary"><i class="fa fa-user"></i></button>
-      </li>
+<!--<div class="card mb-4 content" >-->
+<!--  <div class="card-img-wrapper front">-->
 
-      <li class="list-inline-item">
-        <button (click)="addLike(member)" class="btn btn-primary"><i class="fa fa-heart"></i></button>
-      </li>
+<!--    &lt;!&ndash;    <ul class="list-inline member-icons animate text-center">&ndash;&gt;-->
+<!--    &lt;!&ndash;      <li class="list-inline-item">&ndash;&gt;-->
+<!--    &lt;!&ndash;        <button routerLink="/members/{{member.userName}}" class="btn btn-primary"><i class="fa fa-user"></i></button>&ndash;&gt;-->
+<!--    &lt;!&ndash;      </li>&ndash;&gt;-->
 
-      <li class="list-inline-item">
-        <button
-        routerLink="/members/{{member.userName}}"
-        [queryParams]="{tab: 'Messages'}"
-         class="btn btn-primary"><i class="fa fa-envelope"></i></button>
-      </li>
-    </ul>
-  </div>
-  <div class="card-body ms-1 p-1">
-    <h6 class="card-title mb-1">
+<!--    &lt;!&ndash;      <li class="list-inline-item">&ndash;&gt;-->
+<!--    &lt;!&ndash;        <button (click)="addLike(member)" class="btn btn-primary"><i class="fa fa-heart"></i></button>&ndash;&gt;-->
+<!--    &lt;!&ndash;      </li>&ndash;&gt;-->
+
+<!--    &lt;!&ndash;      <li class="list-inline-item">&ndash;&gt;-->
+<!--    &lt;!&ndash;        <button&ndash;&gt;-->
+<!--    &lt;!&ndash;        routerLink="/members/{{member.userName}}"&ndash;&gt;-->
+<!--    &lt;!&ndash;        [queryParams]="{tab: 'Messages'}"&ndash;&gt;-->
+<!--    &lt;!&ndash;         class="btn btn-primary"><i class="fa fa-envelope"></i></button>&ndash;&gt;-->
+<!--    &lt;!&ndash;      </li>&ndash;&gt;-->
+<!--    &lt;!&ndash;    </ul>&ndash;&gt;-->
+<!--  </div>-->
+<!--  <div class="back">-->
+<!--    <div class="ms-1 p-1">-->
+<!--      <h6 class="card-title mb-1">-->
+<!--      <span [class.is-online]="(presenceService.onlineUsers$ | async)?.includes(member.userName)">-->
+<!--        <i class="fa fa-user me-2"></i>-->
+<!--      </span>-->
+
+<!--        {{ member.knownAs }}-->
+<!--      </h6>-->
+<!--      <p class="card-text ms-1 text-muted">-->
+<!--        Age: {{member.age}} <br>-->
+<!--        &lt;!&ndash; Where to date:-->
+<!--         {{ member.datingProfile.whereToDate }}-->
+<!--         <br> &ndash;&gt;-->
+<!--        &lt;!&ndash; Looking for: {{member.lookingFor}} &ndash;&gt;-->
+<!--      </p>-->
+<!--    </div>-->
+<!--  </div>-->
+<!--</div>-->
+
+<!--&lt;!&ndash;<div class="card mb-4" *ngIf="member">&ndash;&gt;-->
+<!--&lt;!&ndash;  <div class="content">&ndash;&gt;-->
+<!--&lt;!&ndash;    <div class="front">&ndash;&gt;-->
+<!--&lt;!&ndash;      <div class="card-img-wrapper">&ndash;&gt;-->
+<!--&lt;!&ndash;        <img&ndash;&gt;-->
+<!--&lt;!&ndash;          src="{{ member.photoUrl ||  './assets/user.png' }}"&ndash;&gt;-->
+<!--&lt;!&ndash;          alt="{{ member.knownAs }}"&ndash;&gt;-->
+<!--&lt;!&ndash;          class="card-img-top"&ndash;&gt;-->
+<!--&lt;!&ndash;        />&ndash;&gt;-->
+<!--&lt;!&ndash;      </div>&ndash;&gt;-->
+<!--&lt;!&ndash;    </div>&ndash;&gt;-->
+<!--&lt;!&ndash;    <div class="back">&ndash;&gt;-->
+<!--&lt;!&ndash;      Back!&ndash;&gt;-->
+<!--&lt;!&ndash;    </div>&ndash;&gt;-->
+<!--&lt;!&ndash;  </div>&ndash;&gt;-->
+<!--&lt;!&ndash;</div>&ndash;&gt;-->
+
+<div class="flip-card mb-4 w-100" *ngIf="member">
+  <div class="flip-card-inner w-100" [ngClass]="{'is-flipped': flipped}" (dblclick)="flipCard()">
+    <div class="flip-card-front">
+      <img
+        src="{{ member.photoUrl ||  './assets/user.png' }}"
+        alt="{{ member.knownAs }}"
+        class="w-100 h-auto rounded-2"
+      />
+    </div>
+    <div class="flip-card-back">
+      <div class="ms-1 p-1">
+        <h6 class="card-title mb-1">
       <span [class.is-online]="(presenceService.onlineUsers$ | async)?.includes(member.userName)">
         <i class="fa fa-user me-2"></i>
       </span>
-
-      {{ member.knownAs }}
-    </h6>
-    <p class="card-text ms-1 text-muted">
-      Age: {{member.age}} <br>
-      <!-- Where to date:
-       {{ member.datingProfile.whereToDate }}
-       <br> -->
-      <!-- Looking for: {{member.lookingFor}} -->
-    </p>
+          {{ member.knownAs }}
+        </h6>
+        <p class="card-text ms-1 text-muted">
+          Age: {{member.age}} <br>
+          <!-- Where to date:
+           {{ member.datingProfile.whereToDate }}
+           <br> -->
+          <!-- Looking for: {{member.lookingFor}} -->
+        </p>
+      </div>
+    </div>
   </div>
+
+<!--  <div><h1>NoFlip</h1></div>-->
 </div>

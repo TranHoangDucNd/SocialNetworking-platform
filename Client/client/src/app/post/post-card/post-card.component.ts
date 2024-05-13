@@ -55,19 +55,21 @@ export class PostCardComponent implements OnInit {
   }
 
   getReactions() {
-    this.postService.getDetailReaction(this.post?.id as number).subscribe({
+    this.postService.getPostReactionDetail(this.post?.id as number).subscribe({
       next: (data: any) => {
         this.reactionCount = data.resultObj.length;
         if (data.resultObj.length === 0 || !data.resultObj.some((reaction: {
           userId: number;
         }) => reaction.userId === this.user?.id)) {
           this.currentReaction = '';
+          console.log(this.currentReaction)
           return;
         }
         const type = data.resultObj.find((reaction: {
           userId: number;
         }) => reaction.userId === this.user?.id).type as number;
         this.currentReaction = convertToEmoji(ReactionType[type]);
+        console.log(this.currentReaction)
       }
     })
   }

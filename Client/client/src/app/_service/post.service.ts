@@ -79,8 +79,12 @@ export class PostService {
     return this.http.post(this.baseUrl + 'Post/update-comment-reaction', request);
   }
 
-  getDetailReaction(targetId: number) {
-    return this.http.get(this.baseUrl + 'Post/get-detail-reaction?targetId=' + targetId);
+  getPostReactionDetail(targetId: number) {
+    return this.http.get(this.baseUrl + 'Post/get-post-reaction-detail?targetId=' + targetId);
+  }
+
+  getCommentReactionDetail(targetId: number) {
+    return this.http.get(this.baseUrl + 'Post/get-comment-reaction-detail?targetId=' + targetId);
   }
 
   getPostComment(postId: any) {

@@ -12,6 +12,12 @@ import { PresenceService } from 'src/app/_service/presence.service';
 export class MemberCardComponent implements OnInit {
   @Input() member: Member | undefined;
 
+  flipped: boolean = false;
+
+  flipCard() {
+    this.flipped = !this.flipped;
+  }
+
   constructor(private memberService: MembersService,
     private toastr: ToastrService, public presenceService: PresenceService) {}
 

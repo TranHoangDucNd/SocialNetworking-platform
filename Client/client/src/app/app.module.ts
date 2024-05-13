@@ -61,6 +61,7 @@ import {MatExpansionModule} from "@angular/material/expansion";
 import {PostCommentComponent} from "./post/post-comment/post-comment.component";
 import { PostCardComponent } from './post/post-card/post-card.component';
 import { PostCommentBoxComponent } from './post/post-comment-box/post-comment-box.component';
+import {MatPaginatorModule} from "@angular/material/paginator";
 
 @NgModule({
   declarations: [
@@ -121,7 +122,7 @@ import { PostCommentBoxComponent } from './post/post-comment-box/post-comment-bo
     MatMenuModule,
     MatTooltipModule,
     OverlayModule,
-    AdminModule, MatButtonToggleModule, NgOptimizedImage, MatSidenavModule, MatTreeModule, MatListModule, MatCardModule, MatExpansionModule
+    AdminModule, MatButtonToggleModule, NgOptimizedImage, MatSidenavModule, MatTreeModule, MatListModule, MatCardModule, MatExpansionModule, MatPaginatorModule
   ],
 })
 export class AppModule {}

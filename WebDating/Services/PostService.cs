@@ -616,10 +616,10 @@ namespace WebDating.Services
             return success ? new SuccessResult<string>("Thành công") : new ErrorResult<string>("Lỗi tương tác cảm xúc bài viết");
         }
 
-        public async Task<ResultDto<List<ReactionLogVM>>> GetDetailReaction(int targetId)
+        public async Task<ResultDto<List<ReactionLogVM>>> GetDetailReaction(int targetId, bool isPost)
         {
             List<ReactionLogVM> vms = new List<ReactionLogVM>();
-            List<ReactionLog> reactions = await _uow.ReactionLogRepository.GetDetailReaction(targetId);
+            List<ReactionLog> reactions = isPost ? await _uow.ReactionLogRepository.GetDetailReactionForPost(targetId) : await _uow.ReactionLogRepository.GetDetailReactionForComment(targetId);
 
             List<AppUser> userCommented = await _uow.UserRepository.GetMany(reactions.Select(it => it.UserId));
             foreach (var react in reactions)

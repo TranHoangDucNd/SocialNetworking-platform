@@ -102,6 +102,7 @@ export class MemberListComponent implements OnInit, OnDestroy {
           if (response.result && response.pagination) {
             this.members = response.result;
             this.pagination = response.pagination;
+            console.log(this.pagination);
           }
         },
       });

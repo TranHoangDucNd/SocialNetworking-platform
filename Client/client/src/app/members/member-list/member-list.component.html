@@ -1,32 +1,38 @@
 <div class="my-3 mx-5">
-  <button mat-mini-fab color="primary" (click)="openFilterModal()"><i class="fa fa-filter"></i></button>
-  <div class="float-end">
-    <p>Sort by:
-      <mat-button-toggle-group name="sortBy" aria-label="Sort by" [(ngModel)]="orderBy" (change)="handleSortChange($event)">
-        <mat-button-toggle value="lastActive"><i *ngIf="orderBy==='lastActive'" class="fa fa-check"></i> Last Active</mat-button-toggle>
-        <mat-button-toggle value="created"><i *ngIf="orderBy!='lastActive'" class="fa fa-check"></i> Newest Members</mat-button-toggle>
-      </mat-button-toggle-group>
-    </p>
-</div>
-
-<div class="w-100 row mt-5 mb-3">
-  <div class="col col-md-3 col-xl-3 col-sm-6" *ngFor="let member of members">
-    <app-member-card [member]="member"></app-member-card>
+  <div class="d-flex justify-content-between">
+<!--    <div class="d-flex justify-content-start">-->
+      <button mat-mini-fab color="warn" (click)="openFilterModal()"><i class="fa fa-filter"></i></button>
+      <mat-paginator *ngIf="pagination"
+                     class="demo-paginator"
+                     (page)="pageChanged($event)"
+                     [length]="pagination.totalItems"
+                     [pageSize]="pagination.itemsPerPage"
+                     [showFirstLastButtons]="true"
+                     [hidePageSize]="true"
+                     [pageIndex]="pagination.currentPage-1"
+                     aria-label="Select page">
+      </mat-paginator>
+<!--    </div>-->
+    <div>
+      <p>Sort by:
+        <mat-button-toggle-group name="sortBy" aria-label="Sort by" [(ngModel)]="orderBy"
+                                 (change)="handleSortChange($event)">
+          <mat-button-toggle value="lastActive"><i *ngIf="orderBy==='lastActive'" class="fa fa-check"></i> Last Active
+          </mat-button-toggle>
+          <mat-button-toggle value="created"><i *ngIf="orderBy!='lastActive'" class="fa fa-check"></i> Newest Members
+          </mat-button-toggle>
+        </mat-button-toggle-group>
+      </p>
+    </div>
   </div>
-</div>
 
-<div class="d-flex justify-content-center" *ngIf="pagination">
-  <pagination
-    [boundaryLinks]="true"
-    [totalItems]="pagination.totalItems"
-    [itemsPerPage]="pagination.itemsPerPage"
-    [maxSize]="10"
-    [(ngModel)]="pagination.currentPage"
-    (pageChanged)="pageChanged($event)"
-    previousText="&lsaquo;"
-    nextText="&rsaquo;"
-    firstText="&laquo;"
-    lastText="&raquo;"
-  >
-  </pagination>
+
+  <div class="w-100 row mt-5 mb-3">
+    <div class="col col-md-3 col-xl-3 col-sm-6" *ngFor="let member of members">
+      <app-member-card [member]="member"></app-member-card>
+    </div>
+    <div class="col col-md-3 col-xl-3 col-sm-6" *ngFor="let member of members">
+      <app-member-card [member]="member"></app-member-card>
+    </div>
+  </div>
 </div>

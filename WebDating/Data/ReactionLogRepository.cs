@@ -66,10 +66,18 @@ namespace WebDating.Data
                 .Where(it => it.Target == ReactTarget.Post && it.PostId == postId)
                 .ToList();
         }
-        public Task<List<ReactionLog>> GetDetailReaction(int targetId)
+        
+        public Task<List<ReactionLog>> GetDetailReactionForPost(int targetId)
         {
             return _context.ReactionLogs
-                .Where(it => it.CommentId == targetId || it.PostId == targetId)
+                .Where(it => it.PostId == targetId)
+                .ToListAsync();
+        }
+        
+        public Task<List<ReactionLog>> GetDetailReactionForComment(int targetId)
+        {
+            return _context.ReactionLogs
+                .Where(it => it.CommentId == targetId)
                 .ToListAsync();
         }
     }

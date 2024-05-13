@@ -10,9 +10,8 @@ namespace WebDating.Interfaces
 
         ReactionLog GetReactUserByComment(int userId, int commentId);
         ReactionLog GetReactUserByPost(int userId, int postId);
-
-        Task<List<ReactionLog>> GetDetailReaction(int targetId);
-
+        Task<List<ReactionLog>> GetDetailReactionForPost(int targetId);
+        Task<List<ReactionLog>> GetDetailReactionForComment(int targetId);
         List<ReactionLog> GetByComment(int commentId);
         List<ReactionLog> GetByComments(IEnumerable<int> commentIds);
         List<ReactionLog> GetByPost(int postId);

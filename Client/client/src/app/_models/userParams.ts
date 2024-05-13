@@ -2,7 +2,7 @@ import { User } from './user';
 
 export class UserParams {
   currentUserName = '';
-  gender= 2;
+  gender= 0;
   minAge = 18;
   maxAge = 99;
   minHeight = 120;
@@ -14,7 +14,6 @@ export class UserParams {
 
   constructor(user?: User) {
     this.currentUserName = user?.userName || '';
-    this.gender = user?.gender === 'female' ? 1 : 2;
   }
 
 }

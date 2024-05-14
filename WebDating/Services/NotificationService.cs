@@ -24,6 +24,7 @@ namespace WebDating.Services
                 Id = it.Id,
                 Content = it.Content,
                 PostId = it.PostId,
+                UserId = it.NotifyFromUserId,
                 Status = it.Status,
                 CreatedDate = it.CreatedDate,
             });
@@ -41,6 +42,7 @@ namespace WebDating.Services
                 Id = it.Id,
                 Content = it.Content,
                 PostId = it.PostId,
+                UserId = it.NotifyFromUserId,
                 Status = it.Status,
                 CreatedDate = it.CreatedDate,
             });

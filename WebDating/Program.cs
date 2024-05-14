@@ -66,7 +66,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
-app.MapHub<PresenceHub>("hubs/presence");//"hubs/presence" giúp client tìm th?y tên trung tâm PresenceHub
+app.MapHub<PresenceHub>("hubs/presence");//"hubs/presence" giÃºp client tÃ¬m th?y tÃªn trung tÃ¢m PresenceHub
 app.MapHub<MessageHub>("hubs/message");
 app.MapHub<CommentSignalR>("hubs/commentHub");
 app.MapHub<NotificationHub>("hubs/notifications");

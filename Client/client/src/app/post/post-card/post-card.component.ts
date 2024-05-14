@@ -69,7 +69,6 @@ export class PostCardComponent implements OnInit {
           userId: number;
         }) => reaction.userId === this.user?.id).type as number;
         this.currentReaction = convertToEmoji(ReactionType[type]);
-        console.log(this.currentReaction)
       }
     })
   }
@@ -81,6 +80,7 @@ export class PostCardComponent implements OnInit {
     ]).subscribe({
       next: ([allShorts, comments]) => {
         this.postService.setAllUsersShort(allShorts);
+
         const commentsWithUserShort = comments.resultObj.map((comment: { userId: number; }) => {
           const userShort = allShorts.resultObj.find((short: { id: number; }) => short.id === comment.userId);
           return {

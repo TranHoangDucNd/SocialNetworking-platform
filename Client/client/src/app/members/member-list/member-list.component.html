@@ -1,18 +1,18 @@
 <div class="my-3 mx-5">
   <div class="d-flex justify-content-between">
-<!--    <div class="d-flex justify-content-start">-->
-      <button mat-mini-fab color="warn" (click)="openFilterModal()"><i class="fa fa-filter"></i></button>
-      <mat-paginator *ngIf="pagination"
-                     class="demo-paginator"
-                     (page)="pageChanged($event)"
-                     [length]="pagination.totalItems"
-                     [pageSize]="pagination.itemsPerPage"
-                     [showFirstLastButtons]="true"
-                     [hidePageSize]="true"
-                     [pageIndex]="pagination.currentPage-1"
-                     aria-label="Select page">
-      </mat-paginator>
-<!--    </div>-->
+    <!--    <div class="d-flex justify-content-start">-->
+    <button mat-mini-fab color="warn" (click)="openFilterModal()"><i class="fa fa-filter"></i></button>
+    <mat-paginator *ngIf="pagination"
+                   class="demo-paginator"
+                   (page)="pageChanged($event)"
+                   [length]="pagination.totalItems"
+                   [pageSize]="pagination.itemsPerPage"
+                   [showFirstLastButtons]="true"
+                   [hidePageSize]="true"
+                   [pageIndex]="pagination.currentPage-1"
+                   aria-label="Select page">
+    </mat-paginator>
+    <!--    </div>-->
     <div>
       <p>Sort by:
         <mat-button-toggle-group name="sortBy" aria-label="Sort by" [(ngModel)]="orderBy"
@@ -28,9 +28,6 @@
 
 
   <div class="w-100 row mt-5 mb-3">
-    <div class="col col-md-3 col-xl-3 col-sm-6" *ngFor="let member of members">
-      <app-member-card [member]="member"></app-member-card>
-    </div>
     <div class="col col-md-3 col-xl-3 col-sm-6" *ngFor="let member of members">
       <app-member-card [member]="member"></app-member-card>
     </div>

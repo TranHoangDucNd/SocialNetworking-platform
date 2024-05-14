@@ -1,0 +1,5 @@
+<mat-nav-list>
+  <mat-list-item *ngFor="let noti of notifications" (click)="navigateToPost(noti)">
+    {{ noti | json }}
+  </mat-list-item>
+</mat-nav-list>

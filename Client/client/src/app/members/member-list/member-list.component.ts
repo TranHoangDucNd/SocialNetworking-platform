@@ -1,12 +1,12 @@
 import {Component, inject, OnDestroy, OnInit} from '@angular/core';
-import { BsModalService } from 'ngx-bootstrap/modal';
+import {BsModalService} from 'ngx-bootstrap/modal';
 
-import { Member } from 'src/app/_models/member';
-import { Pagination } from 'src/app/_models/pagination';
-import { UserParams } from 'src/app/_models/userParams';
-import { AccountService } from 'src/app/_service/account.service';
-import { MembersService } from 'src/app/_service/members.service';
-import { DatingProfileComponent } from 'src/app/dating-profile/dating-profile.component';
+import {Member} from 'src/app/_models/member';
+import {Pagination} from 'src/app/_models/pagination';
+import {UserParams} from 'src/app/_models/userParams';
+import {AccountService} from 'src/app/_service/account.service';
+import {MembersService} from 'src/app/_service/members.service';
+import {DatingProfileComponent} from 'src/app/dating-profile/dating-profile.component';
 import {MatDialog} from "@angular/material/dialog";
 import {MemberFilterComponent} from "../../modals/member-filter/member-filter.component";
 import {forkJoin} from "rxjs";
@@ -33,6 +33,7 @@ export class MemberListComponent implements OnInit, OnDestroy {
   ) {
 
   }
+
   checkUser() {
     this.accountService.checkDatingProfile().subscribe(
       (data: any) => {
@@ -43,6 +44,7 @@ export class MemberListComponent implements OnInit, OnDestroy {
       }
     );
   }
+
   openDatingModal() {
     this.modalService.show(DatingProfileComponent, {
       class: 'modal-lg',
@@ -102,7 +104,6 @@ export class MemberListComponent implements OnInit, OnDestroy {
           if (response.result && response.pagination) {
             this.members = response.result;
             this.pagination = response.pagination;
-            console.log(this.pagination);
           }
         },
       });

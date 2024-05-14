@@ -95,6 +95,10 @@ export class PostService {
     return this.hubUrl + 'commentHub';
   }
 
+  getNotificationSignalR(): string {
+    return this.hubUrl + 'notifications';
+  }
+
   CreatePostComment(data: CommentPostDto) {
     return this.http.post(this.baseUrl + 'Post/Chat', data)
   }

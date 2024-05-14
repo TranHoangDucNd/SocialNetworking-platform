@@ -672,7 +672,18 @@ namespace WebDating.Services
         }
         private async Task sendNotificationData(int userId, Notification notification)
         {
-            await sendData("SendNotification", userId, notification);
+            await sendData("SendNotification", userId, new
+            {
+                PostId = notification.PostId,
+                CommentId = notification.CommentId,
+                Id = notification.Id,
+                Content = notification.Content,
+                Type = notification.Type,
+                Status = notification.Status,
+                CreatedDate = notification.CreatedDate,
+                From = notification.NotifyFromUserId,
+                To = notification.NotifyToUserId,
+            });
         }
 
         #endregion

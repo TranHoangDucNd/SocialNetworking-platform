@@ -1,0 +1,10 @@
+<mat-tab-group style="max-width: 500px">
+  <mat-tab label="Unread">
+    <app-notification-list [notifications]="unreadNotifications"></app-notification-list>
+  </mat-tab>
+  <mat-tab label="All">
+    <ng-template matTabContent>
+      <app-notification-list [notifications]="allNotifications"></app-notification-list>
+    </ng-template>
+  </mat-tab>
+</mat-tab-group>

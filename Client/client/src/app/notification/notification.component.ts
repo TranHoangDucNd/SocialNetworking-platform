@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {HubConnection, HubConnectionBuilder} from "@microsoft/signalr";
 import {UserShortDto} from "../_models/PostModels";
 import {AccountService} from "../_service/account.service";
@@ -19,6 +19,7 @@ export class NotificationComponent implements OnInit {
   allUserShort: UserShortDto[] = [];
   unreadNotifications: Notification[] = [];
   allNotifications: Notification[] = [];
+  @Output() notiClicked = new EventEmitter<boolean>();
 
   constructor(public accountService: AccountService,
               private router: Router,
@@ -86,13 +87,16 @@ export class NotificationComponent implements OnInit {
     })
 
     this.hubConnection.on('SendNotification', (data: any) => {
+      let date = new Date(data.createdDate);
+      date.setHours(date.getHours() - 7);
+      let updatedDate = date.toISOString();
       this.notificationService.addNotification({
         postId: data.postId,
         userId: data.userId,
         id: data.id,
         content: data.content,
         status: data.status,
-        createdDate: data.createdDate,
+        createdDate: updatedDate,
         userShort: this.allUserShort.find((user: any) => user.id === data.userId)
       });
 
@@ -101,4 +105,9 @@ export class NotificationComponent implements OnInit {
     })
   }
 
+  handleNotiClicked($event: boolean) {
+    if ($event) {
+      this.notiClicked.emit(true);
+    }
+  }
 }

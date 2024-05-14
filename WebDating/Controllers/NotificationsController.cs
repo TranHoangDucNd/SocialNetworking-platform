@@ -33,7 +33,7 @@ namespace WebDating.Controllers
             return Ok(notifications);
         }
 
-        [HttpPost]
+        [HttpGet]
         [Route("mark-as-read")]
         public async Task<IActionResult> MarkNotificationRead(int notificationId)
         {

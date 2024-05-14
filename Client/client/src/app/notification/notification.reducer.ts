@@ -15,7 +15,7 @@ export function notificationReducer(state: NotificationState, action: Action<any
         ...state,
         unreadCount: state.unreadCount - 1,
         unreadNotifications: state.unreadNotifications.filter(n => n.id !== action.payload?.id),
-        notifications: state.notifications.map(n => n.id === action.payload?.id ? {...n, isRead: true} : n)
+        notifications: state.notifications.map(n => n.id === action.payload?.id ? {...n, status: 1} : n)
       };
     case 'RESET':
       return {

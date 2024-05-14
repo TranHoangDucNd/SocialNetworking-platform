@@ -77,11 +77,11 @@
   </mat-card-actions>
   <mat-divider></mat-divider>
   <div class="ms-5">
-    <div *ngFor="let childComment of comment?.descendants">
-      <app-post-comment (commentChanged)="handleCommentChanged($event)" [comment]="childComment" [user]="user"
-                        [level]="level + 1"></app-post-comment>
-    </div>
     <mat-expansion-panel [expanded]="commentOpened" hideToggle>
+      <div *ngFor="let childComment of comment?.descendants">
+        <app-post-comment (commentChanged)="handleCommentChanged($event)" [comment]="childComment" [user]="user"
+                          [level]="level + 1"></app-post-comment>
+      </div>
       <app-post-comment-box (commentAdded)="handleCommentAdded($event)" [postId]="comment?.postId"
                             [parentCommentId]="comment?.id"></app-post-comment-box>
     </mat-expansion-panel>

@@ -589,7 +589,7 @@ namespace WebDating.Services
 
 
                 AppUser currentUser = await _uow.UserRepository.GetUserByIdAsync(request.UserId);
-                notificationToUserId = post.Id;
+                notificationToUserId = post.UserId;
                 notification = new Notification()
                 {
                     NotifyFromUserId = request.UserId,

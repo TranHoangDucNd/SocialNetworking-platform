@@ -68,6 +68,7 @@ import {ManagepostreportModule} from "./admin/components/managepostreport/manage
 import {MatTabsModule} from "@angular/material/tabs";
 import {ModeratorModule} from "./admin/components/moderator/moderator.module";
 import { NotificationListComponent } from './notification/notification-list/notification-list.component';
+import { PostDetailComponent } from './post/post-detail/post-detail.component';
 
 @NgModule({
   declarations: [
@@ -97,7 +98,8 @@ import { NotificationListComponent } from './notification/notification-list/noti
     PostCardComponent,
     PostCommentBoxComponent,
     NotificationComponent,
-    NotificationListComponent
+    NotificationListComponent,
+    PostDetailComponent
 
   ],
   providers: [

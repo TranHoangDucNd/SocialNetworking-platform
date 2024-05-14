@@ -28,13 +28,15 @@ export class NavComponent implements OnInit {
   ngOnInit(): void {
     this.notificationService.subscribeToStore('unreadCount')?.subscribe((count) => {
       this.unreadNotificationCount = count as number;
-      console.log(this.unreadNotificationCount);
     });
   }
 
   togglePopover(event: Event) {
     event.preventDefault(); // Prevents following the link
     this.popoverVisible = !this.popoverVisible;
-    console.log(this.notificationService.getStore());
+  }
+
+  closePopover() {
+    this.popoverVisible = false;
   }
 }

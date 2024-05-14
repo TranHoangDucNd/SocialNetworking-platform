@@ -1,4 +1,4 @@
-import {Component, inject, Input} from '@angular/core';
+import {Component, EventEmitter, inject, Input, Output} from '@angular/core';
 import {Notification} from '../notification.model';
 import {Router} from "@angular/router";
 import {AccountService} from "../../_service/account.service";
@@ -15,15 +15,13 @@ export class NotificationListComponent {
   notificationService = inject(NotificationService);
   user = this.accountService.getCurrentUser();
   @Input() notifications: Notification[] = [];
+  @Output() notiClicked = new EventEmitter<boolean>();
 
   navigateToPost(noti: Notification) {
-    console.log('Navigating to post', noti);
+    if (!noti.status) this.notificationService.markAsRead(noti).subscribe();
+    this.notiClicked.emit(true);
     if (noti.postId) {
-      this.router.navigate(['/personalpage/', noti.postId]).then(
-        () => {
-          if (noti.status) this.notificationService.markAsRead(noti).subscribe();
-        }
-      )
+      this.router.navigate(['/post/', noti.postId]).catch(console.error);
     }
   }
 }

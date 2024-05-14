@@ -14,7 +14,7 @@
 
         <div class="popover__wrapper">
           <div class="popover__content" [ngClass]="{ 'show': popoverVisible }">
-            <app-notification></app-notification>
+            <app-notification (notiClicked)="closePopover()"></app-notification>
           </div>
         </div>
 

@@ -16,9 +16,22 @@ import {convertToEmoji, countComments} from "../../_service/post.helper";
   styleUrls: ['./post-card.component.css']
 })
 export class PostCardComponent implements OnInit {
+  _post: PostResponseDto | undefined;
   @Output() postChanged = new EventEmitter<boolean>();
-  @Input() post: PostResponseDto | undefined;
+
+  @Input() set post(value: PostResponseDto | undefined) {
+    this._post = value;
+    this.getReactions();
+    this.getComments();
+  }
+
+  get post() {
+    return this._post;
+  }
+
+  @Input() postId = 0;
   @Input() user: User | undefined;
+  @Input() commentOpened = false;
   modalService = inject(BsModalService);
   postService = inject(PostService);
   toastr = inject(ToastrService);
@@ -32,10 +45,10 @@ export class PostCardComponent implements OnInit {
   currentReaction: string = '';
 
 
-  commentOpened = false;
   showReactions: boolean = false;
 
   ngOnInit() {
+    console.log(this.post)
     this.getComments();
     this.getReactions();
     this.reaction$.pipe(throttleTime(100),
@@ -55,14 +68,13 @@ export class PostCardComponent implements OnInit {
   }
 
   getReactions() {
-    this.postService.getPostReactionDetail(this.post?.id as number).subscribe({
+    this.postService.getPostReactionDetail(this.post?.id || this.postId).subscribe({
       next: (data: any) => {
         this.reactionCount = data.resultObj.length;
         if (data.resultObj.length === 0 || !data.resultObj.some((reaction: {
           userId: number;
         }) => reaction.userId === this.user?.id)) {
           this.currentReaction = '';
-          console.log(this.currentReaction)
           return;
         }
         const type = data.resultObj.find((reaction: {
@@ -76,7 +88,7 @@ export class PostCardComponent implements OnInit {
   getComments() {
     forkJoin([
       this.postService.getAllUsersShort(),
-      this.postService.getAllCommentsOfPost(this.post?.id as number)
+      this.postService.getAllCommentsOfPost(this.post?.id || this.postId)
     ]).subscribe({
       next: ([allShorts, comments]) => {
         this.postService.setAllUsersShort(allShorts);

@@ -51,6 +51,6 @@ export class NotificationService {
 
   markAsRead(notification: Notification) {
     this.#notificationStore?.dispatch({type: 'MARK_AS_READ', payload: notification});
-    return this.http.post<any>(this.#baseUrl + 'Notifications/mark-as-read', {notificationId: notification.id});
+    return this.http.get(this.#baseUrl + 'Notifications/mark-as-read?notificationId=' + notification.id);
   }
 }

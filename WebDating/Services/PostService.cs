@@ -59,7 +59,6 @@ namespace WebDating.Services
                         var img = new ImagePost(post.Id, image.SecureUrl.AbsoluteUri, image.PublicId);
                         await _uow.PostRepository.InsertImagePost(img);
                     }
-
                 }
                 bool success = await _uow.Complete();
                 if (success)
@@ -76,7 +75,7 @@ namespace WebDating.Services
                                 NotifyToUserId = follower,
                                 PostId = post.Id,
                                 Type = NotificationType.NewPost,
-                                Content = generateNotificatioContent(user.KnownAs, NotificationType.NewPost),
+                                Content = generateNotificatioContent(user.KnownAs, NotificationType.CommentPost),
                             };
                             notifications.Add(notification);
                             _uow.NotificationRepository.Insert(notification);
@@ -602,6 +601,10 @@ namespace WebDating.Services
             }else if(notificationType == NotificationType.NewPost)
             {
                 return string.Format("{0} người bạn đang theo dõi vừa đăng một bài đăng mới", fullname);
+            }
+            else if (notificationType == NotificationType.NewPost)
+            {
+                return string.Format("{0} vừa đăng một bài đăng mới", fullname);
             }
             return string.Empty;
         }

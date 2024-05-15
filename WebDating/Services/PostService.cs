@@ -191,7 +191,7 @@ namespace WebDating.Services
                 return new ErrorResult<PostResponseDto>(ex.Message);
             }
         }
-        
+
         public async Task<Post> GetById(int postId)
         => await _uow.PostRepository.GetById(postId);
 
@@ -332,6 +332,7 @@ namespace WebDating.Services
                     if (newComment.Level > 3)
                     {
                         newComment.Level = 3;
+                        //Khi cố tình (hoặc có lỗi xảy ra) mà user vẫn trả lời được 1 comment đang ở level 3 rồi thì sẽ không chuyển nó thành level 4, mà vẫn sẽ là level 3 và coi như 2 comment này đang chung parent Id, nghĩa là cùng reply 1 comment
                         newComment.ParentId = parentComment.ParentId;
                     }
                     notificationType = NotificationType.ReplyComment;
@@ -371,8 +372,18 @@ namespace WebDating.Services
             #endregion
         }
 
+        /// <summary>
+        /// Lấy danh sách tất cả comment (dạng cây) của 1 bài viết theo postId
+        /// </summary>
+        /// <param name="postId"></param>
+        /// <returns></returns>
         public async Task<ResultDto<List<CommentVM>>> GetComments(int postId)
         {
+
+            /*
+             * Đầu tiên get tất cả comment có postId bằng với postId truyền vào
+             * Sắp xếp lại comment theo dạng cây(sử dụng đệ quy - createCommentVM)
+             */
             var comments = await _uow.CommentRepository.GetByPostId(postId);
             List<CommentVM> models = createCommentVM(postId, 0, comments, 1);
 
@@ -381,9 +392,19 @@ namespace WebDating.Services
 
         List<CommentVM> createCommentVM(int postId, int parentCommentId, List<Comment> comments, int level)
         {
+
+            /*
+             * Quy định level tối đa của comment là 3, nên khi quá level 3 thì dừng đệ quy
+             * - parentCommentId: chỉ định hàm đệ quy này sẽ lấy danh sách comment con của comment nào, nói cách khác là tìm tất cả comment mà có ParentId bằng với parentCommentId truyền vào
+             * - comments: danh sách các comments (tất cả level) có liên quan tới bài viết có (postId)
+             * - level: chỉ định cấp của các comment sẽ được tạo, mỗi lần gọi đệ quy thì tăng level này nên, biểu thị việc lấy comment cấp thấp hơn (comment con)
+             */
+
             List<CommentVM> items = new List<CommentVM>();
             if (level > 3)
                 return items;
+
+            ///Lấy tất cả các comment có ParentId bằng với parentCommentId và level=level ở tham số sau đó duyệt danh sách để tạo ViewModel, trong view model lại đệ quy để tạo child-view modle
             IEnumerable<Comment> commentByLevel = comments.Where(it => it.ParentId == parentCommentId && it.Level == level);
             foreach (Comment cmt in commentByLevel)
             {
@@ -396,44 +417,18 @@ namespace WebDating.Services
                     ParentCommentId = cmt.ParentId,
                     CreateAt = cmt.CreatedAt.ToString(CultureInfo.InvariantCulture),
                 };
+                ///Thống kê số lượng action mỗi loại (like, haha....), phần này thực tế không cần join bảng để lấy mà chỉ cần sử dụng .Include để load lên, vì đã thiết lập relationship trong context rồi.
                 item.Stats = cmt.ReactionLogs.GroupBy(it => it.ReactionType)
                     .ToDictionary(it => it.Key, it => it.Count());
+
+
+                ///Lấy tất cả comment con của commnet cmt bằng cách gọi lại chính hàm này (đệ quy), với tham số parentCommentId = cmt.Id, @level thì bằng @level +1
                 item.Descendants = createCommentVM(postId, cmt.Id, comments, level + 1);
                 items.Add(item);
             }
             return items;
         }
 
-
-        private List<CommentVM> createCommentVM(int postId, int parentCommentId, List<Comment> descendants, IEnumerable<ReactionLog> reactions)
-        {
-            List<CommentVM> items = new List<CommentVM>();
-            IEnumerable<Comment> childs = descendants.Where(it => it.ParentId == parentCommentId);
-            foreach (Comment child in childs)
-            {
-                CommentVM item = new CommentVM()
-                {
-                    Id = child.Id,
-                    Content = child.Content,
-                    PostId = postId,
-                    UserId = child.UserId,
-                    ParentCommentId = child.ParentId,
-                    CreateAt = child.CreatedAt.ToString(CultureInfo.InvariantCulture),
-                };
-                item.Stats = reactions
-                    .Where(it => it.CommentId == child.Id)
-                    .ToDictionary(it => it.ReactionType, it => 1);
-                List<Comment> replyComments = descendants
-                    .Where(it => it.ParentId == child.Id)
-                    .ToList();
-                while (replyComments.Count > 0)
-                {
-                    item.Descendants = createCommentVM(postId, child.Id, replyComments, reactions);
-                }
-                items.Add(item);
-            }
-            return items;
-        }
         #endregion
 
         #region Thả react
@@ -467,6 +462,12 @@ namespace WebDating.Services
 
                 AppUser currentUser = await _uow.UserRepository.GetUserByIdAsync(request.UserId);
 
+
+                /*
+                 * Để tạo thông báo realtime đến đúng user thì cần biết user hiện tại đang tương tác đến đối tượng nào, và đối tượng đó do ai tạo ra
+                 * Ở đây đã biết user hiện tại đang react đến comment nào? Comment đó do ai tạo ra, từ đó truy ngược được người cần thông báo tới
+                 */
+
                 notification = new Notification()
                 {
                     NotifyFromUserId = request.UserId,
@@ -480,6 +481,7 @@ namespace WebDating.Services
             }
             else
             {
+                ///Chỗ này remove bởi đang xử lý chung API, khi người dùng nhấn thả cảm xúc lần đầu thì sẽ tạo mới reactionLog, ngược lại khi gọi hàm này mà người dùng đã tương tác thì coi như là hủy thả cảm xúc, do đó cần remove
                 if (react.ReactionType == request.ReactionType)
                     _uow.ReactionLogRepository.Remove(react);
                 else
@@ -490,6 +492,7 @@ namespace WebDating.Services
 
             if (success && notification != null)
             {
+                ///Cần confirm update database success thì mới gửi thông báo đến hub
                 Task t = sendNotificationData(notificationToUserId, notification);
             }
 

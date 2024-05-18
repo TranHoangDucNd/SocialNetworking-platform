@@ -8,6 +8,7 @@ namespace WebDating.Interfaces
     {
         Task<UserLike> GetUserLike(int sourceUserId, int tagetUserId);
         Task<AppUser> GetUserWithLike(int userId);
-        Task<PagedList<LikeDto>> GetUserLikes(LikesParams likesParams);
+        Task<PagedList<MemberDto>> GetUserLikes(LikesParams likesParams);
+        Task<List<int>> GetAllFollowerId(int userId);
     }
 }

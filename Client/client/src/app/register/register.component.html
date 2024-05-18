@@ -1,49 +1,153 @@
-<form [formGroup]="registerForm" (ngSubmit)="registerForm.valid && register()" autocomplete="off">
-      <h2 class="text-center text-primary">Sign up</h2>
-      <hr>
 
-      <div class="mb-3">
-            <label style="margin-right: 10px;">I am a: </label>
-            <label class="form-check-label">
-                  <input type="radio" class="form-check-input" value="male" formControlName="gender"> Male
-            </label>
+<form
+  [formGroup]="registerForm"
+  (ngSubmit)="registerForm.valid && register()"
+  autocomplete="off"
+>
+  <body data-new-gr-c-s-check-loaded="14.1172.0" data-gr-ext-installed="">
+    <div class="page-wrapper bg-gra-02 p-t-130 p-b-100 font-poppins">
+      <div class="wrapper wrapper--w680">
+        <div class="card card-4">
+          <div class="card-body">
+            <h2 class="title">Registration Form</h2>
+            <div class="row row-space">
+              <div class="col-2">
+                <div class="input-group">
+                  <label class="label">Tên người dùng</label>
+                  <app-text-input
+                    [formControl]="$any(registerForm.controls['knownAs'])"
+                    [label]="'Nhập tên hiển thị'"
+                  >
+                  </app-text-input>
+                </div>
+              </div>
+              <div class="col-2">
+                <label class="label">Giới tính</label>
+                <div class="input-group">
+                  <div class="p-t-10">
+                    <label class="radio-container m-r-45"
+                      >Nam
+                      <input
+                        type="radio"
+                        checked="checked"
+                        name="gender"
+                        value="male"
+                        formControlName="gender"
+                      />
+                      <span class="checkmark"></span>
+                    </label>
+                    <label class="radio-container">
+                      Nữ
+                      <input
+                        type="radio"
+                        name="gender"
+                        value="female"
+                        formControlName="gender"
+                      />
+                      <span class="checkmark"></span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row row-space">
+              <div class="col-2">
+                <div class="input-group">
+                  <label class="label">Quê quán</label>
+                  <div>
+                    <mat-form-field
+                      appearance="fill"
+                      style="height: 62px; width: 230px"
+                    >
+                      <mat-label>Thành phố</mat-label>
+                      <mat-select formControlName="city">
+                        <mat-option
+                          *ngFor="let city of cities"
+                          [value]="city"
+                          >{{ city }}</mat-option
+                        >
+                      </mat-select>
+                    </mat-form-field>
+                  </div>
+                </div>
+              </div>
+              <div class="col-2">
+                <div class="input-group">
+                  <label class="label">Sinh nhật</label>
+                  <span class="material-symbols-outlined">
+                    calendar_month
+                  </span>
+                  <div class="input-group-icon">
+                    <app-date-picker
+                      [formControl]="$any(registerForm.controls['dateOfBirth'])"
+                      [label]="'Sinh nhật'"
+                      [maxDate]="maxDate"
+                    >
+                    </app-date-picker>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row row-space">
+              <div class="col-2">
+                <div class="input-group">
+                  <label class="label">Tên đăng nhập</label>
+                  <app-text-input
+                    [formControl]="$any(registerForm.controls['userName'])"
+                    [label]="'Username'"
+                  ></app-text-input>
+                </div>
+              </div>
+            </div>
 
-            <label class="form-check-label">
-                  <input type="radio" class="form-check-input" value="female" formControlName="gender"> Female
-            </label>
+            <div class="row row-space">
+              <div class="col-2">
+                <div class="input-group">
+                  <label class="label">Mật khẩu</label>
+                  <app-text-input
+                    [formControl]="$any(registerForm.controls['password'])"
+                    [label]="'Password'"
+                    [type]="'password'"
+                  ></app-text-input>
+                </div>
+              </div>
+              <div class="col-2">
+                <div class="input-group">
+                  <label class="label">Xác nhận lại mật khẩu</label>
+                  <app-text-input
+                    [formControl]="
+                      $any(registerForm.controls['confirmPassword'])
+                    "
+                    [label]="'Confirm Password'"
+                    [type]="'password'"
+                  ></app-text-input>
+                  <div class="row" *ngIf="validationErrors">
+                    <ul class="text-danger">
+                      <li *ngFor="let error of validationErrors">
+                        {{ error }}
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+      
+            <div class="p-t-15">
+              <button
+                class="btn btn--radius-2 btn--blue me-2"
+                [disabled]="!registerForm.valid"
+                type="submit"
+              >
+                Đăng ký
+              </button>
+
+              <button class="btn btn-danger" type="button" (click)="cancel()">
+                Hủy bỏ
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
-
-      <app-text-input [formControl]="$any(registerForm.controls['userName'])"
-      [label]="'Username'"></app-text-input>
-
-      <app-text-input [formControl]="$any(registerForm.controls['knownAs'])"
-      [label]="'known As'"></app-text-input>
-
-      <app-date-picker [formControl]="$any(registerForm.controls['dateOfBirth'])"
-      [label]="'Date of birth'" [maxDate]="maxDate">
-      </app-date-picker>
-
-      <app-text-input [formControl]="$any(registerForm.controls['city'])"
-      [label]="'City'"></app-text-input>
-
-      <app-text-input [formControl]="$any(registerForm.controls['country'])"
-      [label]="'Country'"></app-text-input>
-
-      <app-text-input [formControl]="$any(registerForm.controls['password'])"
-      [label]="'Password'" [type]="'password'"></app-text-input>
-
-      <app-text-input [formControl]="$any(registerForm.controls['confirmPassword'])"
-      [label]="'Confirm Password'" [type]="'password'"></app-text-input>
-
-      <div class="row" *ngIf="validationErrors">
-            <ul class="text-danger">
-                  <li *ngFor="let error of validationErrors">{{error}}</li>
-            </ul>
-      </div>
-
-      <div class="text-center">
-            <button [disabled]="!registerForm.valid" class="btn btn-success me-2" type="submit">Register</button>
-            <button class="btn btn-default" type="button" (click)="cancel()">Cancel</button>
-      </div>
-
+    </div>
+  </body>
 </form>

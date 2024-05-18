@@ -27,7 +27,7 @@
               <th style="width: 40%">Message</th>
               <th style="width: 20%">From / To</th>
               <th style="width: 20%">Sent / Received</th>
-              <th style="width: 20%"></th>
+              <th style="width: 20%">Delete chat</th>
           </tr>
       </thead>
       <tbody class="align-middle">
@@ -54,6 +54,15 @@
                   </div>
               </td>
               <td>{{message.messageSent | timeago}}</td>
+              <td>
+                <div *ngIf="container === 'Outbox'">
+                    <button mat-raised-button (click)="openconfirmDialog(message.recipientId, $event)">Delete</button>
+                </div>
+
+                <div *ngIf="container === 'Inbox'">
+                    <button mat-raised-button (click)="openconfirmDialog(message.senderId, $event)">Delete</button>
+                </div>
+              </td>
           </tr>
       </tbody>
 

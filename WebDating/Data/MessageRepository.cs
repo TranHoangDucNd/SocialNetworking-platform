@@ -13,6 +13,7 @@ namespace WebDating.Data
     {
         private readonly DataContext _context;
         private readonly IMapper _mapper;
+     
 
         public MessageRepository(DataContext context, IMapper mapper)
         {
@@ -30,9 +31,28 @@ namespace WebDating.Data
             _context.Messages.Add(message);
         }
 
-        public void DeleteMessage(Message message)
+        public async Task DeleteAllMessageByUserId(int currentId, int otherId)
         {
-            _context.Messages.Remove(message);
+            var messages = await _context.Messages
+                .Where(mes => (mes.SenderId == currentId && mes.RecipientId == otherId)
+                || (mes.SenderId == otherId && mes.RecipientId == currentId)).ToListAsync();
+
+            foreach(Message message in messages)
+            {
+                if(message.SenderId == currentId)
+                {
+                    message.SenderDeleted = true;
+                }
+                if(message.RecipientId == currentId)
+                {
+                    message.RecipientDeleted = true;
+                }
+            }
+            var messageToDelete = messages.Where(m => m.SenderDeleted && m.RecipientDeleted).ToList();
+            _context.Messages.RemoveRange(messageToDelete);
+           //bool success =  await _uow.Complete();
+           // return success ? new SuccessResult<string>("Successfully deleted message") : new ErrorResult<string>("Delete message failed");
+
         }
 
         public async Task<Connection> GetConnection(string connectionId)
@@ -72,7 +92,7 @@ namespace WebDating.Data
             {
                 case "Inbox":
                     var latestMessagesInbox = query
-                        .Where(m => m.RecipientUsername == messageParams.Username)
+                        .Where(m => m.RecipientUsername == messageParams.Username && m.RecipientDeleted == false)
                         .GroupBy(m => m.SenderUsername)
                         .Select(g => g.OrderByDescending(m => m.MessageSent).FirstOrDefault());
                     query = query.Where(m => latestMessagesInbox.Any(lm => lm.Id == m.Id));

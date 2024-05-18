@@ -69,6 +69,7 @@ import {MatTabsModule} from "@angular/material/tabs";
 import {ModeratorModule} from "./admin/components/moderator/moderator.module";
 import { NotificationListComponent } from './notification/notification-list/notification-list.component';
 import { PostDetailComponent } from './post/post-detail/post-detail.component';
+import { ConfirmDialogComponent } from './messages/confirm-dialog/confirm-dialog.component';
 
 @NgModule({
   declarations: [
@@ -99,7 +100,8 @@ import { PostDetailComponent } from './post/post-detail/post-detail.component';
     PostCommentBoxComponent,
     NotificationComponent,
     NotificationListComponent,
-    PostDetailComponent
+    PostDetailComponent,
+    ConfirmDialogComponent
 
   ],
   providers: [

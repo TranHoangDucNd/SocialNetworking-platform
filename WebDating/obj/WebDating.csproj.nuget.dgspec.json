@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "D:\\Workspace\\freelance\\Try-Hard\\WebDating\\WebDating.csproj": {}
+    "E:\\TranHoangDuc_DATN\\Try-Hard\\WebDating\\WebDating.csproj": {}
   },
   "projects": {
-    "D:\\Workspace\\freelance\\Try-Hard\\WebDating\\WebDating.csproj": {
+    "E:\\TranHoangDuc_DATN\\Try-Hard\\WebDating\\WebDating.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Workspace\\freelance\\Try-Hard\\WebDating\\WebDating.csproj",
+        "projectUniqueName": "E:\\TranHoangDuc_DATN\\Try-Hard\\WebDating\\WebDating.csproj",
         "projectName": "WebDating",
-        "projectPath": "D:\\Workspace\\freelance\\Try-Hard\\WebDating\\WebDating.csproj",
-        "packagesPath": "C:\\Users\\Admin\\.nuget\\packages\\",
-        "outputPath": "D:\\Workspace\\freelance\\Try-Hard\\WebDating\\obj\\",
+        "projectPath": "E:\\TranHoangDuc_DATN\\Try-Hard\\WebDating\\WebDating.csproj",
+        "packagesPath": "C:\\Users\\ADMIN\\.nuget\\packages\\",
+        "outputPath": "E:\\TranHoangDuc_DATN\\Try-Hard\\WebDating\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\Admin\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\ADMIN\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [

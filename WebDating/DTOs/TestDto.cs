@@ -15,7 +15,6 @@ namespace WebDating.DTOs
         public string LookingFor { get; set; }
         public Interest InteresName { get; set; }
         public string City { get; set; }
-        public string Country { get; set; }
         public int DatingProfileId { get; set; }
         public int Age { get; set; }
         public Gender DatingObject { get; set; }

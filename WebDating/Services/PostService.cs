@@ -61,7 +61,36 @@ namespace WebDating.Services
                     }
 
                 }
-                await _uow.Complete();
+                bool success = await _uow.Complete();
+                if (success)
+                {
+                    List<int> followerIds = await _uow.LikeRepository.GetAllFollowerId(user.Id);
+                    if (followerIds.Count > 0)
+                    {
+                        List<Notification> notifications = new List<Notification>();
+                        foreach (int follower in followerIds)
+                        {
+                            Notification notification = new Notification()
+                            {
+                                NotifyFromUserId = user.Id,
+                                NotifyToUserId = follower,
+                                PostId = post.Id,
+                                Type = NotificationType.NewPost,
+                                Content = generateNotificatioContent(user.KnownAs, NotificationType.NewPost),
+                            };
+                            notifications.Add(notification);
+                            _uow.NotificationRepository.Insert(notification);
+                        }
+                        success = await _uow.Complete();
+                        if (success)
+                        {
+                            foreach (Notification notification in notifications)
+                            {
+                                Task t = sendNotificationData(notification.NotifyToUserId, notification);
+                            }
+                        }
+                    }
+                }
 
                 var result = _mapper.Map<PostResponseDto>(post);
                 return new SuccessResult<PostResponseDto>(result);
@@ -162,103 +191,10 @@ namespace WebDating.Services
                 return new ErrorResult<PostResponseDto>(ex.Message);
             }
         }
-        //public async Task<ResultDto<List<CommentPostDto>>> CreateComment(CommentPostDto dto)
-        //{
-        //    var post = await _uow.PostRepository.GetById(dto.PostId);
-        //    if (post is null)
-        //    {
-        //        return new
-        //            ErrorResult<List<CommentPostDto>>("Không tìm thấy bài đọc bạn bình luận, nó có thể đã bị xóa");
-        //    }
-
-
-        //    //var postComment = new PostComment()
-        //    //{
-        //    //    PostId = post.Id,
-        //    //    UserId = comment.UserId,
-        //    //    Content = comment.Content
-        //    //};
-        //    //postComment.UpdatedAt = DateTime.UtcNow;
-
-        //    //await _uow.PostRepository.InsertComment(postComment);
-        //    //await _uow.Complete();
-
-        //    //var comments = await GetComment(post);
-        //    //await _commentHubContext.Clients.All.SendAsync("ReceiveComment", comments);
-
-
-        //    #region New
-        //    Comment newComment = new Comment
-        //    {
-        //        UserId = dto.UserId,
-        //        PostId = post.Id,
-        //        Content = dto.Content,
-
-        //    };
-        //    if (dto.ParentCommentId != 0)
-        //    {
-        //        Comment parentComment = _uow.CommentRepository.GetById(dto.ParentCommentId);
-        //        if (parentComment != null)
-        //        {
-        //            newComment.ParentId = dto.ParentCommentId;
-        //            newComment.Level = parentComment.Level + 1;
-        //            if (newComment.Level > 3)
-        //            {
-        //                newComment.Level = 3;
-        //                newComment.ParentId = parentComment.ParentId;
-        //            }
-        //        }
-        //    }
-        //    _uow.CommentRepository.Insert(newComment);
-        //    await _uow.Complete();
-        //    #endregion
-        //    return new ResultDto<List<CommentPostDto>>();
-        //}
-
-
-
-
-
-
+        
         public async Task<Post> GetById(int postId)
         => await _uow.PostRepository.GetById(postId);
 
-        //public async Task<ResultDto<List<CommentPostDto>>> UpdateComment(CommentPostDto comment)
-        //{
-        //    var postComment = await _uow.PostRepository.GetCommentById(comment.Id);
-        //    var post = await _uow.PostRepository.GetById(comment.PostId);
-        //    if (postComment == null)
-        //    {
-        //        return new ErrorResult<List<CommentPostDto>>("Không tìm thấy bài đọc bạn bình luận");
-        //    }
-        //    postComment.Content = comment.Content;
-        //    postComment.UpdatedAt = DateTime.UtcNow;
-
-        //    _uow.PostRepository.UpdateComment(postComment);
-        //    await _uow.Complete();
-
-        //    var comments = await GetComments(comment.PostId);
-        //    await _commentHubContext.Clients.All.SendAsync("ReceiveComment", comments);
-
-        //    return comments;
-        //}
-        //public async Task<ResultDto<List<CommentPostDto>>> DeleteComment(int id)
-        //{
-        //    var comment = await _uow.PostRepository.GetCommentById(id);
-        //    var post = await _uow.PostRepository.GetById(comment.PostId);
-
-        //    if (comment == null)
-        //    {
-        //        return new ErrorResult<List<CommentPostDto>>("Không tìm thấy bình luận");
-        //    }
-
-        //    _uow.PostRepository.DeleteComment(comment);
-        //    await _uow.Complete();
-
-        //    var comments = await GetComments(comment.PostId);
-        //    await _commentHubContext.Clients.All.SendAsync("ReceiveComment", comments);
-        //    return comments;
-        //}
 
         public async Task<(int Likes, int Comments)> GetLikesAndCommentsCount(int postId)
         {
@@ -660,6 +596,9 @@ namespace WebDating.Services
             else if (notificationType == NotificationType.ReactionComment)
             {
                 return string.Format("{0} vừa bày tỏ cảm xúc về bình luận của bạn", fullname);
+            }else if(notificationType == NotificationType.NewPost)
+            {
+                return string.Format("{0} người bạn đang theo dõi vừa đăng một bài đăng mới", fullname);
             }
             return string.Empty;
         }

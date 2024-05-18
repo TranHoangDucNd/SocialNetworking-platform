@@ -5,5 +5,7 @@
     {
         public string RecipientUsername { get; set; }
         public string Content { get; set; }
+        public string? Url { get; set; }
+        public string? PublicId { get; set; }
     }
 }

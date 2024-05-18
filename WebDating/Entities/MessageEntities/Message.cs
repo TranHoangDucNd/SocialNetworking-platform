@@ -17,5 +17,7 @@ namespace WebDating.Entities.MessageEntities
         public DateTime MessageSent { get; set; } = DateTime.UtcNow;
         public bool SenderDeleted { get; set; }
         public bool RecipientDeleted { get; set; }
+        public string? Url { get; set; }
+        public string? PublicId { get; set; }
     }
 }

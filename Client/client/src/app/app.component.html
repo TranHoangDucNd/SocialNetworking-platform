@@ -21,12 +21,18 @@
       </mat-list-item>
       <mat-list-item routerLink="/lists">
         <i class="fa fa-heart"> </i>
-        <span class="full-width"> Likes</span>
+        <span class="full-width"> Follows</span>
       </mat-list-item>
       <mat-list-item routerLink="/messages">
         <i class="fa fa-envelope"> </i>
         <span class="full-width"> Messages</span>
       </mat-list-item>
+
+      <mat-list-item routerLink="/messages">
+        <i class="fa fa-envelope"> </i>
+        <span class="full-width">Dating</span>
+      </mat-list-item>
+
       <mat-divider></mat-divider>
       <mat-list-item routerLink="/admin" *appHasRole="['Admin', 'Moderator','ManageReport']">
         <i class="fa fa-cog"> </i>

@@ -73,6 +73,8 @@ namespace WebDating.SignalR
                 SenderUsername = sender.UserName,
                 RecipientUsername = recipient.UserName,
                 Content = createMessageDto.Content,
+                PublicId = createMessageDto.PublicId,
+                Url = createMessageDto.Url
             };
 
             var groupName = GetGroupName(sender.UserName, recipient.UserName);

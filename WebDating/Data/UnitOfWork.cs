@@ -16,7 +16,7 @@ namespace WebDating.Data
 
         public IUserRepository UserRepository => new UserRepository(_context, _mapper);
 
-        public ILikeRepository LikeRepository => new LikeRepository(_context);
+        public ILikeRepository LikeRepository => new LikeRepository(_context, _mapper);
 
         public IMessageRepository MessageRepository => new MessageRepository(_context, _mapper);
 

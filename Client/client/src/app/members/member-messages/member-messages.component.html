@@ -2,7 +2,7 @@
   <div
     class="chat-body"
     #scrollMe
-    style="overflow: scroll; height: 550px"
+    style="overflow: scroll; height: 500px; width: 800px;"
     [scrollTop]="scrollMe.scrollHeight"
   >
     <div *ngIf="(messageService.messageThread$ | async)?.length === 0">
@@ -49,6 +49,11 @@
             <hr />
             <div class="message-text">
               {{ message.content }}
+              <br>
+            </div>
+
+            <div *ngIf="message.url">
+              <img class="img-fix m-2" src="{{message.url}}" alt="">
             </div>
           </div>
           <br />
@@ -93,6 +98,11 @@
 
               <div class="message-text">
                 {{ message.content }}
+                <br>
+              </div>
+
+              <div *ngIf="message.url">
+                <img class="img-fix m-2" src="{{message.url}}" alt="">
               </div>
             </div>
           </div>
@@ -102,27 +112,37 @@
     </ul>
   </div>
   <div class="chat-footer">
-    <form #messageForm="ngForm" (ngSubmit)="sendMessage()" autocomplete="off">
-      <div class="input-group">
-        <input
-          name="messageContent"
-          required
-          [(ngModel)]="messageContent"
-          type="text"
-          class="form-control input-sm"
-          placeholder="Send a private message"
-        />
-
-        <div class="input-group-append">
-          <button
-            [disabled]="!messageForm.valid || loading"
-            class="btn btn-primary"
-            type="submit"
-          >
-            Send <i *ngIf="loading" class="fa fa-spinner fa-spin"></i>
+    <form (ngSubmit)="onSubmit()" #messageForm="ngForm" class="message-form">
+      <div class="input-container">
+        <textarea 
+          class="form-control message-input justify-content-between" 
+          name="content" 
+          [(ngModel)]="messageContent" 
+          #content="ngModel" 
+          required 
+          placeholder="Enter your message"></textarea>
+    
+        <div class="form-actions">
+          <label class="relative">
+            <span class="material-symbols-outlined me-3" style="color: #9d9d9d;;">
+              add_photo_alternate
+              </span>
+            <input id="img-upload" type="file" class="d-none" (change)="AddImage($event)" />
+          </label>
+    
+          <button 
+            type="submit" 
+            class="send-message-button" 
+            [disabled]="!messageForm.form.valid || loading"> 
+            <i class="fa fa-send"></i>
+            <i *ngIf="loading" class="fa fa-spinner fa-spin"></i>
           </button>
         </div>
       </div>
+    
+      <div *ngIf="imagePreview" class="image-preview">
+        <p>Image Preview:</p>
+        <img [src]="imagePreview" alt="Image Preview" style="max-width: 300px;" class="form-control input-sm">
+      </div>
     </form>
-  </div>
 </div>

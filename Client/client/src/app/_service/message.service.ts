@@ -2,7 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { getPaginationHeaders, getPaginationResult } from './paginationHelper';
-import { Message } from '../_models/message';
+import { CreateMessageDto, Message, UploadImageMess } from '../_models/message';
 import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
 import { BehaviorSubject, take } from 'rxjs';
 import { User } from '../_models/user';
@@ -81,10 +81,18 @@ export class MessageService {
     );
   }
 
-  async sendMessage(username: string, content: string) {
+  async sendMessage(createMessage: CreateMessageDto) {
     //Lấy đúng tên method   public async Task SendMessage(CreateMessageDto createMessageDto)
     return this.hubConnection
-      ?.invoke('SendMessage', { recipientUsername: username, content })
+      ?.invoke('SendMessage', createMessage)
       .catch((error) => console.log(error));
+  }
+
+  upLoadImageMessage(formData: FormData){
+    return this.http.post<UploadImageMess>(this.baseUrl + 'messages/upload-image-message', formData);
+  }
+
+  deleteAllMessage(userId: number){
+    return this.http.delete(this.baseUrl + 'messages/delete-messages-by-userId/' + userId);
   }
 }

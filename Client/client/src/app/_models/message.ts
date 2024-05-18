@@ -7,6 +7,20 @@ export interface Message {
   recipientUsername: string;
   recipientPhotoUrl: string;
   content: string;
+  url?: string;
   dateRead?: Date;
   messageSent: string;
+}
+
+
+export interface CreateMessageDto {
+  recipientUsername: string;
+  content: string;
+  url?: any;
+  publicId?: any;
+}
+
+export interface UploadImageMess {
+  path: string
+  publicId: string
 }

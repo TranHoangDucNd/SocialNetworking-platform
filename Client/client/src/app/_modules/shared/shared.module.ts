@@ -11,6 +11,7 @@ import { PaginationModule } from 'ngx-bootstrap/pagination';
 import { FileUploadModule } from 'ng2-file-upload';
 import { HasRoleDirective } from 'src/app/_directives/has-role.directive';
 import { ModalModule } from 'ngx-bootstrap/modal';
+import {MatDialogModule} from '@angular/material/dialog';
 @NgModule({
   declarations: [
     HasRoleDirective
@@ -28,7 +29,8 @@ import { ModalModule } from 'ngx-bootstrap/modal';
     ButtonsModule.forRoot(),
     PaginationModule.forRoot(),
     FileUploadModule,
-    ModalModule.forRoot()
+    ModalModule.forRoot(),
+    MatDialogModule
   ],
   exports: [
     ToastrModule,
@@ -41,7 +43,8 @@ import { ModalModule } from 'ngx-bootstrap/modal';
     PaginationModule,
     FileUploadModule,
     HasRoleDirective,
-    ModalModule
+    ModalModule,
+    MatDialogModule
   ]
 })
 export class SharedModule { }

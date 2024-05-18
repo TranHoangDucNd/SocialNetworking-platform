@@ -2,7 +2,7 @@
   <div class="col-4">
     <div class="profile-card-4 z-depth-3">
       <div class="card">
-        <div class="card-body text-center bg-primary rounded-top">
+        <div class="card-body text-center rounded-top" style="background-color: #fdd9e5 !important;">
           <div class="user-box">
             <img
               src="{{ member.photoUrl || './assets/user.png' }}"
@@ -33,7 +33,7 @@
             <li class="list-group-item">
               <div>
                 <strong>Location:</strong>
-                <p>{{ member.city }}, {{ member.country }}</p>
+                <p>{{ member.city }}</p>
               </div>
       
               <div>
@@ -51,41 +51,23 @@
         </div>
         <div class="card-footer">
           <div class="btn-group d-flex">
-            <button class="btn btn-primary" (click)="addLike(member)">Like</button>
+            <button class="btn" style="background-color: #fdd9e5 !important;" (click)="addLike(member)">Follow</button>
             <!-- Messages là heading dưới heading="Messages"-->
-            <button (click)="selectTab('Messages')" class="btn btn-success">
+            <button (click)="selectTab('Messages')" class="btn" style="background-color: #fdd9e5 !important;">
               Messages
             </button>
+
+            <button (click)="selectTab('Messages')" class="btn btn-primary">
+              Dating
+            </button>
           </div>
-        </div>
-        <div class="card-footer text-center">
-          <a
-            href="javascript:void()"
-            class="btn-social btn-facebook waves-effect waves-light m-1"
-            ><i class="fa fa-facebook"></i
-          ></a>
-          <a
-            href="javascript:void()"
-            class="btn-social btn-google-plus waves-effect waves-light m-1"
-            ><i class="fa fa-google-plus"></i
-          ></a>
-          <a
-            href="javascript:void()"
-            class="list-inline-item btn-social btn-behance waves-effect waves-light"
-            ><i class="fa fa-behance"></i
-          ></a>
-          <a
-            href="javascript:void()"
-            class="list-inline-item btn-social btn-dribbble waves-effect waves-light"
-            ><i class="fa fa-dribbble"></i
-          ></a>
         </div>
       </div>
     </div>
   </div>
   
 
-  <div class="col-8">
+  <div class="col-6">
     <tabset class="member-tabset" #memberTabs>
       <tab
         heading="About {{ member.knownAs }}"

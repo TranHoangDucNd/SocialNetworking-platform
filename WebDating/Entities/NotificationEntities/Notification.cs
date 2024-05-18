@@ -33,5 +33,6 @@ namespace WebDating.Entities.NotificationEntities
         CommentPost = 1,
         ReplyComment = 2,
         ReactionComment = 3,
+        NewPost = 4,
     }
 }

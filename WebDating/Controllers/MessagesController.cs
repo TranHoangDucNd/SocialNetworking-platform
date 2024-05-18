@@ -8,6 +8,7 @@ using WebDating.Entities.MessageEntities;
 using WebDating.Extensions;
 using WebDating.Helpers;
 using WebDating.Interfaces;
+using WebDating.Services;
 
 namespace WebDating.Controllers
 {
@@ -16,12 +17,29 @@ namespace WebDating.Controllers
     {
         private readonly IUnitOfWork _uow;
         private readonly IMapper _mapper;
+        private readonly IPhotoService _photoService;
 
-        public MessagesController(IUnitOfWork uow, IMapper mapper)
+        public MessagesController(IUnitOfWork uow, IMapper mapper, IPhotoService photoService)
         {
             _uow = uow;
             _mapper = mapper;
+            _photoService = photoService;
         }
+
+        [Authorize]
+        [HttpPost]
+        [Route("upload-image-message")]
+        public async Task<IActionResult> UploadImage(IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+                return BadRequest("No file uploaded.");
+            var uploadResult = await _photoService.AddPhotoAsync(file);
+            var path = uploadResult.SecureUrl.AbsoluteUri;
+            var publicId = uploadResult.PublicId;
+
+            return Ok(new { Path = path, PublicId = publicId });
+        }
+
 
         [HttpPost]
         public async Task<ActionResult<MessageDto>> CreateMessage(CreateMessageDto createMessageDto)
@@ -75,6 +93,17 @@ namespace WebDating.Controllers
             var currentUserName = User.GetUserName();
 
             return Ok(await _uow.MessageRepository.GetMessageThread(currentUserName, username));
+        }
+
+        [HttpDelete]
+        [Route("delete-messages-by-userId/{userId}")]
+        public async Task<IActionResult> DeleteAllMessagesByUserId(int userId)
+        {
+            int currentUserId = User.GetUserId();
+             await _uow.MessageRepository.DeleteAllMessageByUserId(currentUserId, userId);
+            if(await _uow.Complete()) return NoContent();
+            return BadRequest("Delete message failed");
+            
         }
     }
 }

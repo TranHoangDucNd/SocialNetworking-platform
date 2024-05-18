@@ -22,7 +22,7 @@ export class RegisterComponent implements OnInit {
   registerForm: FormGroup = new FormGroup({});
   maxDate: Date = new Date();
   validationErrors: string[] | undefined;
-
+  
   constructor(
     private accountService: AccountService,
     private fb: FormBuilder,
@@ -42,7 +42,6 @@ export class RegisterComponent implements OnInit {
       knownAs: ['', Validators.required],
       dateOfBirth: ['', Validators.required],
       city: ['', Validators.required],
-      country: ['', Validators.required],
       password: [
         '',
         [
@@ -106,6 +105,66 @@ export class RegisterComponent implements OnInit {
       .toISOString()
       .slice(0, 10);
   }
+
+  cities: string[] = [
+    'Hà Nội',
+    'Hồ Chí Minh',
+    'Đà Nẵng',
+    'Hải Phòng',
+    'Cần Thơ',
+    'Nghệ An',
+    'Thanh Hóa',
+    'Bắc Ninh',
+    'Bảo Lộc',
+    'Biên Hòa',
+    'Bến Tre',
+    'Buôn Ma Thuột',
+    'Cà Mau',
+    'Cẩm Phả',
+    'Cao Lãnh',
+    'Đà Lạt',
+    'Điện Biên Phủ',
+    'Đông Hà',
+    'Đồng Hới',
+    'Hà Tĩnh',
+    'Hạ Long',
+    'Hải Dương',
+    'Hòa Bình',
+    'Hội An',
+    'Huế',
+    'Hưng Yên',
+    'Kon Tum',
+    'Lạng Sơn',
+    'Lào Cai',
+    'Long Xuyên',
+    'Móng Cái',
+    'Mỹ Tho',
+    'Nam Định',
+    'Ninh Bình',
+    'Nha Trang',
+    'Phan Rang-Tháp Chàm',
+    'Phan Thiết',
+    'Phủ Lý',
+    'Pleiku',
+    'Quảng Ngãi',
+    'Quy Nhơn',
+    'Rạch Giá',
+    'Sóc Trăng',
+    'Sơn La',
+    'Tam Kỳ',
+    'Tân An',
+    'Thái Bình',
+    'Thái Nguyên',
+    'Trà Vinh',
+    'Tuy Hòa',
+    'Tuyên Quang',
+    'Uông Bí',
+    'Việt Trì',
+    'Vĩnh Yên',
+    'Vĩnh Long',
+    'Vũng Tàu',
+    'Yên Bái'
+  ];
 }
 
 export function createPasswordStrengthValidator(): ValidatorFn {
@@ -126,4 +185,6 @@ export function createPasswordStrengthValidator(): ValidatorFn {
 
     return !passwordValid ? { passwordStrength: true } : null;
   };
+
+  
 }

@@ -21,7 +21,7 @@ export class MemberListComponent implements OnInit, OnDestroy {
   pagination: Pagination | undefined;
   userParams: UserParams = new UserParams();
   orderBy = 'lastActive';
-  pageSize = 4;
+  pageSize = 8;
   pageNumber = 1;
 
   _dialog = inject(MatDialog);
@@ -111,7 +111,7 @@ export class MemberListComponent implements OnInit, OnDestroy {
   }
 
   pageChanged(event: any) {
-    this.pageNumber = event.page;
+    this.pageNumber = event.pageIndex + 1;
     if (this.userParams && this.userParams?.pageNumber !== event.page) {
       this.userParams.pageNumber = event.page;
       this.memberService.setUserParams(this.userParams);

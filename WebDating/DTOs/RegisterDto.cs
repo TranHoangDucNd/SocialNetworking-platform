@@ -15,8 +15,6 @@ namespace WebDating.DTOs
         [Required]
         public string City { get; set; }
         [Required]
-        public string Country { get; set; }
-        [Required]
         [StringLength(15, MinimumLength = 6)]
         public string Password { get; set; }
     }

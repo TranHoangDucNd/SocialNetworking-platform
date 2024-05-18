@@ -106,10 +106,7 @@ namespace WebDating.Data
             user.Introduction = memberUpdateDto.Introduction;
             user.LookingFor = memberUpdateDto.LookingFor;
             user.City = memberUpdateDto.City;
-            user.Country = memberUpdateDto.Country;
-            
-            
-
+           
             profile.DatingObject = memberUpdateDto.DatingObject;
             profile.Height = memberUpdateDto.Height;
             profile.WhereToDate = memberUpdateDto.WhereToDate;
@@ -173,6 +170,7 @@ namespace WebDating.Data
             List<int> listTds = _context.Database.SqlQueryRaw<int>("EXEC Search_Best_Match @MinHeight, @MaxHeight, @Gender,@MinAge,@MaxAge, @City, @Interest", sqlParams).ToList();
             var query = _context.Users.AsQueryable();
             query = query.Where(it => listTds.Contains(it.Id) && it.UserName != userParams.CurrentUserName);
+
             query = userParams.OrderBy switch
             {
                 "created" => query.OrderByDescending(x => x.Created),
@@ -190,6 +188,12 @@ namespace WebDating.Data
             {
                 member.DatingProfile = await GetDatingProfile(member.Id);
             }
+
+            query = userParams.OrderBy switch
+            {
+                "created" => query.OrderByDescending(x => x.Created),
+                _ => query.OrderByDescending(x => x.LastActive)
+            };
 
             return result;
         }

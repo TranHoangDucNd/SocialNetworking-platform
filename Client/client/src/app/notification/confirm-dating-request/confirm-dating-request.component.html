@@ -1,0 +1,10 @@
+<h2 *ngIf="data.type === DatingRequestType.Accept" mat-dialog-title>Xác nhận hẹn hò</h2>
+<h2 *ngIf="data.type === DatingRequestType.Cancel" mat-dialog-title>Xác nhận kết thúc hẹn hò</h2>
+<mat-dialog-content>
+  <p *ngIf="data.type === DatingRequestType.Accept">Bạn có đồng ý hẹn hò cùng {{ data.name }} không?</p>
+  <p *ngIf="data.type === DatingRequestType.Cancel">Bạn xác nhận kết thúc hẹn hò với {{ data.name }}?</p>
+</mat-dialog-content>
+<mat-dialog-actions class="d-flex justify-content-around mb-3">
+  <button mat-button color="accent" (click)="handleResult(true)">Đồng ý</button>
+  <button mat-button (click)="handleResult(false)">Từ chối</button>
+</mat-dialog-actions>

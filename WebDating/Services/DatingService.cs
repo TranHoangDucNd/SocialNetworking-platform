@@ -95,13 +95,14 @@ namespace WebDating.Services
                 SenderId = senderId,
                 Status = DatingStatus.Waiting,
             };
-            _uow.DatingRequestRepository.Insert(datingRequest);
+            var datingRequestId = _uow.DatingRequestRepository.InsertAndGetId(datingRequest);
             Notification notification = new Notification()
             {
                 NotifyFromUserId = senderId,
                 NotifyToUserId = crushId,
                 PostId = null,
                 Type = NotificationType.SentDatingRequest,
+                DatingRequestId = datingRequestId,
                 Content = _notificationService.GenerateNotificationContent(currentUser.KnownAs, NotificationType.SentDatingRequest),
             };
             _uow.NotificationRepository.Insert(notification);

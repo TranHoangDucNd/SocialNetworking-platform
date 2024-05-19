@@ -1,5 +1,5 @@
 <mat-nav-list>
-  <mat-list-item class="h-auto p-2" *ngFor="let noti of notifications" (click)="navigateToPost(noti)">
+  <mat-list-item class="h-auto p-2" *ngFor="let noti of notifications" (click)="handleNotiClicked(noti)">
     <div class="d-flex w-100">
       <div *ngIf="!noti.status" class="text-center d-flex flex-column align-items-center justify-content-center"
            style="height: 100%;">

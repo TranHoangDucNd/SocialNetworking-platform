@@ -42,6 +42,8 @@ namespace WebDating.Data
             .Include(x => x.Images)
             .Include(x => x.ReactionLogs)
             .Include(x => x.Comments)
+            .Include(x => x.User)
+            .ThenInclude(x => x.Photos)
             .FirstOrDefaultAsync();
 
 

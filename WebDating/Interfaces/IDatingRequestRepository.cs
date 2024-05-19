@@ -6,6 +6,7 @@ namespace WebDating.Interfaces
     public interface IDatingRequestRepository
     {
         void Insert(DatingRequest entity);
+        int InsertAndGetId(DatingRequest entity);
         void Remove(int id);
         void Remove(DatingRequest entity);
         DatingRequest Get(int id);

@@ -24,7 +24,7 @@
               >
                 <i class="class fa fa-user-circle text-success"></i> Online now
               </div>
-  
+
               <div>
                 <strong>Last active:</strong>
                 <p>{{ member.lastActive | timeago }}</p>
@@ -35,10 +35,10 @@
                 <strong>Location:</strong>
                 <p>{{ member.city }}</p>
               </div>
-      
+
               <div>
                 <strong>Age:  {{ member.age }}</strong>
-                
+
               </div>
             </li>
             <li class="list-group-item">
@@ -51,13 +51,19 @@
         </div>
         <div class="card-footer">
           <div class="btn-group d-flex">
-            <button class="btn" style="background-color: #fdd9e5 !important;" (click)="addLike(member)">Follow</button>
+            <button class="btn" style="background-color: #fdd9e5 !important;" (click)="addLike(member)">
+              <i class="fa fa-heart"></i>
+              Follow
+            </button>
             <!-- Messages là heading dưới heading="Messages"-->
             <button (click)="selectTab('Messages')" class="btn" style="background-color: #fdd9e5 !important;">
+              <i class="fa fa-envelope"></i>
               Messages
             </button>
 
-            <button (click)="selectTab('Messages')" class="btn btn-primary">
+            <button style="background-color: #fdd9e5 !important;" (click)="sendDatingRequest(member)"
+                    class="btn">
+              <i class="fa fa-venus-mars"></i>
               Dating
             </button>
           </div>
@@ -65,7 +71,7 @@
       </div>
     </div>
   </div>
-  
+
 
   <div class="col-6">
     <tabset class="member-tabset" #memberTabs>
@@ -79,10 +85,10 @@
             <div class="row">
               <div class="col-md-6">
                 <h6>Description</h6>
-                <p>{{member.introduction}}</p>
+                <p>{{ member.introduction }}</p>
                 <h6>LookingFor</h6>
                 <p>
-                  {{member.lookingFor}}
+                  {{ member.lookingFor }}
                 </p>
               </div>
               <div class="col-md-6">
@@ -90,43 +96,43 @@
                 <li *ngFor="let i of member.datingProfile.userInterests" class="badge badge-dark badge-pill">
                   {{ i.interestName }}
                 </li>
-                <hr />
+                <hr/>
                 <table class="table table-hover table-striped">
                   <tbody>
-                    <tr>
-                      <td>
-                        <strong>Height: </strong>
-                        <strong>{{member.datingProfile.height}}</strong>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <strong>Dating object: </strong>
-                        <strong>{{member.datingProfile.datingObject}}</strong>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <strong>Where to date: </strong>
-                        <strong>{{member.datingProfile.whereToDate}}</strong>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <strong>John</strong> deleted My Board1 in
-                        <strong>`Discussions`</strong>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <strong>Skell</strong> deleted his post Look at Why this
-                        is.. in <strong>`Discussions`</strong>
-                      </td>
-                    </tr>
+                  <tr>
+                    <td>
+                      <strong>Height: </strong>
+                      <strong>{{ member.datingProfile.height }}</strong>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <strong>Dating object: </strong>
+                      <strong>{{ member.datingProfile.datingObject }}</strong>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <strong>Where to date: </strong>
+                      <strong>{{ member.datingProfile.whereToDate }}</strong>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <strong>John</strong> deleted My Board1 in
+                      <strong>`Discussions`</strong>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <strong>Skell</strong> deleted his post Look at Why this
+                      is.. in <strong>`Discussions`</strong>
+                    </td>
+                  </tr>
                   </tbody>
                 </table>
               </div>
-             
+
             </div>
           </div>
         </div>
@@ -144,7 +150,7 @@
           thumbPosition="left"
         ></gallery>
       </tab>
-      
+
       <tab heading="Messages" (selectTab)="onTabActivated($event)">
         <app-member-messages [username]="member.userName"></app-member-messages>
       </tab>

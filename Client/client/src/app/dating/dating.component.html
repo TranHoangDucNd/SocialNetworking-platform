@@ -1,0 +1,53 @@
+<div class="d-flex justify-content-center my-5" style="">
+  <mat-card *ngIf="datingResponse; else noDating" class="dating-card" style="width: 50%">
+    <mat-card-content class="row">
+      <div class="col col-12 d-flex justify-content-center">
+        <h2 style="color: #fc72a5">LOVE DAYS</h2>
+      </div>
+      <div class="col col-12 d-flex justify-content-center">
+        <div class="w-50 p-2 m-5 d-flex flex-column justify-content-center"
+             style="background-color: #fdd9e5; border-radius: 50px;">
+          <div class="text-center text-dark">
+            <h5 style="color:#36180d !important;">DAY {{ daysSinceDate }}</h5>
+            <h3 style="color:#36180d !important;">{{ currentTime }}</h3>
+          </div>
+        </div>
+      </div>
+      <div class="col col-12 d-flex justify-content-around">
+        <div>
+          <img [src]="datingResponse?.senderAvatar || './assets/user.png'" alt="senderAvatar"
+               style="width: 200px; height: 200px; border-radius: 50%; box-shadow: 0 0 10px 5px #fdd9e5;">
+          <h5 style="color:#36180d !important;" class="mt-2 text-center">{{ datingResponse?.senderName }}</h5>
+        </div>
+
+        <div class="d-flex flex-column justify-content-center">
+          <div class="heart"></div>
+        </div>
+        <div>
+          <img [src]="datingResponse?.crushAvatar || './assets/user.png'" alt="crushAvatar"
+               style="width: 200px; height: 200px; border-radius: 50%; box-shadow: 0 0 10px 5px #fdd9e5;">
+          <h5 style="color:#36180d !important;" class="mt-2 text-center">{{ datingResponse?.crushName }}</h5>
+        </div>
+      </div>
+      <div class="col col-12 text-center">
+        <h4 style="color: #fc72a5">{{ targetDate | date: "dd-MM-yyyy" }}</h4>
+      </div>
+
+    </mat-card-content>
+    <mat-card-actions class="d-flex justify-content-end">
+      <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
+        <mat-icon>more_vert</mat-icon>
+      </button>
+      <mat-menu #menu="matMenu">
+        <button (click)="endDating()" mat-menu-item>
+          <span>Kết thúc hẹn hò</span>
+        </button>
+      </mat-menu>
+    </mat-card-actions>
+  </mat-card>
+  <ng-template #noDating>
+    <div class="d-flex justify-content-center">
+      <h2 style="color: #fc72a5">{{ noDatingMessage }}</h2>
+    </div>
+  </ng-template>
+</div>

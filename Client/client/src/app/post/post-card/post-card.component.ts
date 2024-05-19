@@ -86,6 +86,7 @@ export class PostCardComponent implements OnInit {
   }
 
   getComments() {
+    if (!this.post?.id) return;
     forkJoin([
       this.postService.getAllUsersShort(),
       this.postService.getAllCommentsOfPost(this.post?.id || this.postId)
@@ -101,6 +102,7 @@ export class PostCardComponent implements OnInit {
           }
         })
         this.comments = commentsWithUserShort;
+        console.log(this.comments)
         this.commentCount = countComments(commentsWithUserShort);
       }
     })

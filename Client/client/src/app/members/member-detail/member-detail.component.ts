@@ -1,19 +1,20 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { Member } from 'src/app/_models/member';
-import { GalleryModule, GalleryItem, ImageItem } from 'ng-gallery';
-import { CommonModule } from '@angular/common';
-import { TabDirective, TabsetComponent, TabsModule } from 'ngx-bootstrap/tabs';
-import { TimeagoModule } from 'ngx-timeago';
-import { MemberMessagesComponent } from '../member-messages/member-messages.component';
-import { Message } from 'src/app/_models/message';
-import { User } from 'src/app/_models/user';
-import { AccountService } from 'src/app/_service/account.service';
-import { MessageService } from 'src/app/_service/message.service';
-import { take } from 'rxjs';
-import { PresenceService } from 'src/app/_service/presence.service';
-import { MembersService } from 'src/app/_service/members.service';
-import { ToastrService } from 'ngx-toastr';
+import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {ActivatedRoute} from '@angular/router';
+import {Member} from 'src/app/_models/member';
+import {GalleryItem, GalleryModule, ImageItem} from 'ng-gallery';
+import {CommonModule} from '@angular/common';
+import {TabDirective, TabsetComponent, TabsModule} from 'ngx-bootstrap/tabs';
+import {TimeagoModule} from 'ngx-timeago';
+import {MemberMessagesComponent} from '../member-messages/member-messages.component';
+import {Message} from 'src/app/_models/message';
+import {User} from 'src/app/_models/user';
+import {AccountService} from 'src/app/_service/account.service';
+import {MessageService} from 'src/app/_service/message.service';
+import {take} from 'rxjs';
+import {PresenceService} from 'src/app/_service/presence.service';
+import {MembersService} from 'src/app/_service/members.service';
+import {ToastrService} from 'ngx-toastr';
+import {MatIconModule} from "@angular/material/icon";
 
 @Component({
   selector: 'app-member-detail',
@@ -26,6 +27,7 @@ import { ToastrService } from 'ngx-toastr';
     TabsModule,
     TimeagoModule,
     MemberMessagesComponent,
+    MatIconModule,
   ],
 })
 export class MemberDetailComponent implements OnInit, OnDestroy {
@@ -36,27 +38,27 @@ export class MemberDetailComponent implements OnInit, OnDestroy {
   messages: Message[] = [];
   user?: User; //current user
 
-  constructor(private accountService:AccountService,
-     private route:ActivatedRoute, private messageService: MessageService,
-     public presenceService: PresenceService, private memberService: MembersService,
-    private toastr: ToastrService) {
-      this.accountService.currentUser$.pipe(take(1)).subscribe({
-        next: user => {
-          if(user){
-            this.user = user
-          }
+  constructor(private accountService: AccountService,
+              private route: ActivatedRoute, private messageService: MessageService,
+              public presenceService: PresenceService, private memberService: MembersService,
+              private toastr: ToastrService) {
+    this.accountService.currentUser$.pipe(take(1)).subscribe({
+      next: user => {
+        if (user) {
+          this.user = user
         }
-      })
       }
+    })
+  }
 
   ngOnInit(): void {
     this.route.data.subscribe({
-      next: data=>{
+      next: data => {
         this.member = data['member'] //member: resolve: {member: memberDetailedResolver} ở approuting
       }
     })
     this.route.queryParams.subscribe({
-      next: params =>{
+      next: params => {
         params['tab'] && this.selectTab(params['tab'])
       }
     })
@@ -65,22 +67,22 @@ export class MemberDetailComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-      this.messageService.stopHubConnection();
+    this.messageService.stopHubConnection();
   }
 
   //Khi người dùng kích vào tin nhắn nó sẽ đi đến luôn mục message
-  onTabActivated(data: TabDirective){
+  onTabActivated(data: TabDirective) {
     this.activeTab = data;
 
-    if(this.activeTab.heading === 'Messages' && this.user){
+    if (this.activeTab.heading === 'Messages' && this.user) {
       this.messageService.createHubConnection(this.user, this.member.userName)
-    }else{
+    } else {
       this.messageService.stopHubConnection();
     }
   }
 
-  loadMessages(){
-    if(this.member){
+  loadMessages() {
+    if (this.member) {
       this.messageService.getMessageThread(this.member.userName).subscribe({
         next: messages => {
           this.messages = messages;
@@ -89,23 +91,32 @@ export class MemberDetailComponent implements OnInit, OnDestroy {
     }
   }
 
-  selectTab(heading: string){
-    if(this.memberTabs){
-      this.memberTabs.tabs.find(x=>x.heading === heading)!.active = true;   
+  selectTab(heading: string) {
+    if (this.memberTabs) {
+      this.memberTabs.tabs.find(x => x.heading === heading)!.active = true;
     }
   }
 
-  getImages(){
-    if(!this.member) return;
-    for(const photo of this.member?.photos){
+  getImages() {
+    if (!this.member) return;
+    for (const photo of this.member?.photos) {
       this.images.push(new ImageItem({src: photo.url, thumb: photo.url}));
     }
   }
 
-  addLike(member: Member){
+  addLike(member: Member) {
     this.memberService.addLike(member.userName).subscribe({
-      next: () =>{
+      next: () => {
         this.toastr.success("You have liked: " + member.knownAs);
+      },
+      error: error => this.toastr.error(error.error)
+    })
+  }
+
+  sendDatingRequest(member: Member) {
+    this.memberService.sendDatingRequest(member.id).subscribe({
+      next: (res) => {
+        this.toastr.success(res.message);
       },
       error: error => this.toastr.error(error.error)
     })

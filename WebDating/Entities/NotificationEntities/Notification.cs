@@ -11,7 +11,6 @@ namespace WebDating.Entities.NotificationEntities
         public int? CommentId { get; set; }
         public int? NotifyFromUserId { get; set; }
         public int NotifyToUserId { get; set; }
-
         public int? DatingRequestId { get; set; }
         public string Content { get; set; }
         public NotificationType Type { get; set; }

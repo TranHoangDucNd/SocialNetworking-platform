@@ -6,9 +6,9 @@ export function notificationReducer(state: NotificationState, action: Action<any
     case 'ADD_NOTIFICATION':
       return {
         ...state,
-        notifications: [...state.notifications, action.payload as Notification],
+        notifications: [action.payload as Notification, ...state.notifications],
         unreadCount: state.unreadCount + 1,
-        unreadNotifications: [...state.unreadNotifications, action.payload as Notification]
+        unreadNotifications: [action.payload as Notification, ...state.unreadNotifications]
       };
     case 'MARK_AS_READ':
       return {

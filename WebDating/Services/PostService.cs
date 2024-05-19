@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SignalR;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Xml.Linq;
 using WebDating.Data.Migrations;
 using WebDating.DTOs;
@@ -134,12 +135,13 @@ namespace WebDating.Services
 
         public async Task<ResultDto<UserShortDto>> GetUserShort(string name)
         {
-            var username = await _uow.UserRepository.GetUserByUsernameAsync(name);
+            var user = await _uow.UserRepository.GetUserByUsernameAsync(name);
             return new SuccessResult<UserShortDto>(new UserShortDto()
             {
-                Id = username.Id,
-                FullName = username.KnownAs,
-                Image = username.Photos.Select(x => x.Url).FirstOrDefault()
+                Id = user.Id,
+                FullName = user.UserName,
+                KnownAs = user.KnownAs,
+                Image = user.Photos.Select(x => x.Url).FirstOrDefault()
             });
         }
 
@@ -148,8 +150,9 @@ namespace WebDating.Services
             var users = await _uow.UserRepository.GetAllUserWithPhotosAsync();
             var listUserShort = users.Select(user => new UserShortDto()
             {
-                Id = user.Id,
-                FullName = user.KnownAs ?? user.UserName,
+                Id = user.Id, 
+                FullName = user.UserName,
+                KnownAs = user.KnownAs ?? string.Empty,
                 Image = user.Photos.Select(x => x.Url).FirstOrDefault() ?? string.Empty
             }).ToList();
             return new SuccessResult<List<UserShortDto>>(listUserShort);
@@ -504,7 +507,7 @@ namespace WebDating.Services
                     PostId = postId,
                     UserId = cmt.UserId,
                     ParentCommentId = cmt.ParentId,
-                    CreateAt = cmt.CreatedAt.ToString("HH:mm:ss"),
+                    CreateAt = cmt.CreatedAt.ToString(CultureInfo.InvariantCulture)
                 };
                 ///Thống kê số lượng action mỗi loại (like, haha....), phần này thực tế không cần join bảng để lấy mà chỉ cần sử dụng .Include để load lên, vì đã thiết lập relationship trong context rồi.
                 item.Stats = cmt.ReactionLogs.GroupBy(it => it.ReactionType)
@@ -638,10 +641,10 @@ namespace WebDating.Services
             return success ? new SuccessResult<string>("Thành công") : new ErrorResult<string>("Lỗi tương tác cảm xúc bài viết");
         }
 
-        public async Task<ResultDto<List<ReactionLogVM>>> GetDetailReaction(int targetId)
+        public async Task<ResultDto<List<ReactionLogVM>>> GetDetailReaction(int targetId, bool isPost)
         {
             List<ReactionLogVM> vms = new List<ReactionLogVM>();
-            List<ReactionLog> reactions = await _uow.ReactionLogRepository.GetDetailReaction(targetId);
+            List<ReactionLog> reactions = isPost ? await _uow.ReactionLogRepository.GetDetailReactionForPost(targetId) : await _uow.ReactionLogRepository.GetDetailReactionForComment(targetId);
 
             List<AppUser> userCommented = await _uow.UserRepository.GetMany(reactions.Select(it => it.UserId));
             foreach (var react in reactions)

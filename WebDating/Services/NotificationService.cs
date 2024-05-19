@@ -30,6 +30,8 @@ namespace WebDating.Services
                 PostId = it.PostId,
                 UserId = it.NotifyFromUserId,
                 Status = it.Status,
+                Type = it.Type,
+                DatingRequestId = it.DatingRequestId,
                 CreatedDate = it.CreatedDate,
             });
         }
@@ -48,6 +50,8 @@ namespace WebDating.Services
                 PostId = it.PostId,
                 UserId = it.NotifyFromUserId,
                 Status = it.Status,
+                Type = it.Type,
+                DatingRequestId = it.DatingRequestId,
                 CreatedDate = it.CreatedDate,
             });
         }
@@ -135,7 +139,20 @@ namespace WebDating.Services
         }
         public async Task SendNotification(int userId, Notification notification)
         {
-            await SendData("SendNotification", userId, notification);
+            await SendData("SendNotification", userId, new
+            {
+                PostId = notification.PostId,
+                CommentId = notification.CommentId,
+                Id = notification.Id,
+                Content = notification.Content,
+                Type = notification.Type,
+                Status = notification.Status,
+                CreatedDate = notification.CreatedDate,
+                DatingRequestId = notification.DatingRequestId,
+                UserId = notification.NotifyFromUserId,
+                From = notification.NotifyFromUserId,
+                To = notification.NotifyToUserId,
+            });
         }
 
         #endregion

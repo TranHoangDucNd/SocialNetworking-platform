@@ -53,4 +53,12 @@ export class NotificationService {
     this.#notificationStore?.dispatch({type: 'MARK_AS_READ', payload: notification});
     return this.http.get(this.#baseUrl + 'Notifications/mark-as-read?notificationId=' + notification.id);
   }
+
+  confirmDatingRequest(requestId: number) {
+    return this.http.post<any>(this.#baseUrl + 'DatingRequest/' + requestId + '/confirm-dating-request', {});
+  }
+
+  denyDatingRequest(requestId: number) {
+    return this.http.post<any>(this.#baseUrl + 'DatingRequest/' + requestId + '/deny-dating-request', {});
+  }
 }

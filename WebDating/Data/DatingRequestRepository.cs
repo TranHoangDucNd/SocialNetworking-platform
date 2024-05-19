@@ -23,6 +23,14 @@ namespace WebDating.Data
         {
             _context.DatingRequests.Add(entity);
         }
+        
+        public int InsertAndGetId(DatingRequest entity)
+        {
+            _context.DatingRequests.Add(entity);
+            _context.SaveChanges();
+            return entity.Id;
+        }
+        
         public void Remove(int id)
         {
             DatingRequest react = _context.DatingRequests.Find(id);

@@ -22,3 +22,14 @@ export interface DatingProfile {
   userInterests: UserInterest[];
 }
 
+export interface DatingResponse {
+  id: number;
+  senderId: number;
+  senderName: string;
+  crushId: number;
+  crushName: string;
+  startDate: string;
+  datingTimeSeconds: number;
+  senderAvatar?: string;
+  crushAvatar?: string;
+}

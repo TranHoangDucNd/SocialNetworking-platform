@@ -41,6 +41,7 @@ namespace WebDating.Data
         public virtual DbSet<Comment> Comments { get; set; }
         public virtual DbSet<ReactionLog> ReactionLogs { get; set; }
         public virtual DbSet<Notification> Notifications { get; set; }
+        public virtual DbSet<DatingRequest> DatingRequests { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -215,13 +216,30 @@ namespace WebDating.Data
               .WithMany(u => u.Notifications)
               .HasForeignKey(f => f.CommentId);
 
+            builder.Entity<Notification>()
+              .HasOne<DatingRequest>()
+              .WithMany(x => x.Notifications)
+              .HasForeignKey(x => x.DatingRequestId);
 
             //builder.Entity<ReactionLog>()
             //    .ToTable(t => t.HasCheckConstraint("CheckForeignKeyCount", "(CommentId IS NOT NULL AND PostId IS NULL) OR (CommentId IS NULL AND PostId IS NOT NULL)"));
             #endregion
 
 
+            #region Dating Request
+            builder.Entity<DatingRequest>()
+                .HasOne<AppUser>()
+                .WithMany(x => x.DatingRequests)
+                .HasForeignKey(x => x.SenderId);
 
+            builder.Entity<DatingRequest>()
+              .HasOne<AppUser>()
+              .WithMany(x => x.DatingRequests)
+              .HasForeignKey(x => x.CrushId);
+
+         
+
+            #endregion
         }
     }
 }

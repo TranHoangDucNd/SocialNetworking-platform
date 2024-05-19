@@ -1,4 +1,5 @@
 ﻿using WebDating.Entities.PostEntities;
+using WebDating.Entities.ProfileEntities;
 using WebDating.Entities.UserEntities;
 
 namespace WebDating.Entities.NotificationEntities
@@ -10,6 +11,8 @@ namespace WebDating.Entities.NotificationEntities
         public int? CommentId { get; set; }
         public int? NotifyFromUserId { get; set; }
         public int NotifyToUserId { get; set; }
+
+        public int? DatingRequestId { get; set; }
         public string Content { get; set; }
         public NotificationType Type { get; set; }
         public NotificationStatus Status { get; set; } = NotificationStatus.Unread;
@@ -17,7 +20,6 @@ namespace WebDating.Entities.NotificationEntities
         public virtual AppUser User { get; set; }
         public virtual Post Post { get; set; }
         public virtual Comment Comment { get; set; }
-
     }
 
     public enum NotificationStatus
@@ -34,5 +36,9 @@ namespace WebDating.Entities.NotificationEntities
         ReplyComment = 2,
         ReactionComment = 3,
         NewPost = 4,
+        SentDatingRequest = 5,
+        ConfirmedDatingRequest = 6,
+        DeniedDatingRequest = 7,
+        CancelDating = 8,
     }
 }

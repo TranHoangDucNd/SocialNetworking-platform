@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("WebDating")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+5e5ec322ca31d208554838d38e7f45cd11ff50d6")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+12991e5638e10b7d418cd002e20ff7d87514c7a9")]
 [assembly: System.Reflection.AssemblyProductAttribute("WebDating")]
 [assembly: System.Reflection.AssemblyTitleAttribute("WebDating")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

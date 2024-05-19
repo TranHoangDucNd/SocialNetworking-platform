@@ -29,6 +29,7 @@ namespace WebDating.Data
 
         public IReactionLogRepository ReactionLogRepository => new ReactionLogRepository(_context);
         public INotificationRepository NotificationRepository => new NotificationRepository(_context);
+        public IDatingRequestRepository DatingRequestRepository => new DatingRequestRepository(_context);
 
         public async Task<bool> Complete()
         {

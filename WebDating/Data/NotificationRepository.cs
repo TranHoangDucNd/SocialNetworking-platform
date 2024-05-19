@@ -56,5 +56,11 @@ namespace WebDating.Data
                 .Take(limit)
                 .ToListAsync();
         }
+
+        public void RemoveAllByDateId(int datingRequestId)
+        {
+            IEnumerable<Notification> notifications = _context.Notifications.Where(it => it.DatingRequestId == datingRequestId);
+            _context.Notifications.RemoveRange(notifications);
+        }
     }
 }

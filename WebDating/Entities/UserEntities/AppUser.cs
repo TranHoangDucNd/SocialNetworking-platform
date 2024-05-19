@@ -36,5 +36,6 @@ namespace WebDating.Entities.UserEntities
         public ICollection<PostSubComment> PostSubComments { get; set; }
         public ICollection<PostReportDetail> PostReportDetails { get; set; }
         public virtual ICollection<Notification> Notifications { get; set; }
+        public virtual ICollection<DatingRequest> DatingRequests { get; set; }
     }
 }

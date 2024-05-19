@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebDating.Data;
 
@@ -11,9 +12,11 @@ using WebDating.Data;
 namespace WebDating.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20240519051329_AddDatingRequestIdToNotify")]
+    partial class AddDatingRequestIdToNotify
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -155,9 +158,6 @@ namespace WebDating.Data.Migrations
                     b.Property<DateTime>("MessageSent")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("PublicId")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<bool>("RecipientDeleted")
                         .HasColumnType("bit");
 
@@ -174,9 +174,6 @@ namespace WebDating.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("SenderUsername")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Url")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -589,6 +586,9 @@ namespace WebDating.Data.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Country")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime2");
 
@@ -826,8 +826,8 @@ namespace WebDating.Data.Migrations
                         .WithMany("Notifications")
                         .HasForeignKey("CommentId");
 
-                    b.HasOne("WebDating.Entities.ProfileEntities.DatingRequest", null)
-                        .WithMany("Notifications")
+                    b.HasOne("WebDating.Entities.ProfileEntities.DatingRequest", "DatingRequest")
+                        .WithMany()
                         .HasForeignKey("DatingRequestId");
 
                     b.HasOne("WebDating.Entities.UserEntities.AppUser", "User")
@@ -841,6 +841,8 @@ namespace WebDating.Data.Migrations
                         .HasForeignKey("PostId");
 
                     b.Navigation("Comment");
+
+                    b.Navigation("DatingRequest");
 
                     b.Navigation("Post");
 
@@ -1097,11 +1099,6 @@ namespace WebDating.Data.Migrations
             modelBuilder.Entity("WebDating.Entities.ProfileEntities.DatingProfile", b =>
                 {
                     b.Navigation("UserInterests");
-                });
-
-            modelBuilder.Entity("WebDating.Entities.ProfileEntities.DatingRequest", b =>
-                {
-                    b.Navigation("Notifications");
                 });
 
             modelBuilder.Entity("WebDating.Entities.UserEntities.AppRole", b =>

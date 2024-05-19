@@ -7514,19 +7514,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\ADMIN\\.nuget\\packages\\": {}
+    "C:\\Users\\viett\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "E:\\TranHoangDuc_DATN\\Try-Hard\\WebDating\\WebDating.csproj",
+      "projectUniqueName": "D:\\Workspace\\freelance\\Try-Hard\\WebDating\\WebDating.csproj",
       "projectName": "WebDating",
-      "projectPath": "E:\\TranHoangDuc_DATN\\Try-Hard\\WebDating\\WebDating.csproj",
-      "packagesPath": "C:\\Users\\ADMIN\\.nuget\\packages\\",
-      "outputPath": "E:\\TranHoangDuc_DATN\\Try-Hard\\WebDating\\obj\\",
+      "projectPath": "D:\\Workspace\\freelance\\Try-Hard\\WebDating\\WebDating.csproj",
+      "packagesPath": "C:\\Users\\viett\\.nuget\\packages\\",
+      "outputPath": "D:\\Workspace\\freelance\\Try-Hard\\WebDating\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\ADMIN\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\viett\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -7628,7 +7628,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.100/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.101/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

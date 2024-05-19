@@ -11,6 +11,7 @@
         ICommentRepository CommentRepository { get; }
         IReactionLogRepository ReactionLogRepository { get; }
         INotificationRepository NotificationRepository { get; }
+        IDatingRequestRepository DatingRequestRepository { get; }
         Task<bool> Complete();
         bool CompleteNotAsync();
         bool HasChanges();

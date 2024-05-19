@@ -12,6 +12,7 @@ namespace WebDating.Interfaces
         Task<IEnumerable<AppUser>> GetAllUserWithPhotosAsync();
         Task<PagedList<MemberDto>> GetMembersAsync(UserParams userParams);
         Task<AppUser> GetUserByIdAsync(int id);
+        Task<AppUser> GetFullInfoByIdAsync(int id);
         Task<MemberDto> GetMemberAsync(string username);
         Task<string> GetUserGender(string userName);
         void UpdateUser(AppUser user);
@@ -22,6 +23,6 @@ namespace WebDating.Interfaces
 
         Task<List<AppUser>> GetMany(IEnumerable<int> ids);
 
-      
+
     }
 }

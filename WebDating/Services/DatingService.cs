@@ -245,12 +245,14 @@ namespace WebDating.Services
             {
                 return new ErrorResult<DatingRequestVM>() { Message = "Yêu cầu hẹn hò không hợp lệ" };
             }
-            DatingRequestVM vm = DatingRequestVM.CreateMap(datingRequest);
 
-            AppUser sender = await _uow.UserRepository.GetUserByIdAsync(datingRequest.SenderId);
-            vm.SenderName = sender.KnownAs;
-            AppUser crush = await _uow.UserRepository.GetUserByIdAsync(datingRequest.CrushId);
+            AppUser sender = await _uow.UserRepository.GetFullInfoByIdAsync(datingRequest.SenderId);
+            AppUser crush = await _uow.UserRepository.GetFullInfoByIdAsync(datingRequest.CrushId);
+            DatingRequestVM vm = DatingRequestVM.CreateMap(datingRequest);
             vm.CrushName = crush.KnownAs;
+            vm.CrushAvatar = crush.Photos.FirstOrDefault(it => it.IsMain)?.Url;
+            vm.SenderName = sender.KnownAs;
+            vm.SenderAvatar = sender.Photos.FirstOrDefault(it => it.IsMain)?.Url;
             return new SuccessResult<DatingRequestVM>(vm) { Message = "Thành công" };
         }
 
@@ -261,11 +263,13 @@ namespace WebDating.Services
             {
                 return new SuccessResult<DatingRequestVM>() { Message = "Bạn đang không trong mối quan hệ nào cả" };
             }
+            AppUser sender = await _uow.UserRepository.GetFullInfoByIdAsync(existingDating.SenderId);
+            AppUser crush = await _uow.UserRepository.GetFullInfoByIdAsync(existingDating.CrushId);
             DatingRequestVM vm = DatingRequestVM.CreateMap(existingDating);
-            AppUser sender = await _uow.UserRepository.GetUserByIdAsync(existingDating.SenderId);
-            vm.SenderName = sender.KnownAs;
-            AppUser crush = await _uow.UserRepository.GetUserByIdAsync(existingDating.CrushId);
             vm.CrushName = crush.KnownAs;
+            vm.CrushAvatar = crush.Photos.FirstOrDefault(it => it.IsMain)?.Url;
+            vm.SenderName = sender.KnownAs;
+            vm.SenderAvatar = sender.Photos.FirstOrDefault(it => it.IsMain)?.Url;
             return new SuccessResult<DatingRequestVM>(vm) { Message = "Thành công" };
         }
 

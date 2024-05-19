@@ -11,7 +11,8 @@ namespace WebDating.DTOs
         public string CrushName { get; set; }
         public string StartDate { get; set; }
         public long DatingTimeSeconds { get; set; }
-
+        public string SenderAvatar { get; set; }
+        public string CrushAvatar { get; set; }
 
 
         public DatingRequestVM()

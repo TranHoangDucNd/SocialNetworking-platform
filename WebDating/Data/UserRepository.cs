@@ -78,6 +78,15 @@ namespace WebDating.Data
             return await _context.Users.FindAsync(id);
         }
 
+        public async Task<AppUser> GetFullInfoByIdAsync(int id)
+        {
+            return await _context.Users
+                .Include(it => it.Photos)
+                .FirstOrDefaultAsync(it => it.Id == id);
+        }
+
+
+
         public async Task<AppUser> GetUserByUsernameAsync(string username)
         {
             return await _context.Users

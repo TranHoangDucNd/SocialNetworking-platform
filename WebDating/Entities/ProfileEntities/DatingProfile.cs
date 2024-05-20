@@ -11,8 +11,9 @@ namespace WebDating.Entities.ProfileEntities
         public Gender DatingObject { get; set; }
         public Height Height { get; set; }
         public Provice WhereToDate { get; set; }
+        public int DatingAgeFrom { get; set; }
+        public int DatingAgeTo { get; set; }
         public IEnumerable<UserInterest> UserInterests { get; set; }
-
         public AppUser User { get; set; }
     }
 }

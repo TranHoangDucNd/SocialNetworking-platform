@@ -41,7 +41,6 @@ import {TimeagoModule} from "ngx-timeago";
 import {TimeAgoPipe} from './_service/time-ago.pipe';
 import {MatDialogModule} from '@angular/material/dialog';
 import {CKEditorModule} from '@ckeditor/ckeditor5-angular';
-import {ChatComponent} from './post/chat/chat.component';
 import {MatMenuModule} from '@angular/material/menu';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import {OverlayModule} from '@angular/cdk/overlay';
@@ -91,7 +90,6 @@ import { ConfirmDialogComponent } from './messages/confirm-dialog/confirm-dialog
     UpdatepostComponent,
     PersonalpageComponent,
     TimeAgoPipe,
-    ChatComponent,
     RolesModalComponent,
     ReportComponent,
     CountlikecommentComponent,

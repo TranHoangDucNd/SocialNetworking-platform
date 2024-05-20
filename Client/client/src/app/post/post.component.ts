@@ -9,7 +9,6 @@ import { PostFpkDto, PostLike, PostResponseDto, UserShortDto } from '../_models/
 import { CreatepostComponent } from './createpost/createpost.component';
 import { UpdatepostComponent } from './updatepost/updatepost.component';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
-import { ChatComponent } from './chat/chat.component';
 import { Overlay } from '@angular/cdk/overlay';
 import { ReportComponent } from '../report/report.component';
 
@@ -106,30 +105,6 @@ export class PostComponent implements OnInit {
       }
     )
   }
-
-  Comment(postId: number){
-    this.openDialogComment('10ms', '10ms', postId);
-  }
-
-  openDialogComment(enteranimation: any, exitanimation: any, postId: number) {
-    const dialogConfig = new MatDialogConfig();
-    dialogConfig.hasBackdrop = false;
-    const popup = this.dialog.open(ChatComponent, {
-      enterAnimationDuration: enteranimation,
-      exitAnimationDuration: exitanimation,
-      width: '414px',
-      height: '100%',
-      data: {
-        SubId: postId,
-      },
-      panelClass: 'right-aligned-dialog',
-      backdropClass: 'custom-backdrop',
-      // Enable scoll page
-      scrollStrategy: this.overlay.scrollStrategies.noop(),
-    });
-  }
-
-
   getLike(postLikes: PostLike[]): any{
     return postLikes.some((postlike) => postlike.userId === this.userShort.id);
   }

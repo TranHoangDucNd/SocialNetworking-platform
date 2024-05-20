@@ -19,6 +19,8 @@ export interface DatingProfile {
   heightCode: number;
   whereToDate: string;
   whereToDateCode: number;
+  datingAgeFrom: number;
+  datingAgeTo: number;
   userInterests: UserInterest[];
 }
 

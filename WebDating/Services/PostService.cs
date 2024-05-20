@@ -195,40 +195,6 @@ namespace WebDating.Services
         public async Task<Post> GetById(int postId)
         => await _uow.PostRepository.GetById(postId);
 
-
-        public async Task<(int Likes, int Comments)> GetLikesAndCommentsCount(int postId)
-        {
-            var postLikes = await _uow.PostRepository.GetCountPostLikesByPostId(postId);
-            var postComments = await _uow.PostRepository.GetCountPostCommentByPostId(postId);
-
-            var likesCount = postLikes;
-            var commentsCount = postComments;
-
-            return (likesCount, commentsCount);
-        }
-
-
-        public async Task<ResultDto<List<PostResponseDto>>> AddOrUnLikePost(PostFpkDto postFpk)
-        {
-            var checkLike = await _uow.PostRepository.GetLikeByMultiId(postFpk.UserId, postFpk.PostId);
-            if (checkLike is null)
-            {
-                PostLike postLike = new()
-                {
-                    UserId = postFpk.UserId,
-                    PostId = postFpk.PostId,
-                };
-                await _uow.PostRepository.InsertPostLike(postLike);
-            }
-            else
-            {
-                _uow.PostRepository.DeletePostLike(checkLike);
-            }
-            await _uow.Complete();
-
-            return await GetAll();
-        }
-
         public async Task<bool> Report(PostReportDto postReport)
         {
             var check = await _uow.PostRepository.GetReport(postReport.UserId, postReport.PostId);

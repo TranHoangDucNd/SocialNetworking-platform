@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebDating.Data;
 
@@ -11,9 +12,11 @@ using WebDating.Data;
 namespace WebDating.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20240519170920_profile-match")]
+    partial class profilematch
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -321,6 +324,61 @@ namespace WebDating.Data.Migrations
                     b.ToTable("Post");
                 });
 
+            modelBuilder.Entity("WebDating.Entities.PostEntities.PostComment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Content")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("dateTime");
+
+                    b.Property<int>("PostId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("dateTime");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PostId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("PostComment");
+                });
+
+            modelBuilder.Entity("WebDating.Entities.PostEntities.PostLike", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("PostId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PostId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("PostLike");
+                });
+
             modelBuilder.Entity("WebDating.Entities.PostEntities.PostReportDetail", b =>
                 {
                     b.Property<int>("Id")
@@ -357,6 +415,38 @@ namespace WebDating.Data.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("PostReportDetail");
+                });
+
+            modelBuilder.Entity("WebDating.Entities.PostEntities.PostSubComment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Content")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("PreCommentId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PreCommentId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("PostSubComment");
                 });
 
             modelBuilder.Entity("WebDating.Entities.PostEntities.ReactionLog", b =>
@@ -518,6 +608,9 @@ namespace WebDating.Data.Migrations
 
                     b.Property<DateTimeOffset?>("LockoutEnd")
                         .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("LookingFor")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
@@ -762,6 +855,44 @@ namespace WebDating.Data.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("WebDating.Entities.PostEntities.PostComment", b =>
+                {
+                    b.HasOne("WebDating.Entities.PostEntities.Post", "Post")
+                        .WithMany()
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WebDating.Entities.UserEntities.AppUser", "User")
+                        .WithMany("PostComments")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Post");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("WebDating.Entities.PostEntities.PostLike", b =>
+                {
+                    b.HasOne("WebDating.Entities.PostEntities.Post", "Post")
+                        .WithMany("PostLikes")
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK__PostLike__PostId__1332DBDC");
+
+                    b.HasOne("WebDating.Entities.UserEntities.AppUser", "User")
+                        .WithMany("PostLikes")
+                        .HasForeignKey("UserId")
+                        .HasConstraintName("FK__PostLike__UserId__14270015");
+
+                    b.Navigation("Post");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("WebDating.Entities.PostEntities.PostReportDetail", b =>
                 {
                     b.HasOne("WebDating.Entities.PostEntities.Post", "Post")
@@ -779,6 +910,23 @@ namespace WebDating.Data.Migrations
                         .HasConstraintName("FK__PostRepor__UserI__160F4887");
 
                     b.Navigation("Post");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("WebDating.Entities.PostEntities.PostSubComment", b =>
+                {
+                    b.HasOne("WebDating.Entities.PostEntities.PostComment", "PreComment")
+                        .WithMany("PostSubComments")
+                        .HasForeignKey("PreCommentId")
+                        .HasConstraintName("FK__PostSubCo__PreCo__114A936A");
+
+                    b.HasOne("WebDating.Entities.UserEntities.AppUser", "User")
+                        .WithMany("PostSubComments")
+                        .HasForeignKey("UserId")
+                        .HasConstraintName("FK__PostSubCo__UserI__123EB7A3");
+
+                    b.Navigation("PreComment");
 
                     b.Navigation("User");
                 });
@@ -898,9 +1046,16 @@ namespace WebDating.Data.Migrations
 
                     b.Navigation("Notifications");
 
+                    b.Navigation("PostLikes");
+
                     b.Navigation("PostReportDetails");
 
                     b.Navigation("ReactionLogs");
+                });
+
+            modelBuilder.Entity("WebDating.Entities.PostEntities.PostComment", b =>
+                {
+                    b.Navigation("PostSubComments");
                 });
 
             modelBuilder.Entity("WebDating.Entities.ProfileEntities.DatingProfile", b =>
@@ -927,7 +1082,13 @@ namespace WebDating.Data.Migrations
 
                     b.Navigation("Photos");
 
+                    b.Navigation("PostComments");
+
+                    b.Navigation("PostLikes");
+
                     b.Navigation("PostReportDetails");
+
+                    b.Navigation("PostSubComments");
 
                     b.Navigation("Posts");
 

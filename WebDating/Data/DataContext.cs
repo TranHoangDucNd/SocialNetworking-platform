@@ -33,10 +33,7 @@ namespace WebDating.Data
 
         //Post
         public DbSet<Post> Posts { get; set; }
-        public DbSet<PostComment> PostsComments { get; set; }
-        public DbSet<PostLike> PostLikes { get; set; }
         public DbSet<PostReportDetail> PostReportDetails { get; set; }
-        public DbSet<PostSubComment> PostSubComments { get; set; }
         public DbSet<ImagePost> ImagePosts { get; set; }
         public virtual DbSet<Comment> Comments { get; set; }
         public virtual DbSet<ReactionLog> ReactionLogs { get; set; }
@@ -108,31 +105,6 @@ namespace WebDating.Data
                 .HasConstraintName("FK__Post__UserId__778AC167");
             });
 
-            //builder.Entity<PostComment>(entity =>
-            //{
-            //    entity.HasOne(x => x.Post)
-            //    .WithMany(x => x.PostComments)
-            //    .HasForeignKey(x => x.PostId)
-            //    .HasConstraintName("FK__PostComme__PostI__0F624AF8");
-
-            //    entity.HasOne(x => x.User)
-            //    .WithMany(x => x.PostComments)
-            //    .HasForeignKey(x => x.UserId)
-            //    .HasConstraintName("FK__PostComme__UserI__10566F31");
-
-            //});
-
-            builder.Entity<PostLike>(entity =>
-            {
-                entity.HasOne(d => d.Post)
-                    .WithMany(p => p.PostLikes)
-                    .HasForeignKey(d => d.PostId)
-                    .HasConstraintName("FK__PostLike__PostId__1332DBDC");
-                entity.HasOne(d => d.User)
-                    .WithMany(p => p.PostLikes)
-                    .HasForeignKey(d => d.UserId)
-                    .HasConstraintName("FK__PostLike__UserId__14270015");
-            });
 
             builder.Entity<ImagePost>(entity =>
             {
@@ -156,19 +128,6 @@ namespace WebDating.Data
                     .WithMany(p => p.PostReportDetails)
                     .HasForeignKey(d => d.UserId)
                     .HasConstraintName("FK__PostRepor__UserI__160F4887");
-            });
-
-            builder.Entity<PostSubComment>(entity =>
-            {
-                entity.HasOne(d => d.PreComment)
-                    .WithMany(p => p.PostSubComments)
-                    .HasForeignKey(d => d.PreCommentId)
-                    .HasConstraintName("FK__PostSubCo__PreCo__114A936A");
-
-                entity.HasOne(d => d.User)
-                    .WithMany(p => p.PostSubComments)
-                    .HasForeignKey(d => d.UserId)
-                    .HasConstraintName("FK__PostSubCo__UserI__123EB7A3");
             });
             #endregion
 

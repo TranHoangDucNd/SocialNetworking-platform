@@ -3,8 +3,8 @@ import { User } from './user';
 export class UserParams {
   currentUserName = '';
   gender= 0;
-  minAge = 18;
-  maxAge = 99;
+  minAge = 0;
+  maxAge = 0;
   minHeight = 120;
   maxHeight = 200;
   province = 0;

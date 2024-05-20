@@ -8,7 +8,6 @@ import { take } from 'rxjs';
 import { UpdatepostComponent } from '../post/updatepost/updatepost.component';
 import { ToastrService } from 'ngx-toastr';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
-import { ChatComponent } from '../post/chat/chat.component';
 import { Overlay } from '@angular/cdk/overlay';
 
 @Component({
@@ -70,27 +69,5 @@ export class PersonalpageComponent {
         console.log(error);
       }
     )
-  }
-
-  Comment(postId: number){
-    this.openDialogComment('10ms', '10ms', postId);
-  }
-
-  openDialogComment(enteranimation: any, exitanimation: any, postId: number) {
-    const dialogConfig = new MatDialogConfig();
-    dialogConfig.hasBackdrop = false;
-    const popup = this.dialog.open(ChatComponent, {
-      enterAnimationDuration: enteranimation,
-      exitAnimationDuration: exitanimation,
-      width: '414px',
-      height: '100%',
-      data: {
-        SubId: postId,
-      },
-      panelClass: 'right-aligned-dialog',
-      backdropClass: 'custom-backdrop',
-      // Enable scoll page
-      scrollStrategy: this.overlay.scrollStrategies.noop(),
-    });
   }
 }

@@ -107,10 +107,6 @@ export class PostService {
     return this.http.put(this.baseUrl + 'Post/Chat', data);
   }
 
-  DeleteComment(id: number) {
-    return this.http.delete(this.baseUrl + 'Post/Chat?commentId=' + id);
-  }
-
   likeOrDisLike(postFpk: PostFpkDto) {
     const params = new HttpParams()
       .set('postId', postFpk.postId)

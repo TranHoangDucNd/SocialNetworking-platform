@@ -17,7 +17,6 @@ namespace WebDating.Interfaces
         Task<ResultDto<string>> Delete(int id);
 
         //Comment
-        //Task<ResultDto<List<CommentPostDto>>> GetComment(Post post);
 
 
         #region New 10/5/2024
@@ -42,18 +41,10 @@ namespace WebDating.Interfaces
         Task<ResultDto<List<ReactionLogVM>>> GetDetailReaction(int targetId, bool isPost);
         #endregion
 
-
-
-        //Task<ResultDto<List<CommentPostDto>>> DeleteComment(int id);
-        //Task<ResultDto<List<CommentPostDto>>> UpdateComment(CommentPostDto comment);
-        //Task<ResultDto<List<CommentPostDto>>> CreateComment(CommentPostDto comment);
         Task<Post> GetById(int postId);
 
         //Task<int> CountLikes(int postId);
         //Task<int> CountComments(int postId);
-
-        Task<(int Likes, int Comments)> GetLikesAndCommentsCount(int postId);
-        Task<ResultDto<List<PostResponseDto>>> AddOrUnLikePost(PostFpkDto postFpk);
 
         Task<bool> Report(PostReportDto postReport);
         Task<ResultDto<List<PostReportDto>>> GetReport();

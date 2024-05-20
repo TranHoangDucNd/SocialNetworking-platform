@@ -179,24 +179,6 @@ namespace WebDating.Controllers
             return numberResult is null ? BadRequest(numberResult) : Ok(numberResult);
         }
 
-
-        [HttpGet("LikesAndComments/{postId}")]
-        [Authorize]
-        public async Task<IActionResult> GetLikesAndCommentsCount(int postId)
-        {
-            var (likesCount, commentsCount) = await _postService.GetLikesAndCommentsCount(postId);
-            return Ok(new { Likes = likesCount, Comments = commentsCount });
-        }
-
-
-        [HttpPost("Like")]
-        public async Task<IActionResult> AddLike(PostFpkDto postFpk)
-        {
-            var result = await _postService.AddOrUnLikePost(postFpk);
-            return Ok(result);
-        }
-
-
         [HttpGet("ContentReport")]
         public IActionResult GetContentReport()
         {

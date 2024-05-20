@@ -9,6 +9,8 @@ namespace WebDating.DTOs
         public Gender DatingObject { get; set; }
         public Height Height { get; set; }
         public Provice WhereToDate { get; set; }
+        public int DatingAgeFrom { get; set; }
+        public int DatingAgeTo { get; set; }
         public IEnumerable<UserInterestVM> UserInterests { get; set; }
     }
 
@@ -24,6 +26,8 @@ namespace WebDating.DTOs
         // Địa điểm muốn hẹn hò - Tỉnh thành
         public string WhereToDate { get; set; }
         public Provice WhereToDateCode { get; set; }
+        public int DatingAgeFrom { get; set; }
+        public int DatingAgeTo { get; set; }
         // Sở thích
         public List<UserInterestDto> UserInterests { get; set; }
     }

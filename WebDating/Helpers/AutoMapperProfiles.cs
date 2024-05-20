@@ -54,6 +54,8 @@ namespace WebDating.Helpers
                     opt => opt.MapFrom(s => s.DatingObject.GetDisplayName()))
                 .ForMember(dest => dest.DatingObjectCode,
                     opt => opt.MapFrom(s => s.DatingObject))
+                .ForMember(dest => dest.DatingAgeFrom, opt => opt.MapFrom(s => s.DatingAgeFrom))
+                .ForMember(dest => dest.DatingAgeTo, opt => opt.MapFrom(s => s.DatingAgeTo))
                 .ForMember(dest => dest.UserInterests,
                     opt => opt.MapFrom(s => s.UserInterests.Select(ui => new UserInterestDto
                     {
@@ -78,12 +80,6 @@ namespace WebDating.Helpers
                 .ForPath(dest => dest.UserShort.Id, o => o.MapFrom(s => s.UserId))
                 .ForPath(dest => dest.UserShort.FullName, o => o.MapFrom(s => s.User.UserName))
                 .ForPath(dest => dest.UserShort.Image, o => o.MapFrom(s => s.User.Photos.FirstOrDefault(x => x.IsMain).Url));
-
-            CreateMap<PostComment, CommentPostDto>()
-                .ForPath(dest => dest.UserShort.Id, o => o.MapFrom(s => s.User.Id))
-                .ForPath(dest => dest.UserShort.FullName, o => o.MapFrom(s => s.User.UserName))
-                .ForPath(dest => dest.UserShort.Image, o => o.MapFrom(s => s.User.Photos.FirstOrDefault(x => x.IsMain).Url))
-                .ReverseMap();
 
             CreateMap<PostReportDto, PostReportDetail>()
                 .ReverseMap();

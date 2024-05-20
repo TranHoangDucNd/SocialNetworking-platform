@@ -6,7 +6,7 @@ import {
   ViewChild,
   inject,
 } from '@angular/core';
-import { FormBuilder, FormControl, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormControl, ValidatorFn, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { DatingService } from '../_service/Dating.service';
@@ -37,17 +37,24 @@ export class DatingProfileComponent implements OnInit {
   filteredInterest!: Observable<EItem[]>;
   separatorKeysCodes: number[] = [ENTER, COMMA];
 
+  isFormValid = true;
+  isAgeRangeValid = true;
+
   WhereToDates!: EItem[];
   Heights!: EItem[];
   DatingObjects!: EItem[];
 
-  floatLabelControl = new FormControl('auto' as FloatLabelType);
-
   createdatingform = this.fb.group({
+    datingAgeFrom: new FormControl(18, [Validators.min(18), Validators.max(99)]),
+    datingAgeTo: new FormControl(99, [Validators.min(18), Validators.max(99)]),
     datingObject: [0, Validators.required],
     height: [0, Validators.required],
     whereToDate: [0, Validators.required],
     userInterests: [[], Validators.required],
+
+  },{
+    validators: [this.validateAgeRangeControlsValue('datingAgeFrom', 'datingAgeTo')
+    ]
   });
 
   constructor(
@@ -74,6 +81,12 @@ export class DatingProfileComponent implements OnInit {
             : this._filterInterest(topic)
         )
       );
+
+      this.createdatingform.valueChanges.subscribe((value) =>{
+        this.isFormValid = this.createdatingform.valid;
+        this.isAgeRangeValid = !this.createdatingform.hasError('Age range not valid');
+      })
+
       this.openModal();
     }, 1000);
   }
@@ -112,8 +125,8 @@ export class DatingProfileComponent implements OnInit {
 
   GetDatingObject() {
     this.datingService.GetDatingObject().subscribe({
-      next: (data: any) => {
-        this.DatingObjects = data;
+      next: (data: any[]) => {
+        this.DatingObjects = data.filter(obj => obj.value >= 1 && obj.value <= 3);
       },
       error: (error: any) => {
         console.log(error);
@@ -201,6 +214,8 @@ export class DatingProfileComponent implements OnInit {
     formData.append('DatingObject', formValue.datingObject?.toString() || '');
     formData.append('Height', formValue.height?.toString() || '');
     formData.append('WhereToDate', formValue.whereToDate?.toString() || '');
+    formData.append('DatingAgeFrom', formValue.datingAgeFrom?.toString() || '')
+    formData.append('DatingAgeTo', formValue.datingAgeTo?.toString() || '')
 
     const userInterestsArray: UserInterest[] = [];
     for (let i = 0; i < this.ChooseUserInterests.length; i++) {
@@ -230,5 +245,29 @@ export class DatingProfileComponent implements OnInit {
 
   cancel() {
     this.modalService.hide();
+  }
+
+  validateAgeRangeControlsValue(
+    firstControlName: string,
+    secondControlName: string
+  ): ValidatorFn {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
+    return (formGroup: FormGroup): ValidationErrors | null => {
+      const { value: firstControlValue } = formGroup.get(
+        firstControlName
+      ) as AbstractControl;
+      const { value: secondControlValue } = formGroup.get(
+        secondControlName
+      ) as AbstractControl;
+      return firstControlValue <= secondControlValue
+        ? null
+        : {
+          ageRangeNotValid: {
+            firstControlValue,
+            secondControlValue,
+          },
+        };
+    };
   }
 }

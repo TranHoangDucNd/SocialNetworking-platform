@@ -16,7 +16,6 @@ namespace WebDating.Entities.UserEntities
         public bool IsUpdatedDatingProfile { get; set; } = false;
         public string Gender { get; set; }
         public string Introduction { get; set; }
-        public string LookingFor { get; set; }
         public string Interests { get; set; }
         public string City { get; set; }
         public bool Lock { get; set; } = false;
@@ -30,10 +29,6 @@ namespace WebDating.Entities.UserEntities
 
         //Post -------
         public ICollection<Post> Posts { get; set; }
-        [System.Text.Json.Serialization.JsonIgnore]
-        public ICollection<PostLike> PostLikes { get; set; }
-        public ICollection<PostComment> PostComments { get; set; }
-        public ICollection<PostSubComment> PostSubComments { get; set; }
         public ICollection<PostReportDetail> PostReportDetails { get; set; }
         public virtual ICollection<Notification> Notifications { get; set; }
     }

@@ -4,11 +4,13 @@ namespace WebDating.Entities.ProfileEntities
 {
     public enum Gender
     {
-        [Display(Name = "Mọi người")]
+        [Display(Name = "Match gender")]
+        MatchGender,
+        [Display(Name = "Everyone")]
         EveryOne,
-        [Display(Name = "Nam")]
+        [Display(Name = "Male")]
         Male,
-        [Display(Name = "Nữ")]
+        [Display(Name = "Female")]
         Female
     }
 }

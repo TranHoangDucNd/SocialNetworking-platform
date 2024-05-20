@@ -10,10 +10,7 @@ namespace WebDating.Entities.PostEntities
     {
         public Post()
         {
-            //PostComments = new HashSet<PostComment>();
-            PostLikes = new HashSet<PostLike>();
             PostReportDetails = new HashSet<PostReportDetail>();
-            //1 bài đăng tạo ra không cần có ảnh nên không phải khởi tạo hashset của image
         }
         [Key]
         public int Id { get; set; }
@@ -25,7 +22,6 @@ namespace WebDating.Entities.PostEntities
         public int UserId { get; set; }
         public bool IsDeleted { get; set; } = false;
         public AppUser User { get; set; }
-        public ICollection<PostLike> PostLikes { get; set; }
         public ICollection<ImagePost> Images { get; set; }
         //public ICollection<PostComment> PostComments { get; set; }
         public ICollection<PostReportDetail> PostReportDetails { get; set; }

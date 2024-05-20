@@ -104,7 +104,6 @@ namespace WebDating.Data
                 .SingleOrDefaultAsync(x => x.UserId == user.Id);
             
             user.Introduction = memberUpdateDto.Introduction;
-            user.LookingFor = memberUpdateDto.LookingFor;
             user.City = memberUpdateDto.City;
            
             profile.DatingObject = memberUpdateDto.DatingObject;
@@ -155,14 +154,23 @@ namespace WebDating.Data
             IEnumerable<int> listInterest = _context.UserInterests.Where(it => it.DatingProfileId == profile.Id)
                 .Select(it => (int)it.InterestName);
 
+
+            var minAge = userParams.MinAge > 0 ? userParams.MinAge : profile.DatingAgeFrom;
+            var maxAge = userParams.MaxAge > 0 ? userParams.MaxAge : profile.DatingAgeTo;
+
+            if(userParams.Gender == Gender.MatchGender)
+            {
+                userParams.Gender = (Gender)profile.DatingObject;
+            }
+
             string @interest = string.Join(",", listInterest);
             SqlParameter[] sqlParams = new SqlParameter[]
             {
                 new SqlParameter("@MinHeight", userParams.MinHeight),
                 new SqlParameter("@MaxHeight",  userParams.MaxHeight),
                 new SqlParameter("@Gender", userParams.Gender == Gender.EveryOne ? DBNull.Value : userParams.Gender == Gender.Female ? "female" : "male"),
-                new SqlParameter("@MinAge", userParams.MinAge),
-                new SqlParameter("@MaxAge", userParams.MaxAge),
+                new SqlParameter("@MinAge", minAge),
+                new SqlParameter("@MaxAge", maxAge),
                 new SqlParameter("@City", userParams.Province is <= 0 ? DBNull.Value : userParams.Province),
                 new SqlParameter("@Interest",@interest),
             };

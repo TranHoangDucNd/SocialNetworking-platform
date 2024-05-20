@@ -69,44 +69,6 @@ namespace WebDating.Data
         public void Update(Post entity)
         => _context.Posts.Update(entity);
 
-
-        public async Task InsertComment(PostComment comment)
-        => await _context.PostsComments.AddAsync(comment);
-
-
-        public async Task<PostComment> GetCommentById(int id)
-        => await _context.PostsComments.FirstOrDefaultAsync(x => x.Id == id);
-
-        public async Task<IEnumerable<PostComment>> GetCommentsByPostId(int id)
-        => await _context.PostsComments.Where(x => x.PostId == id)
-                .Include(x => x.PostSubComments)
-                .Include(x => x.User)
-                    .ThenInclude(x => x.Photos)
-                .OrderByDescending(x => x.Id)
-                .ToListAsync();
-
-        public void UpdateComment(PostComment postComment)
-        => _context.PostsComments.Update(postComment);
-
-        public void DeleteComment(PostComment comment)
-        => _context.PostsComments.Remove(comment);
-
-        //Kiểm tra xem user hiện tại đã có trong ds like chưa
-        public async Task<PostLike> GetLikeByMultiId(int userId, int postId)
-        => await _context.PostLikes.Where(x => x.UserId == userId && x.PostId == postId).FirstOrDefaultAsync();
-
-        public async Task InsertPostLike(PostLike postLike)
-        => await _context.PostLikes.AddAsync(postLike);
-
-        public void DeletePostLike(PostLike checkLike)
-        => _context.PostLikes.Remove(checkLike);
-
-        public async Task<int> GetCountPostLikesByPostId(int postId)
-        => await _context.PostLikes.Where(x => x.PostId == postId).CountAsync();
-
-        public async Task<int> GetCountPostCommentByPostId(int postId)
-         => await _context.PostsComments.Where(x => x.PostId == postId).CountAsync();
-
         public async Task<IEnumerable<PostReportDetail>> GetAllReport()
         => await _context.PostReportDetails.ToListAsync();
 

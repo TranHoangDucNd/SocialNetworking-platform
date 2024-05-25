@@ -19,17 +19,26 @@ namespace WebDating.Entities.UserEntities
         public string Interests { get; set; }
         public string City { get; set; }
         public bool Lock { get; set; } = false;
+        public DatingProfile DatingProfile { get; set; }
         public List<Photo> Photos { get; set; } = new();
+
+        //Follow
         public List<UserLike> LikedByUsers { get; set; }
         public List<UserLike> LikedUsers { get; set; }
+
+        //Message
         public List<Message> MessagesSent { get; set; }
         public List<Message> MessagesReceived { get; set; }
+
+        //Role
         public ICollection<AppUserRole> UserRoles { get; set; }
-        public DatingProfile DatingProfile { get; set; }
 
         //Post -------
         public ICollection<Post> Posts { get; set; }
         public ICollection<PostReportDetail> PostReportDetails { get; set; }
         public virtual ICollection<Notification> Notifications { get; set; }
+
+        //Dating request
+        public virtual ICollection<DatingRequest> DatingRequests { get; set; }
     }
 }

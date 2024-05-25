@@ -13,5 +13,6 @@ namespace WebDating.Interfaces
         Notification GetById(int id);
         Task<List<Notification>> GetAllByUserId(int userId, int limit);
         Task<List<Notification>> GetUnreadByUser(int userId, int limit);
+        void RemoveAllByDateId(int datingRequestId);
     }
 }

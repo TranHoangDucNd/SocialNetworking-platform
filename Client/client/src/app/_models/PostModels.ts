@@ -140,3 +140,10 @@ export enum ReactionTargetType {
   post = 0,
   comment = 1
 }
+
+export interface Result {
+  type: number;
+  displayName: string;
+  userFullName: string;
+  userId: number;
+}

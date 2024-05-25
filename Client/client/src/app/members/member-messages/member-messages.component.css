@@ -292,6 +292,7 @@ max-height: 0;
 .img-fix{
   height: 300px;
   width: 300px;
+  border-radius: 30px;
 }
 
 .chat-footer .upload-file {

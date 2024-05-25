@@ -21,5 +21,7 @@ namespace WebDating.Interfaces
         Task<PagedList<MemberDto>> GetBestMatch(UserParams userParams);
 
         Task<List<AppUser>> GetMany(IEnumerable<int> ids);
+
+        Task<AppUser> GetFullInfoByIdAsync(int id);
     }
 }

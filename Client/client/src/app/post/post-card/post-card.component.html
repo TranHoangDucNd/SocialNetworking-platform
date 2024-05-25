@@ -14,7 +14,7 @@
           {{ post?.userShort?.knownAs }}
 
         </mat-card-title>
-        <mat-card-subtitle>{{ post!.createdAt | timeAgo }}</mat-card-subtitle>
+        <mat-card-subtitle>{{ post?.createdAt ?? "" | timeAgo }}</mat-card-subtitle>
       </div>
       <div>
         <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
@@ -61,26 +61,30 @@
           <div class="reaction" (click)="handleReaction('angry')">😡</div>
         </div>
       </button>
-      <button mat-icon-button matTooltip="Comment" (click)="openComment()">
+      <button mat-icon-button matTooltip="Comment" (click)="openComment(post!.id)">
         <mat-icon>chat_bubble_outline</mat-icon>
       </button>
     </div>
     <div>
       <div class="col col-12 d-flex justify-content-end">
         <span>{{ reactionCount }} Reactions</span>
+        <span class="material-symbols-outlined" (click)="openDialog()">
+          visibility
+        </span>
+        
         <span class="mx-2">·</span>
-        <span><a (click)="openComment()" style="cursor: pointer">{{ commentCount }} Comments</a></span>
+        <span><a (click)="openComment(post!.id)" style="cursor: pointer">{{ commentCount }} Comments</a></span>
       </div>
     </div>
 
   </mat-card-actions>
-  <mat-expansion-panel [expanded]="commentOpened" hideToggle>
+  <mat-expansion-panel [expanded]="openedComments[post!.id]" hideToggle>
     <ng-template matExpansionPanelContent>
       <app-post-comment-box (commentAdded)="handleCommentChanged($event)" [postId]="post?.id"
                             [parentCommentId]="0"></app-post-comment-box>
-      <ng-container *ngFor="let childComment of comments">
+      <ng-container *ngFor="let childComment of comments" >
         <app-post-comment (commentChanged)="handleCommentChanged($event)" [comment]="childComment" [user]="user"
-                          [level]="0"></app-post-comment>
+                          [level]="0" *ngIf="childComment.parentCommentId === 0"></app-post-comment>
       </ng-container>
     </ng-template>
   </mat-expansion-panel>

@@ -87,9 +87,14 @@ export class PostCommentComponent implements OnInit {
   handleReaction(reaction: string) {
     this.reaction$.next(reaction);
   }
-
-  openComment() {
-    this.commentOpened = !this.commentOpened;
+  
+  openedComments: { [key: number]: boolean } = {};
+  openComment(commentId: number) {
+    this.openedComments[commentId] = !this.openedComments[commentId];
+  }
+  openCommentBox: boolean = false;
+  openCommentBx() {
+    this.openCommentBox = !this.openCommentBox;
   }
 
   handleCommentAdded($event: boolean) {

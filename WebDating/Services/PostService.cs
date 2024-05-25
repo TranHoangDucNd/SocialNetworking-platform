@@ -1,15 +1,9 @@
 ﻿using AutoMapper;
-using Azure.Core;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SignalR;
-using System.Collections.Generic;
-using System.Xml.Linq;
 using System.Globalization;
-using WebDating.Data.Migrations;
 using WebDating.DTOs;
 using WebDating.DTOs.Post;
-using WebDating.Entities;
 using WebDating.Entities.NotificationEntities;
 using WebDating.Entities.PostEntities;
 using WebDating.Entities.UserEntities;
@@ -25,17 +19,17 @@ namespace WebDating.Services
         private readonly UserManager<AppUser> _userManager;
         private readonly IPhotoService _photoService;
         private readonly IHubContext<CommentSignalR> _commentHubContext;
-        private readonly IHubContext<NotificationHub> _notificationHubContext;
+        private readonly INotificationService _notificationService;
 
         public PostService(IMapper mapper, IUnitOfWork uow, UserManager<AppUser> userManager,
-            IPhotoService photoService, IHubContext<CommentSignalR> commentHubContext, IHubContext<NotificationHub> notificationHub)
+            IPhotoService photoService, IHubContext<CommentSignalR> commentHubContext, INotificationService notificationService)
         {
             _mapper = mapper;
             _uow = uow;
             _userManager = userManager;
             _photoService = photoService;
             _commentHubContext = commentHubContext;
-            _notificationHubContext = notificationHub;
+            _notificationService = notificationService;
         }
         public async Task<ResultDto<PostResponseDto>> Create(CreatePostDto requestDto, string username)
         {
@@ -76,7 +70,7 @@ namespace WebDating.Services
                                 NotifyToUserId = follower,
                                 PostId = post.Id,
                                 Type = NotificationType.NewPost,
-                                Content = generateNotificatioContent(user.KnownAs, NotificationType.NewPost),
+                                Content = _notificationService.GenerateNotificationContent(user.KnownAs, NotificationType.NewPost),
                             };
                             notifications.Add(notification);
                             _uow.NotificationRepository.Insert(notification);
@@ -86,7 +80,7 @@ namespace WebDating.Services
                         {
                             foreach (Notification notification in notifications)
                             {
-                                Task t = sendNotificationData(notification.NotifyToUserId, notification);
+                                Task t =_notificationService.SendNotification(notification.NotifyToUserId, notification);
                             }
                         }
                     }
@@ -233,12 +227,6 @@ namespace WebDating.Services
         }
 
         #region Comment
-        public ResultDto<List<CommentDto>> GetCommentOfPost(int postId)
-        {
-            var comments = _uow.CommentRepository.GetByPostId(postId);
-            return new SuccessResult<List<CommentDto>>(_mapper.Map<List<CommentDto>>(comments));
-        }
-
         public async Task<ResultDto<string>> DeleteComment(int id)
         {
             _uow.CommentRepository.Delete(id);
@@ -274,7 +262,6 @@ namespace WebDating.Services
                 return new ErrorResult<string>("Không tìm thấy bài đọc bạn bình luận, nó có thể đã bị xóa");
             }
 
-
             #region New
 
             NotificationType notificationType = NotificationType.CommentPost;
@@ -286,8 +273,6 @@ namespace WebDating.Services
                 Content = dto.Content,
             };
 
-
-
             if (dto.ParentCommentId != 0)
             {
                 Comment parentComment = _uow.CommentRepository.GetById(dto.ParentCommentId);
@@ -298,6 +283,9 @@ namespace WebDating.Services
                     if (newComment.Level > 3)
                     {
                         newComment.Level = 3;
+                        //Khi cố tình (hoặc có lỗi xảy ra) mà user vẫn trả lời
+                        //được 1 comment đang ở level 3 rồi thì sẽ không chuyển nó thành level 4,
+                        //mà vẫn sẽ là level 3 và coi như 2 comment này đang chung parent Id, nghĩa là cùng reply 1 comment
                         newComment.ParentId = parentComment.ParentId;
                     }
                     notificationType = NotificationType.ReplyComment;
@@ -320,7 +308,7 @@ namespace WebDating.Services
                         NotifyToUserId = notificationToUserId,
                         PostId = post.Id,
                         Type = notificationType,
-                        Content = generateNotificatioContent(currentUser.KnownAs, NotificationType.CommentPost),
+                        Content = _notificationService.GenerateNotificationContent(currentUser.KnownAs, NotificationType.CommentPost),
                     };
                     _uow.NotificationRepository.Insert(notification);
                 }
@@ -329,7 +317,7 @@ namespace WebDating.Services
             bool success = await _uow.Complete();
             if (success && notification != null)
             {
-                Task t = sendNotificationData(notificationToUserId, notification);
+                Task t = _notificationService.SendNotification(notificationToUserId, notification);
             }
 
 
@@ -340,6 +328,10 @@ namespace WebDating.Services
         public async Task<ResultDto<List<CommentVM>>> GetComments(int postId)
         {
             var comments = await _uow.CommentRepository.GetByPostId(postId);
+            /*
+             * Đầu tiên get tất cả comment có postId bằng với postId truyền vào
+             * Sắp xếp lại comment theo dạng cây(sử dụng đệ quy - createCommentVM)
+             */
             List<CommentVM> models = createCommentVM(postId, 0, comments, 1);
 
             return new SuccessResult<List<CommentVM>>(models);
@@ -347,9 +339,21 @@ namespace WebDating.Services
 
         List<CommentVM> createCommentVM(int postId, int parentCommentId, List<Comment> comments, int level)
         {
+            /*
+           * Quy định level tối đa của comment là 3, nên khi quá level 3 thì dừng đệ quy
+           * - parentCommentId: chỉ định hàm đệ quy này sẽ lấy danh sách comment con của comment nào,
+           * nói cách khác là tìm tất cả comment mà có ParentId bằng với parentCommentId truyền vào
+           * - comments: danh sách các comments (tất cả level) có liên quan tới bài viết có (postId)
+           * - level: chỉ định cấp của các comment sẽ được tạo, mỗi lần gọi đệ quy thì tăng level này nên, 
+           * biểu thị việc lấy comment cấp thấp hơn (comment con)
+           */
             List<CommentVM> items = new List<CommentVM>();
             if (level > 3)
                 return items;
+
+            ///Lấy tất cả các comment có ParentId bằng với parentCommentId và level=level ở tham số 
+            ///sau đó duyệt danh sách để tạo ViewModel, 
+            ///trong view model lại đệ quy để tạo child-view modle
             IEnumerable<Comment> commentByLevel = comments.Where(it => it.ParentId == parentCommentId && it.Level == level);
             foreach (Comment cmt in commentByLevel)
             {
@@ -362,8 +366,14 @@ namespace WebDating.Services
                     ParentCommentId = cmt.ParentId,
                     CreateAt = cmt.CreatedAt.ToString(CultureInfo.InvariantCulture),
                 };
+                ///Thống kê số lượng action mỗi loại (like, haha....),
+                ///phần này thực tế không cần join bảng để lấy mà chỉ cần sử dụng
+                ///.Include để load lên, vì đã thiết lập relationship trong context rồi.
                 item.Stats = cmt.ReactionLogs.GroupBy(it => it.ReactionType)
                     .ToDictionary(it => it.Key, it => it.Count());
+
+                ///Lấy tất cả comment con của commnet cmt bằng cách gọi lại chính hàm này (đệ quy), 
+                ///với tham số parentCommentId = cmt.Id, @level thì bằng @level +1
                 item.Descendants = createCommentVM(postId, cmt.Id, comments, level + 1);
                 items.Add(item);
             }
@@ -433,6 +443,12 @@ namespace WebDating.Services
 
                 AppUser currentUser = await _uow.UserRepository.GetUserByIdAsync(request.UserId);
 
+                /*
+               * Để tạo thông báo realtime đến đúng user thì cần biết user hiện tại 
+               * đang tương tác đến đối tượng nào, và đối tượng đó do ai tạo ra
+               * Ở đây đã biết user hiện tại đang react đến comment nào? 
+               * Comment đó do ai tạo ra, từ đó truy ngược được người cần thông báo tới
+               */
                 notification = new Notification()
                 {
                     NotifyFromUserId = request.UserId,
@@ -440,23 +456,23 @@ namespace WebDating.Services
                     CommentId = comment.Id,
                     PostId = comment.PostId,
                     Type = NotificationType.ReactionComment,
-                    Content = generateNotificatioContent(currentUser.KnownAs, NotificationType.ReactionComment),
+                    Content = _notificationService.GenerateNotificationContent(currentUser.KnownAs, NotificationType.ReactionComment),
                 };
                 _uow.NotificationRepository.Insert(notification);
             }
             else
             {
-                if (react.ReactionType == request.ReactionType)
-                    _uow.ReactionLogRepository.Remove(react);
-                else
-                    react.ReactionType = request.ReactionType;
+                ///Chỗ này remove bởi đang xử lý chung API, khi người dùng nhấn thả cảm xúc lần đầu 
+                ///thì sẽ tạo mới reactionLog, ngược lại khi gọi hàm này mà người dùng đã
+                ///tương tác thì coi như là hủy thả cảm xúc, do đó cần remove
+                _uow.ReactionLogRepository.Remove(react);
             }
 
             bool success = await _uow.Complete();
-
+            ///Cần confirm update database success thì mới gửi thông báo đến hub
             if (success && notification != null)
             {
-                Task t = sendNotificationData(notificationToUserId, notification);
+                Task t = _notificationService.SendNotification(notificationToUserId, notification);
             }
 
 
@@ -497,7 +513,7 @@ namespace WebDating.Services
                     NotifyFromUserId = request.UserId,
                     NotifyToUserId = notificationToUserId,
                     Type = NotificationType.ReactionPost,
-                    Content = generateNotificatioContent(currentUser.KnownAs, NotificationType.ReactionPost),
+                    Content = _notificationService.GenerateNotificationContent(currentUser.KnownAs, NotificationType.ReactionPost),
                     PostId = post.Id,
                 };
                 _uow.NotificationRepository.Insert(notification);
@@ -505,15 +521,12 @@ namespace WebDating.Services
             }
             else
             {
-                if (react.ReactionType == request.ReactionType)
-                    _uow.ReactionLogRepository.Remove(react);
-                else
-                    react.ReactionType = request.ReactionType;
+                _uow.ReactionLogRepository.Remove(react);
             }
             bool success = await _uow.Complete();
             if (success && notification != null)
             {
-                Task t = sendNotificationData(notificationToUserId, notification);
+                Task t = _notificationService.SendNotification(notificationToUserId, notification);
             }
             return success ? new SuccessResult<string>("Thành công") : new ErrorResult<string>("Lỗi tương tác cảm xúc bài viết");
         }
@@ -521,7 +534,9 @@ namespace WebDating.Services
         public async Task<ResultDto<List<ReactionLogVM>>> GetDetailReaction(int targetId, bool isPost)
         {
             List<ReactionLogVM> vms = new List<ReactionLogVM>();
-            List<ReactionLog> reactions = isPost ? await _uow.ReactionLogRepository.GetDetailReactionForPost(targetId) : await _uow.ReactionLogRepository.GetDetailReactionForComment(targetId);
+            List<ReactionLog> reactions = isPost 
+                ? await _uow.ReactionLogRepository.GetDetailReactionForPost(targetId) 
+                : await _uow.ReactionLogRepository.GetDetailReactionForComment(targetId);
 
             List<AppUser> userCommented = await _uow.UserRepository.GetMany(reactions.Select(it => it.UserId));
             foreach (var react in reactions)
@@ -542,55 +557,6 @@ namespace WebDating.Services
             }
             return new SuccessResult<List<ReactionLogVM>>() { ResultObj = vms };
         }
-        #endregion
-
-        #region Notification
-        private string generateNotificatioContent(string fullname, NotificationType notificationType)
-        {
-            if (notificationType == NotificationType.ReactionPost)
-            {
-                return string.Format("{0} vừa bày tỏ cảm xúc về bài viết của bạn", fullname);
-            }
-            else if (notificationType == NotificationType.CommentPost)
-            {
-                return string.Format("{0} vừa bình luận bài viết của bạn", fullname);
-            }
-            else if (notificationType == NotificationType.ReplyComment)
-            {
-                return string.Format("{0} vừa trả lời bình luận của bạn", fullname);
-            }
-            else if (notificationType == NotificationType.ReactionComment)
-            {
-                return string.Format("{0} vừa bày tỏ cảm xúc về bình luận của bạn", fullname);
-            }else if(notificationType == NotificationType.NewPost)
-            {
-                return string.Format("{0} người bạn đang theo dõi vừa đăng một bài đăng mới", fullname);
-            }
-            return string.Empty;
-        }
-        #endregion
-
-        #region SignalR
-        private async Task sendData(string eventName, int userId, object data)
-        {
-            await _notificationHubContext.Clients.User(Convert.ToString(userId)).SendAsync(eventName, data);
-        }
-        private async Task sendNotificationData(int userId, Notification notification)
-        {
-            await sendData("SendNotification", userId, new
-            {
-                PostId = notification.PostId,
-                CommentId = notification.CommentId,
-                Id = notification.Id,
-                Content = notification.Content,
-                Type = notification.Type,
-                Status = notification.Status,
-                CreatedDate = notification.CreatedDate,
-                From = notification.NotifyFromUserId,
-                To = notification.NotifyToUserId,
-            });
-        }
-
         #endregion
     }
 }

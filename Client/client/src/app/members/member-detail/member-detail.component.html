@@ -51,13 +51,16 @@
         </div>
         <div class="card-footer">
           <div class="btn-group d-flex">
-            <button class="btn" style="background-color: #fdd9e5 !important;" (click)="addLike(member)">Follow</button>
+            <button class="btn" style="background-color: #fdd9e5 !important;" (click)="addLike(member)"> 
+              <i class="fa fa-heart"></i> Follow</button>
             <!-- Messages là heading dưới heading="Messages"-->
             <button (click)="selectTab('Messages')" class="btn" style="background-color: #fdd9e5 !important;">
+              <i class="fa fa-envelope"></i>
               Messages
             </button>
 
-            <button (click)="selectTab('Messages')" class="btn btn-primary">
+            <button (click)="selectTab('Messages')" class="btn" (click)="sendDatingRequest(member)">
+              <i class="fa fa-venus-mars"></i>
               Dating
             </button>
           </div>

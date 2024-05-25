@@ -13,6 +13,7 @@ import {PersonalpageComponent} from './personalpage/personalpage.component';
 import {LayoutComponent} from './admin/layout/layout.component';
 import {adminGuard} from './_guards/admin.guard';
 import {PostDetailComponent} from "./post/post-detail/post-detail.component";
+import { DatingComponent } from './dating/dating.component';
 
 const routes: Routes = [
   {path: '', component: HomeComponent},
@@ -33,6 +34,7 @@ const routes: Routes = [
       {path: 'lists', component: ListsComponent},
       {path: 'messages', component: MessagesComponent},
       {path: 'datingprofile', component: DatingProfileComponent},
+      {path: 'dating', component: DatingComponent},
 
       {
         path: "admin",
@@ -53,7 +55,9 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
+  imports: [RouterModule.forRoot(routes, {
+    onSameUrlNavigation: 'reload',
+  })],
   exports: [RouterModule],
 })
 export class AppRoutingModule {

@@ -49,8 +49,21 @@ export class NotificationService {
     return this.http.get<any>(this.#baseUrl + 'Notifications/get-newest');
   }
 
-  markAsRead(notification: Notification) {
-    this.#notificationStore?.dispatch({type: 'MARK_AS_READ', payload: notification});
+  markAsRead(notification: Notification, isRemove: boolean = false) {
+    if (isRemove) {
+      this.#notificationStore?.dispatch({type: 'MARK_AS_READ_AND_REMOVE', payload: notification});
+    } else {
+      this.#notificationStore?.dispatch({type: 'MARK_AS_READ', payload: notification});
+    }
     return this.http.get(this.#baseUrl + 'Notifications/mark-as-read?notificationId=' + notification.id);
   }
+  
+  confirmDatingRequest(requestId: number){
+    return this.http.post<any>(this.#baseUrl + 'DatingRequest/' + requestId + '/confirm-dating-request', {});
+  }
+
+  denyDatingRequest(requestId: number) {
+    return this.http.post<any>(this.#baseUrl + 'DatingRequest/' + requestId + '/deny-dating-request', {});
+  }
+
 }

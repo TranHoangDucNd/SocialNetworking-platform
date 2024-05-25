@@ -95,7 +95,9 @@ export class NotificationComponent implements OnInit {
         userId: data.userId,
         id: data.id,
         content: data.content,
+        datingRequestId: data.datingRequestId,
         status: data.status,
+        type: data.type,
         createdDate: updatedDate,
         userShort: this.allUserShort.find((user: any) => user.id === data.userId)
       });

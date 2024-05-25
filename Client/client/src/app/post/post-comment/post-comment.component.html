@@ -37,18 +37,6 @@
     <p>
       {{ comment?.content }}
     </p>
-    <!--    <div class="d-flex flex-wrap ">-->
-    <!--      <a *ngFor="let img of post?.images" href="{{ img }}" target="_blank" style="width: 30%;"-->
-    <!--         class="my-2 mx-2 ">-->
-    <!--        <img src="{{ img }}" alt="" style="width: 100%; cursor: pointer;"-->
-    <!--             class="object-fit-contain">-->
-    <!--      </a>-->
-    <!--    </div>-->
-    <!--    <mat-divider></mat-divider>-->
-    <!--    <div class="d-flex justify-content-between">-->
-    <!--      <div>{{ 0 }} Reactions</div>-->
-    <!--      <a (click)="commentOpened = !commentOpened" style="cursor: pointer">{{ 0 }} Comments</a>-->
-    <!--    </div>-->
   </mat-card-content>
   <mat-card-actions class="d-flex justify-content-between">
     <div>
@@ -65,23 +53,23 @@
           <div class="reaction" (click)="handleReaction('angry')">😡</div>
         </div>
       </button>
-      <button mat-icon-button matTooltip="Reply" *ngIf="level <= 1" (click)="openComment()">
+      <button mat-icon-button matTooltip="Reply" *ngIf="level <= 1" (click)="openComment(comment!.id)">
         <mat-icon>chat_bubble_outline</mat-icon>
       </button>
     </div>
     <div>
       <span>{{ reactionCount }} R</span>
       <span class="mx-2">·</span>
-      <span><a (click)="openComment()" style="cursor: pointer">{{ commentCount }} C</a></span>
+      <span><a (click)="openComment(comment!.id)" style="cursor: pointer">{{ commentCount }} C</a></span>
     </div>
   </mat-card-actions>
   <mat-divider></mat-divider>
-  <div class="ms-5">
-    <mat-expansion-panel [expanded]="commentOpened" hideToggle>
-      <div *ngFor="let childComment of comment?.descendants">
-        <app-post-comment (commentChanged)="handleCommentChanged($event)" [comment]="childComment" [user]="user"
-                          [level]="level + 1"></app-post-comment>
-      </div>
+  <div class="ms-5" *ngIf="openedComments[comment!.id]">
+    <div *ngFor="let childComment of comment?.descendants">
+      <app-post-comment (commentChanged)="handleCommentChanged($event)" [comment]="childComment" [user]="user"
+                        [level]="level + 1"></app-post-comment>
+    </div>
+    <mat-expansion-panel [expanded]="openedComments[comment!.id]" hideToggle>
       <app-post-comment-box (commentAdded)="handleCommentAdded($event)" [postId]="comment?.postId"
                             [parentCommentId]="comment?.id"></app-post-comment-box>
     </mat-expansion-panel>

@@ -110,4 +110,15 @@ export class MemberDetailComponent implements OnInit, OnDestroy {
       error: error => this.toastr.error(error.error)
     })
   }
+
+  sendDatingRequest(member: Member){
+    this.memberService.sendDatingRequest(member.id).subscribe({
+      next: (res) => {
+        this.toastr.success(res.message);
+      },
+      error: error =>{
+        this.toastr.error(error.error);
+      }
+    })
+  }
 }

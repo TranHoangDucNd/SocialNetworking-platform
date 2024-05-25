@@ -10,6 +10,7 @@ namespace WebDating.Entities.NotificationEntities
         public int? CommentId { get; set; }
         public int? NotifyFromUserId { get; set; }
         public int NotifyToUserId { get; set; }
+        public int? DatingRequestId { get; set; }
         public string Content { get; set; }
         public NotificationType Type { get; set; }
         public NotificationStatus Status { get; set; } = NotificationStatus.Unread;
@@ -25,6 +26,12 @@ namespace WebDating.Entities.NotificationEntities
         Unread = 0,
         Read = 1,
         Hidden = 2,
+        ReactionComment = 3,
+        NewPost = 4,
+        SentDatingRequest = 5,
+        ConfirmedDatingRequest = 6,
+        DeniedDatingRequest = 7,
+        CancelDating = 8
     }
 
     public enum NotificationType
@@ -34,5 +41,9 @@ namespace WebDating.Entities.NotificationEntities
         ReplyComment = 2,
         ReactionComment = 3,
         NewPost = 4,
+        SentDatingRequest = 5,
+        ConfirmedDatingRequest = 6,
+        DeniedDatingRequest = 7,
+        CancelDating = 8
     }
 }

@@ -75,7 +75,9 @@ namespace WebDating.Data
 
         public async Task<AppUser> GetUserByIdAsync(int id)
         {
-            return await _context.Users.FindAsync(id);
+            return await _context.Users
+                .Include(x => x.Photos)
+                .FirstOrDefaultAsync(x => x.Id == id);
         }
 
         public async Task<AppUser> GetUserByUsernameAsync(string username)
@@ -175,9 +177,23 @@ namespace WebDating.Data
                 new SqlParameter("@Interest",@interest),
             };
 
-            List<int> listTds = _context.Database.SqlQueryRaw<int>("EXEC Search_Best_Match @MinHeight, @MaxHeight, @Gender,@MinAge,@MaxAge, @City, @Interest", sqlParams).ToList();
-            var query = _context.Users.AsQueryable();
-            query = query.Where(it => listTds.Contains(it.Id) && it.UserName != userParams.CurrentUserName);
+            List<int> listTds = _context.Database
+                .SqlQueryRaw<int>("EXEC Search_Best_Match @MinHeight, @MaxHeight, @Gender,@MinAge,@MaxAge, @City, @Interest", sqlParams)
+                .ToList();
+
+            var query = _context.Users
+                .Include(x => x.DatingRequests)
+                .AsQueryable();
+
+            var datingRequest = _context.DatingRequests
+                .Where(it => it.SenderId == currentUser.Id || it.CrushId == currentUser.Id)
+                .Select(it => it.SenderId == currentUser.Id ? it.CrushId : it.SenderId);
+
+
+            query = query.Where(it => listTds.Contains(it.Id)
+                && it.UserName != userParams.CurrentUserName
+                && it.DatingRequests.All(x => x.Status != DatingStatus.Confirmed)
+                && !datingRequest.Contains(it.Id));
 
             query = userParams.OrderBy switch
             {
@@ -211,6 +227,13 @@ namespace WebDating.Data
             return await _context.Users
                 .Where(it => ids.Contains(it.Id))
                 .ToListAsync();
+        }
+
+        public async Task<AppUser> GetFullInfoByIdAsync(int id)
+        {
+            return await _context.Users
+                .Include(x => x.Photos)
+                .FirstOrDefaultAsync(x => x.Id == id);
         }
 
     }

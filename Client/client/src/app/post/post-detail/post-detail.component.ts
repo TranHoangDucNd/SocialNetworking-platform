@@ -25,7 +25,7 @@ export class PostDetailComponent implements OnInit {
     this.user = this.accountService.getCurrentUser();
     this.route.params.subscribe(params => {
       this.id = params['id'] as number;
-      this.getPost();
+      if(this.id) this.getPost();
     });
 
   }

@@ -43,7 +43,8 @@ namespace WebDating.Data
         }
         public async Task<List<Notification>> GetAllByUserId(int userId, int limit)
         {
-            return await _context.Notifications.Where(it => it.NotifyToUserId == userId)
+            return await _context.Notifications.Where(it => it.NotifyToUserId == userId 
+                && !(it.Status == NotificationStatus.Read && it.Type == NotificationType.SentDatingRequest))
                 .OrderByDescending(it => it.CreatedDate)
                 .Take(limit)
                 .ToListAsync();
@@ -55,6 +56,12 @@ namespace WebDating.Data
                 .OrderByDescending(it => it.CreatedDate)
                 .Take(limit)
                 .ToListAsync();
+        }
+
+        public void RemoveAllByDateId(int datingRequestId)
+        {
+            IEnumerable<Notification> notifications = _context.Notifications.Where(it => it.DatingRequestId == datingRequestId);
+            _context.Notifications.RemoveRange(notifications);
         }
     }
 }

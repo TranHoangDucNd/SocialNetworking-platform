@@ -7,6 +7,7 @@ import { getPaginationHeaders, getPaginationResult } from './paginationHelper';
 import { AccountService } from './account.service';
 import { map, of, take } from 'rxjs';
 import { User } from '../_models/user';
+import { DatingResponse } from '../_models/DatingProfile';
 
 @Injectable({
   providedIn: 'root',
@@ -131,5 +132,19 @@ export class MembersService {
     params = params.append('predicate', predicate);
 
     return getPaginationResult<Member[]>(this.baseUrl + 'likes', params, this.http);
+  }
+
+  //Dating function
+
+  sendDatingRequest(userId:number){
+    return this.http.post<any>(this.baseUrl + 'DatingRequest/send-dating-request?crushId=' + userId, {})
+  }
+
+  getDating(){
+    return this.http.get<{message: string, resultObj: DatingResponse}>(this.baseUrl + 'DatingRequest/get-dating');
+  }
+
+  endDating(){
+    return this.http.post<any>(this.baseUrl + 'DatingRequest/cancel-dating',{})
   }
 }

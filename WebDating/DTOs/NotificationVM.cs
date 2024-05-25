@@ -9,6 +9,8 @@ namespace WebDating.DTOs
         public int? UserId { get; set; }
         public string Content { get; set; }
         public NotificationStatus Status { get; set; } = NotificationStatus.Unread;
+        public NotificationType Type { get; set; } = NotificationType.ReactionPost;
+        public int? DatingRequestId { get; set; }
         public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
     }
 }

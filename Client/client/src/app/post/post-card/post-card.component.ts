@@ -1,5 +1,5 @@
 import {Component, DestroyRef, EventEmitter, inject, Input, OnInit, Output} from '@angular/core';
-import {CommentDto, PostResponseDto, ReactionType} from "../../_models/PostModels";
+import {CommentDto, PostResponseDto, ReactionType, Result} from "../../_models/PostModels";
 import {User} from "../../_models/user";
 import {BsModalService} from "ngx-bootstrap/modal";
 import {PostService} from "../../_service/post.service";
@@ -9,6 +9,8 @@ import {ReportComponent} from "../../report/report.component";
 import {forkJoin, Subject, switchMap, throttleTime} from "rxjs";
 import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
 import {convertToEmoji, countComments} from "../../_service/post.helper";
+import { MatDialog } from '@angular/material/dialog';
+import { ShowListReactionComponent } from '../show-list-reaction/show-list-reaction.component';
 
 @Component({
   selector: 'app-post-card',
@@ -24,7 +26,7 @@ export class PostCardComponent implements OnInit {
     this.getReactions();
     this.getComments();
   }
-
+  resultObj: Result[] = []; 
   get post() {
     return this._post;
   }
@@ -36,7 +38,7 @@ export class PostCardComponent implements OnInit {
   postService = inject(PostService);
   toastr = inject(ToastrService);
   destroy$ = inject(DestroyRef)
-
+  dialog = inject(MatDialog);
   reaction$ = new Subject();
 
   comments: CommentDto[] = [];
@@ -46,6 +48,8 @@ export class PostCardComponent implements OnInit {
 
 
   showReactions: boolean = false;
+
+  showListReaction: boolean = false;
 
   ngOnInit() {
     console.log(this.post)
@@ -81,11 +85,14 @@ export class PostCardComponent implements OnInit {
           userId: number;
         }) => reaction.userId === this.user?.id).type as number;
         this.currentReaction = convertToEmoji(ReactionType[type]);
+
+        this.resultObj = data.resultObj;
       }
     })
   }
 
   getComments() {
+    if(!this.post?.id) return
     forkJoin([
       this.postService.getAllUsersShort(),
       this.postService.getAllCommentsOfPost(this.post?.id || this.postId)
@@ -101,6 +108,7 @@ export class PostCardComponent implements OnInit {
           }
         })
         this.comments = commentsWithUserShort;
+        console.log(this.comments)
         this.commentCount = countComments(commentsWithUserShort);
       }
     })
@@ -139,9 +147,9 @@ export class PostCardComponent implements OnInit {
       initialState: initialState
     })
   }
-
-  openComment() {
-    this.commentOpened = !this.commentOpened
+  openedComments: { [key: number]: boolean } = {};
+  openComment(commentId: number) {
+    this.openedComments[commentId] = !this.openedComments[commentId];
   }
 
   handleCommentChanged($event: boolean) {
@@ -152,5 +160,17 @@ export class PostCardComponent implements OnInit {
 
   openImageInNewTab(img: string) {
     window.open(img, '_blank');
+  }
+
+  //xử lý sự kiện hiển thị list reaction
+
+  toggleListReaction() {
+    this.showListReaction = !this.showListReaction;
+  }
+
+  openDialog() {
+    this.dialog.open(ShowListReactionComponent, {
+      data: { resultObj: this.resultObj }
+    });
   }
 }

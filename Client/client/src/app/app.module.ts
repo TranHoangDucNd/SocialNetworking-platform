@@ -69,6 +69,9 @@ import {ModeratorModule} from "./admin/components/moderator/moderator.module";
 import { NotificationListComponent } from './notification/notification-list/notification-list.component';
 import { PostDetailComponent } from './post/post-detail/post-detail.component';
 import { ConfirmDialogComponent } from './messages/confirm-dialog/confirm-dialog.component';
+import { DatingComponent } from './dating/dating.component';
+import { ConfirmDatingComponent } from './notification/confirm-dating/confirm-dating.component';
+import { ShowListReactionComponent } from './post/show-list-reaction/show-list-reaction.component';
 
 @NgModule({
   declarations: [
@@ -99,8 +102,11 @@ import { ConfirmDialogComponent } from './messages/confirm-dialog/confirm-dialog
     NotificationComponent,
     NotificationListComponent,
     PostDetailComponent,
-    ConfirmDialogComponent
-
+    ConfirmDialogComponent,
+    DatingComponent,
+    ConfirmDatingComponent,
+    ShowListReactionComponent
+    
   ],
   providers: [
     {provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true},

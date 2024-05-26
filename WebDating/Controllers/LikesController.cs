@@ -25,11 +25,11 @@ namespace WebDating.Controllers
 
             if (likedUser == null) return NotFound();
 
-            if (sourceUser.UserName == username) return BadRequest("You cannot like yourself!");
+            if (sourceUser.UserName == username) return BadRequest("You cannot follow yourself!");
 
             var userLike = await _uow.LikeRepository.GetUserLike(sourceUserId, likedUser.Id);
 
-            if (userLike != null) return BadRequest("You already like this user!");
+            if (userLike != null) return BadRequest("You already follow this user!");
 
             userLike = new UserLike
             {
@@ -41,7 +41,7 @@ namespace WebDating.Controllers
 
             if (await _uow.Complete()) return Ok();
 
-            return BadRequest("Failed to like user!");
+            return BadRequest("Failed to follow user!");
         }
 
 

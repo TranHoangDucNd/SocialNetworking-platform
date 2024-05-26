@@ -31,19 +31,19 @@ namespace WebDating.Data
             _context.Messages.Add(message);
         }
 
-        public async Task DeleteAllMessageByUserId(int currentId, int otherId)
+        public async Task DeleteAllMessageByUserId(string currentUsername, string otherUsername)
         {
             var messages = await _context.Messages
-                .Where(mes => (mes.SenderId == currentId && mes.RecipientId == otherId)
-                || (mes.SenderId == otherId && mes.RecipientId == currentId)).ToListAsync();
+                .Where(mes => (mes.SenderUsername == currentUsername && mes.RecipientUsername == otherUsername)
+                || (mes.SenderUsername == otherUsername && mes.RecipientUsername == currentUsername)).ToListAsync();
 
             foreach(Message message in messages)
             {
-                if(message.SenderId == currentId)
+                if(message.SenderUsername == currentUsername)
                 {
                     message.SenderDeleted = true;
                 }
-                if(message.RecipientId == currentId)
+                if(message.RecipientUsername == currentUsername)
                 {
                     message.RecipientDeleted = true;
                 }
@@ -79,6 +79,33 @@ namespace WebDating.Data
                 .Include(x => x.Connections)
                 .FirstOrDefaultAsync(x => x.Name == groupName);
         }
+
+        public List<MessageSummaryDto> GetMessages(string currentUsername)
+        {
+            var messages = _context.Messages
+                 .Include(m => m.Sender.Photos)
+                 .Include(m => m.Recipient.Photos)
+                 .Where(m => m.RecipientUsername == currentUsername || m.SenderUsername == currentUsername)
+                 .OrderByDescending(m => m.MessageSent)
+                 .ToList() // Fetch data from database first
+                 .GroupBy(m => m.SenderUsername == currentUsername ? m.RecipientUsername : m.SenderUsername)
+                 .Select(g => g.OrderByDescending(m => m.MessageSent).FirstOrDefault())
+                 .Select(m => new MessageSummaryDto
+                 {
+                     Username = m.SenderUsername == currentUsername
+                         ? m.RecipientUsername
+                         : m.SenderUsername,
+                     LastMessageContent = m.Content,
+                     LastMessageSent = m.MessageSent,
+                     Url = m.SenderUsername == currentUsername
+                         ? m.Recipient?.Photos?.FirstOrDefault(p => p.IsMain)?.Url
+                         : m.Sender?.Photos?.FirstOrDefault(p => p.IsMain)?.Url,
+                     KnownAs = m.SenderUsername == currentUsername ? m.Recipient.KnownAs : m.Sender.KnownAs,
+                     DateRead = m.RecipientUsername == currentUsername && m.DateRead == null
+                 }).ToList();
+            return messages;
+        }
+
 
         //Get các tin nhắn đã gửi, đã nhận, chưa đọc của current user với other users
         public async Task<PagedList<MessageDto>> GetMessagesForUser(MessageParams messageParams)

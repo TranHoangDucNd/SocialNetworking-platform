@@ -1,11 +1,11 @@
 <div class="d-flex justify-content-center my-5" >
-      <mat-card *ngIf="datingResponse; else noDating" class="dating-card" style="width: 80%; height: 700px;background-color: #fac8da;" >
+      <mat-card *ngIf="datingResponse; else noDating" class="dating-card" >
         <mat-card-content class="row">
           <div class="col col-12 d-flex justify-content-center">
             <h2 style="color: #fc72a5">LOVE DAYS</h2>
           </div>
           <div class="col col-12 d-flex justify-content-center">
-            <div class="w-75 p-2 m-5 d-flex flex-column justify-content-center"
+            <div class="w-50 p-2 m-5 d-flex flex-column justify-content-center"
                  style="background-color: #fdd9e5; border-radius: 50px;">
               <div class="text-center text-dark">
                 <h5 style="color:#36180d !important;">DAY {{ daysSinceDate }}</h5>
@@ -31,6 +31,10 @@
           </div>
           <div class="col col-12 text-center">
             <h4 style="color: #f30d55">{{ targetDate | date: "dd-MM-yyyy" }}</h4>
+          </div>
+
+          <div class="col col-12 text-center">
+            <h4 style="color: #f30d55"> Thank you for your love 😍</h4>
           </div>
     
         </mat-card-content>

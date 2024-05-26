@@ -72,6 +72,11 @@ import { ConfirmDialogComponent } from './messages/confirm-dialog/confirm-dialog
 import { DatingComponent } from './dating/dating.component';
 import { ConfirmDatingComponent } from './notification/confirm-dating/confirm-dating.component';
 import { ShowListReactionComponent } from './post/show-list-reaction/show-list-reaction.component';
+import { ListMessagesComponent } from './newmessages/list-messages/list-messages.component';
+import { MessagesThreadComponent } from './newmessages/messages-thread/messages-thread.component';
+import { NewmessagesComponent } from './newmessages/newmessages.component';
+import { ConfirmComponent } from './newmessages/confirm/confirm.component';
+import { PostreportdetailComponent } from './admin/components/postreportdetail/postreportdetail.component';
 
 @NgModule({
   declarations: [
@@ -105,7 +110,12 @@ import { ShowListReactionComponent } from './post/show-list-reaction/show-list-r
     ConfirmDialogComponent,
     DatingComponent,
     ConfirmDatingComponent,
-    ShowListReactionComponent
+    ShowListReactionComponent,
+    ListMessagesComponent,
+    MessagesThreadComponent,
+    NewmessagesComponent,
+    ConfirmComponent,
+    PostreportdetailComponent
     
   ],
   providers: [

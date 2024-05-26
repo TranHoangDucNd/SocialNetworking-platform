@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.ComponentModel;
 using System.ComponentModel.Design;
-using WebDating.Data.Migrations;
+//using WebDating.Data.Migrations;
 using WebDating.Entities.PostEntities;
 using WebDating.Entities.UserEntities;
 using WebDating.Interfaces;

@@ -1,0 +1,17 @@
+<div class="h-100 d-flex justify-content-center">
+     
+      <!-- Conversation List -->
+      <div class="col-3 me-3" >
+        <app-list-messages (selectedUser)="onUserSelected($event)" 
+        (imgPath)="onUserPhotoUrl($event)"
+        (knownAs)="onUserKnownAs($event)"
+        ></app-list-messages>
+      </div>
+      
+      <!-- Chat Window -->
+      <div class="col-7">
+        <app-messages-thread [username]="selectedUsername" [knownAs]="knownAs" [imgPath]="photoUrl">
+      </app-messages-thread>
+      </div>
+
+</div>

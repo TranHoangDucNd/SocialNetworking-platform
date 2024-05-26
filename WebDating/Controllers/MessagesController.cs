@@ -87,6 +87,15 @@ namespace WebDating.Controllers
 
         }
 
+        [HttpGet]
+        [Route("get-messages-for-user")]
+        public ActionResult<List<MessageDto>> GetMessages()
+        {
+            var username = User.GetUserName();
+            var result = _uow.MessageRepository.GetMessages(username);
+            return Ok(result);
+        }
+
         [HttpGet("thread/{username}")]
         public async Task<ActionResult<IEnumerable<MessageDto>>> GetMessagesThread(string username)
         {
@@ -96,11 +105,11 @@ namespace WebDating.Controllers
         }
 
         [HttpDelete]
-        [Route("delete-messages-by-userId/{userId}")]
-        public async Task<IActionResult> DeleteAllMessagesByUserId(int userId)
+        [Route("delete-messages-by-username/{otherUsername}")]
+        public async Task<IActionResult> DeleteAllMessagesByUserId(string otherUsername)
         {
-            int currentUserId = User.GetUserId();
-             await _uow.MessageRepository.DeleteAllMessageByUserId(currentUserId, userId);
+            string currentUsername = User.GetUserName();
+             await _uow.MessageRepository.DeleteAllMessageByUserId(currentUsername, otherUsername);
             if(await _uow.Complete()) return NoContent();
             return BadRequest("Delete message failed");
             

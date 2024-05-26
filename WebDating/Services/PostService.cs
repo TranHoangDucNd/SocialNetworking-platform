@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SignalR;
 using System.Globalization;
+using System.Xml.Linq;
+using WebDating.Data;
 using WebDating.DTOs;
 using WebDating.DTOs.Post;
 using WebDating.Entities.NotificationEntities;
@@ -20,9 +22,10 @@ namespace WebDating.Services
         private readonly IPhotoService _photoService;
         private readonly IHubContext<CommentSignalR> _commentHubContext;
         private readonly INotificationService _notificationService;
+        private readonly DataContext _dataContext;
 
         public PostService(IMapper mapper, IUnitOfWork uow, UserManager<AppUser> userManager,
-            IPhotoService photoService, IHubContext<CommentSignalR> commentHubContext, INotificationService notificationService)
+            IPhotoService photoService, IHubContext<CommentSignalR> commentHubContext, INotificationService notificationService,DataContext dataContext)
         {
             _mapper = mapper;
             _uow = uow;
@@ -30,6 +33,7 @@ namespace WebDating.Services
             _photoService = photoService;
             _commentHubContext = commentHubContext;
             _notificationService = notificationService;
+            _dataContext = dataContext;
         }
         public async Task<ResultDto<PostResponseDto>> Create(CreatePostDto requestDto, string username)
         {
@@ -100,6 +104,44 @@ namespace WebDating.Services
         public async Task<ResultDto<string>> Delete(int id)
         {
             var post = await _uow.PostRepository.GetById(id);
+            if(post != null)
+            {
+                foreach(var comment in post.Comments)
+                {
+                    if(comment.ReactionLogs != null)
+                    {
+                        foreach (var reactionLog in comment.ReactionLogs)
+                        {
+                            _dataContext.ReactionLogs.Remove(reactionLog);
+                        }
+                    }
+                    if(comment.Notifications != null)
+                    {
+
+                        foreach (var notification in comment.Notifications)
+                        {
+                            _dataContext.Notifications.Remove(notification);
+                        }
+
+                    }
+                    _dataContext.Comments.Remove(comment);
+                }
+                if(post.ReactionLogs != null)
+                {
+                    foreach (var reactionLog in post.ReactionLogs)
+                    {
+                        _dataContext.ReactionLogs.Remove(reactionLog);
+                    }
+                }
+                if(post.Notifications != null)
+                {
+                    foreach (var notification in post.Notifications)
+                    {
+                        _dataContext.Notifications.Remove(notification);
+                    }
+                }
+               
+            }
             _uow.PostRepository.Delete(post);
             await _uow.Complete();
             return new SuccessResult<string>();

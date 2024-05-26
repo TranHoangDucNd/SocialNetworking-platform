@@ -8,10 +8,6 @@ namespace WebDating.Entities.PostEntities
     [Table("Post")]
     public class Post
     {
-        public Post()
-        {
-            PostReportDetails = new HashSet<PostReportDetail>();
-        }
         [Key]
         public int Id { get; set; }
         public string Content { get; set; }

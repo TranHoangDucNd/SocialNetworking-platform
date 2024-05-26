@@ -53,8 +53,8 @@ export class ManagepostreportComponent implements OnInit{
     const popup = this.dialog.open(PostreportdetailComponent,{
       enterAnimationDuration: enteranimation,
       exitAnimationDuration: exitanimation,
-      width: '414px',
-      height: '40%',
+      width: '600px',
+      height: '700px',
       data: {
         SubId: postId,
       },
@@ -66,8 +66,6 @@ export class ManagepostreportComponent implements OnInit{
     this.adminService.deletePost(postId).subscribe(
       (data: any) =>{
         if(data.isSuccessed === true){
-          this.postReports = data.resultObj;
-          this.toastr.success("Post deleted successfully");
           this.getPostReports();
         }
       }

@@ -23,9 +23,10 @@
         <i class="fa fa-heart"> </i>
         <span class="full-width"> Follows</span>
       </mat-list-item>
-      <mat-list-item routerLink="/messages">
-        <i class="fa fa-envelope"> </i>
-        <span class="full-width"> Messages</span>
+      
+      <mat-list-item routerLink="/featmess" (click)="clearUnreadMessages()">      
+        <i class="fa fa-envelope"></i>
+        <span class="full-width"> Messages <span *ngIf="unreadMessageCount > 0" class="badge">{{ unreadMessageCount }}</span></span>
       </mat-list-item>
 
       <mat-list-item routerLink="/dating">

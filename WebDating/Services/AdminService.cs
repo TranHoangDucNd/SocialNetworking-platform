@@ -15,20 +15,30 @@ namespace WebDating.Services
         private readonly IMapper _mapper;
         private readonly IPhotoService _photoService;
         private readonly DataContext _dataContext;
+        private readonly IPostService _postService;
 
-        public AdminService(IUnitOfWork uow, IMapper mapper, IPhotoService photoService, DataContext dataContext)
+        public AdminService(IUnitOfWork uow, IMapper mapper, IPhotoService photoService, DataContext dataContext, IPostService postService)
         {
             _uow = uow;
             _mapper = mapper;
             _photoService = photoService;
             _dataContext = dataContext;
+            _postService = postService;
         }
-        public async Task<ResultDto<List<PostReportAdminDto>>> DeletePostReport(int postId)
+        public async Task<ResultDto<string>> DeletePostReport(int postId)
         {
-            var post = await _uow.PostRepository.GetById(postId);
-            _uow.AdminRepository.Delete(post);
-            await _uow.Complete();
-            return await GetPostReports();
+            var reportsTask = _uow.AdminRepository.GetPostReports(postId);
+            var reports = await reportsTask;
+
+            if (reports != null && reports.Any())
+            {
+                _uow.AdminRepository.RemoveRange(reports);
+                await _uow.Complete();
+            }
+
+            await _postService.Delete(postId);
+
+            return new SuccessResult<string>("Post report deleted successfully.");
         }
 
         public async Task<ResultDto<ShowPostAdminDto>> GetPost(int postId)

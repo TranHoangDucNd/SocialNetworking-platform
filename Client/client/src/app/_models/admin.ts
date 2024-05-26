@@ -19,12 +19,14 @@ export interface UserShortDto {
   id: number;
   fullName: string;
   image: string;
+  knownAs: string;
 }
 
 export interface MembersLock {
   id: number
   userName: string
   photoUrl: string
+  knownAs: string;
   lock: boolean
 }
 export interface LockUser {

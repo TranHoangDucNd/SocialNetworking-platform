@@ -9,6 +9,13 @@
   animation-iteration-count: infinite;
 }
 
+.dating-card {
+  width: 80%;
+  height: 700px;
+  background-color: #fac8da;
+  border-radius: 50px;
+}
+
 .heart:after {
   background-color: rgb(210, 20, 51);
   content: "";

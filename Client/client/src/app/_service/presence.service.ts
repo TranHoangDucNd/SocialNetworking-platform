@@ -15,7 +15,10 @@ export class PresenceService {
   private onlineUsersSource = new BehaviorSubject<string[]>([]);
   onlineUsers$ = this.onlineUsersSource.asObservable();
  
-  
+  private unreadMessageCountSource = new BehaviorSubject<number>(0);
+  unreadMessageCount$ = this.unreadMessageCountSource.asObservable();
+  public unreadMessageCount = 0;
+
   constructor(private toastr: ToastrService, private router: Router) {}
   
   //Xây dưng kết nối trung tâm
@@ -60,6 +63,16 @@ export class PresenceService {
             this.router.navigateByUrl('/members/' + username + '?tab=Messages'),
         });
     });
+
+    this.hubConnection.on('NewUnreadMessage', () => {
+      console.log('NewUnreadMessage event received'); // Kiểm tra sự kiện
+      let currentCount = this.unreadMessageCountSource.value;
+      this.unreadMessageCountSource.next(currentCount + 1);
+    });
+  }
+
+  clearUnreadMessages() {
+    this.unreadMessageCountSource.next(0);
   }
 
   stopHubConnection() {

@@ -2,9 +2,9 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { getPaginationHeaders, getPaginationResult } from './paginationHelper';
-import { CreateMessageDto, Message, UploadImageMess } from '../_models/message';
+import { CreateMessageDto, Message, MessagesForUser, UploadImageMess } from '../_models/message';
 import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
-import { BehaviorSubject, take } from 'rxjs';
+import { BehaviorSubject, take, tap } from 'rxjs';
 import { User } from '../_models/user';
 import { Group } from '../_models/group';
 
@@ -17,6 +17,11 @@ export class MessageService {
   private hubConnection?: HubConnection;
   private messageThreadSource = new BehaviorSubject<Message[]>([]);
   messageThread$ = this.messageThreadSource.asObservable();
+
+  //xay dung cho last message
+  private messageListSource = new BehaviorSubject<MessagesForUser[]>([]);
+  messageList$ = this.messageListSource.asObservable();
+  private messages: MessagesForUser[] = [];
 
   constructor(private http: HttpClient) {}
 
@@ -32,6 +37,11 @@ export class MessageService {
     this.hubConnection.on('ReceiveMessageThread', (messages) => {
       this.messageThreadSource.next(messages);
     });
+
+    this.hubConnection.on('UpdateUI', (message) => {
+      this.updateMessageList(message);
+    });
+
 
     this.hubConnection.on('UpdatedGroup', (group: Group) => {
       if (group.connections.some((x) => x.username === otherUsername)) {
@@ -92,7 +102,34 @@ export class MessageService {
     return this.http.post<UploadImageMess>(this.baseUrl + 'messages/upload-image-message', formData);
   }
 
-  deleteAllMessage(userId: number){
-    return this.http.delete(this.baseUrl + 'messages/delete-messages-by-userId/' + userId);
+  deleteAllMessage(otherUsername: string){
+    return this.http.delete(this.baseUrl + 'messages/delete-messages-by-username/' + otherUsername);
   }
+
+  //New messages
+  getMessagesForUser(){
+    return this.http.get<MessagesForUser[]>(this.baseUrl + 'messages/get-messages-for-user').pipe(
+      tap(messages => {
+        this.messages = messages;
+        this.messageListSource.next(messages);
+      })
+    )
+  }
+
+  private updateMessageList(message: MessagesForUser) {
+    // Lấy danh sách tin nhắn hiện tại
+    let currentMessages = this.messageListSource.value;
+    // Tìm tin nhắn cũ của người gửi hoặc người nhận trong danh sách
+    const index = currentMessages.findIndex(m => m.username === message.username);
+    // Nếu tìm thấy, cập nhật tin nhắn
+    if (index !== -1) {
+      currentMessages[index] = message;
+    } else {
+      // Nếu không tìm thấy, thêm tin nhắn mới vào danh sách
+      currentMessages.push(message);
+    }
+    // Cập nhật lại danh sách tin nhắn
+    this.messageListSource.next(currentMessages);
+  }
+
 }

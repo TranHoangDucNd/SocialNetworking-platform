@@ -24,3 +24,12 @@ export interface UploadImageMess {
   path: string
   publicId: string
 }
+
+export interface MessagesForUser {
+  username: string
+  lastMessageContent: string
+  url?: string
+  lastMessageSent: string,
+  knownAs: string,
+  dateRead: boolean
+}

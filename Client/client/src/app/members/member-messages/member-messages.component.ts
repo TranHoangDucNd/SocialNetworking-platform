@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, Input, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { TimeagoModule } from 'ngx-timeago';
@@ -14,14 +14,13 @@ import { MatIconModule } from '@angular/material/icon';
   styleUrls: ['./member-messages.component.css'],
   imports: [CommonModule, TimeagoModule, FormsModule, BsDropdownModule,MatIconModule],
 })
-export class MemberMessagesComponent implements OnInit {
+export class MemberMessagesComponent implements OnInit,AfterViewInit {
   @ViewChild('messageForm') messageForm?: NgForm;
   @Input() username?: string;
   messageContent = '';
   loading = false;
-
   createMessage: CreateMessageDto;
-
+  @ViewChild('messageContainer') private messageContainer!: ElementRef;
   formData: FormData;
   selectedImage?: File | null;
   imagePreview: string | ArrayBuffer |  null = null;
@@ -35,7 +34,11 @@ export class MemberMessagesComponent implements OnInit {
       publicId: null
     }
   }
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.messageService.messageThread$.subscribe(() => {
+      this.scrollToBottom();
+    });
+  }
 
   AddImage(event: Event) {
     const selectedFile = event.target as HTMLInputElement;
@@ -86,6 +89,20 @@ export class MemberMessagesComponent implements OnInit {
       })
       .finally(() => (this.loading = false));
     
+  }
+
+  ngAfterViewInit(): void {
+    this.scrollToBottom();
+  }
+
+  private scrollToBottom(): void {
+    try {
+      setTimeout(() => {
+        this.messageContainer.nativeElement.scrollTop = this.messageContainer.nativeElement.scrollHeight;
+      }, 0);
+    } catch (err) {
+      console.error('Scroll to bottom failed:', err);
+    }
   }
   // deleteMessage(id: number,containerDeleteMessage: string){
   //   this.messageService.deleteMessage(id,containerDeleteMessage).subscribe({

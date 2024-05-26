@@ -1,9 +1,10 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {ChangeDetectorRef, Component, OnInit, ViewChild} from '@angular/core';
 import { MembersService } from './_service/members.service';
 import { Member } from './_models/member';
 import { AccountService } from './_service/account.service';
 import { User } from './_models/user';
 import {MatSidenav} from "@angular/material/sidenav";
+import { PresenceService } from './_service/presence.service';
 
 @Component({
   selector: 'app-root',
@@ -17,10 +18,19 @@ export class AppComponent implements OnInit {
   isShowing = false;
   showSubSubMenu: boolean = false;
   user: User | null = null;
+  unreadMessageCount: number = 0;
 
-  constructor(public accountService: AccountService){}
-  ngOnInit(): void {
+  constructor(public accountService: AccountService, private cdr: ChangeDetectorRef,
+    public presenceService: PresenceService){}
+    ngOnInit(): void {
     this.setCurrentUser();
+
+
+    this.presenceService.unreadMessageCount$.subscribe(count => {
+      console.log('Unread message count updated:', count); // Kiểm tra cập nhật
+      this.unreadMessageCount = count;
+      this.cdr.detectChanges();
+    });
   }
 
   setCurrentUser(){
@@ -36,6 +46,11 @@ export class AppComponent implements OnInit {
       this.isShowing = true;
     }
   }
+
+  clearUnreadMessages() {
+    this.presenceService.clearUnreadMessages();
+  }
+
 
   mouseleave() {
     if (!this.isExpanded) {

@@ -39,9 +39,14 @@ namespace WebDating.Data
         public async Task<Post> GetById(int id)
         => await _context.Posts
             .Where(x => x.Id == id)
+            .Include(x => x.Notifications)
             .Include(x => x.Images)
             .Include(x => x.ReactionLogs)
-            .Include(x => x.Comments)
+            .Include(p => p.Comments)
+                .ThenInclude(c => c.Notifications)
+            .Include(p => p.Comments)
+                .ThenInclude(c => c.ReactionLogs)
+
             .Include(x => x.User)
                 .ThenInclude(x => x.Photos)
             .FirstOrDefaultAsync();

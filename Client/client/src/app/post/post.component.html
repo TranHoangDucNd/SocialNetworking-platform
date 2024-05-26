@@ -1,15 +1,32 @@
 <div class="w-100">
   <div class="w-100">
-    <div class="d-flex align-items-center">
-      <img src="{{userShort != undefined && userShort.image != undefined ? userShort.image : './assets/user.png'}}"
-           alt=""
-           style="width: 36px; height: 36px; object-fit: cover;" class="rounded-circle ">
-
+    <div class="d-row align-items-center">
+      
       <button type="reset" class=" border-top-0 border-start-0 border-end-0 text-start "
               (click)="openCreatePostModal()"
-              style="background-color: white;padding: 8px 16px;width: 100%; border: 1px solid #ccc;">
+              style="background-color: white;padding: 8px 16px;width: 100%; height: 80px; border: 1px solid #ccc;">
+              <img src="{{userShort != undefined && userShort.image != undefined ? userShort.image : './assets/user.png'}}"
+           alt=""
+           style="width: 60px; height: 60px; object-fit: cover;" class="rounded-circle ">
         What's on your mind, <b>{{ user.knownAs }}</b>
       </button>
+      <footer class="panel-footer" style="background-color: white; height: 40px;">
+        <button class="btn btn-warning pull-right">Post</button>
+        <ul class="nav nav-pills">
+            <li class="m-2">
+                <a href="#"><i class="fa fa-map-marker"></i></a>
+            </li>
+            <li class="m-2">
+                <a href="#"><i class="fa fa-camera"></i></a>
+            </li>
+            <li class="m-2">
+                <a href="#"><i class=" fa fa-film"></i></a>
+            </li>
+            <li class="m-2">
+                <a href="#"><i class="fa fa-microphone"></i></a>
+            </li>
+        </ul>
+    </footer>
     </div>
 
     <div class="my-5">

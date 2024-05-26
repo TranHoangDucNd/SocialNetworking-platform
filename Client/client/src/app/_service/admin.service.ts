@@ -29,7 +29,7 @@ export class AdminService {
   }
 
   deletePost(postId: number){
-    return this.http.delete(this.baseUrl + 'admin/delete-post-report/' +postId)
+    return this.http.delete(this.baseUrl + 'admin/delete-post-report/' + postId)
   }
 
   getMembersLockAdmin(username: string){

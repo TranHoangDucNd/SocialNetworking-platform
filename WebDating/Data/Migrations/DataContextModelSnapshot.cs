@@ -340,7 +340,7 @@ namespace WebDating.Data.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("PostId")
+                    b.Property<int?>("PostId")
                         .HasColumnType("int");
 
                     b.Property<int>("Report")
@@ -740,7 +740,8 @@ namespace WebDating.Data.Migrations
                 {
                     b.HasOne("WebDating.Entities.PostEntities.Comment", "Comment")
                         .WithMany("Notifications")
-                        .HasForeignKey("CommentId");
+                        .HasForeignKey("CommentId")
+                        .OnDelete(DeleteBehavior.ClientCascade);
 
                     b.HasOne("WebDating.Entities.UserEntities.DatingRequest", null)
                         .WithMany("Notifications")
@@ -749,12 +750,13 @@ namespace WebDating.Data.Migrations
                     b.HasOne("WebDating.Entities.UserEntities.AppUser", "User")
                         .WithMany("Notifications")
                         .HasForeignKey("NotifyToUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("WebDating.Entities.PostEntities.Post", "Post")
                         .WithMany("Notifications")
-                        .HasForeignKey("PostId");
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.ClientCascade);
 
                     b.Navigation("Comment");
 
@@ -803,8 +805,6 @@ namespace WebDating.Data.Migrations
                     b.HasOne("WebDating.Entities.PostEntities.Post", "Post")
                         .WithMany("PostReportDetails")
                         .HasForeignKey("PostId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
                         .HasConstraintName("FK__PostRepor__PostI__17036CC0");
 
                     b.HasOne("WebDating.Entities.UserEntities.AppUser", "User")
@@ -823,11 +823,13 @@ namespace WebDating.Data.Migrations
                 {
                     b.HasOne("WebDating.Entities.PostEntities.Comment", "Comment")
                         .WithMany("ReactionLogs")
-                        .HasForeignKey("CommentId");
+                        .HasForeignKey("CommentId")
+                        .OnDelete(DeleteBehavior.ClientCascade);
 
                     b.HasOne("WebDating.Entities.PostEntities.Post", "Post")
                         .WithMany("ReactionLogs")
-                        .HasForeignKey("PostId");
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.ClientCascade);
 
                     b.Navigation("Comment");
 

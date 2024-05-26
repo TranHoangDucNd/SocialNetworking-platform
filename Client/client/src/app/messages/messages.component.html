@@ -55,13 +55,13 @@
               </td>
               <td>{{message.messageSent | timeago}}</td>
               <td>
-                <div *ngIf="container === 'Outbox'">
+                <!-- <div *ngIf="container === 'Outbox'">
                     <button mat-raised-button (click)="openconfirmDialog(message.recipientId, $event)">Delete</button>
                 </div>
 
                 <div *ngIf="container === 'Inbox'">
                     <button mat-raised-button (click)="openconfirmDialog(message.senderId, $event)">Delete</button>
-                </div>
+                </div> -->
               </td>
           </tr>
       </tbody>

@@ -1,0 +1,109 @@
+
+<div class="card">
+      <div class="card-header msg_head">
+        <div class="d-flex bd-highlight">
+          <div class="img_cont">
+            <img src="{{imgPath}}" class="rounded-circle user_img">
+            <span [class.online_icon]="(presenceService.onlineUsers$ | async)?.includes(username)"></span>
+          </div>
+          <div class="user_info">
+            <span>Chat with {{knownAs}}</span>
+          </div>
+        </div>
+        <span id="action_menu_btn"><i class="fas fa-ellipsis-v"></i></span>
+        <div class="action_menu">
+          <ul>
+            <li routerLink="/members/{{username}}"><i class="fas fa-user-circle"></i> View profile</li>
+            <li (click)="addLike(username)"><i class="fas fa-user-plus"></i> Follow </li>
+            <li (click)="openconfirmDialog(username, $event)"><i class="fas fa-trash"></i> Delete Chat</li>
+            
+          </ul>
+        </div>
+      </div>
+      <div class="card-body msg_card_body" #messageContainer>
+          <div *ngIf="(messageService.messageThread$ | async)?.length === 0">
+                No messages yet... say hi by using the message box below
+          </div>
+       <div *ngIf="(messageService.messageThread$ | async)!.length > 0">
+          <div *ngFor="let message of messageService.messageThread$ | async">
+                <div class="d-flex justify-content-start mb-4" *ngIf="message.senderUsername === username">
+                      <div class="img_cont_msg">
+                        <img src="{{message.senderPhotoUrl}}" class="rounded-circle user_img_msg">
+                      </div>
+                      <div class="msg_cotainer">
+                       <div class="msg_content">
+                        {{message.content}}
+                        <div *ngIf="message.url">
+                          <img class="img-fix m-2" src="{{message.url}}" alt="">
+                        </div>
+                       </div>
+                        <span class="msg_time">
+                          <small class="text-muted">
+                            <span class="fa fa-clock-o">{{message.messageSent | timeago}}</span>
+                            <span class="text-danger" *ngIf="!message.dateRead 
+                                && message.senderUsername !== username">(Unread)</span>
+                            <span class="text-success" *ngIf="message.dateRead 
+                                && message.senderUsername !== username">(Read {{message.dateRead | timeago}})</span>
+                        </small>
+                        </span>
+                        
+                      </div>
+                    </div>
+                    <div class="d-flex justify-content-end mb-4" *ngIf="message.recipientUsername === username">
+                      <div class="msg_cotainer_send">
+                            <div class="msg_content_send">
+                                  {{message.content}}
+                                    <div *ngIf="message.url">
+                                      <img class="img-fix m-2" src="{{message.url}}" alt="">
+                                    </div>
+                            </div>
+                        <span class="msg_time_send">
+                      <small class="text-muted">
+                            <span class="fa fa-clock-o">{{message.messageSent | timeago}}</span>
+                            <span class="text-danger" *ngIf="!message.dateRead 
+                                && message.senderUsername !== username">(Unread)</span>
+                            <span class="text-success" *ngIf="message.dateRead 
+                                && message.senderUsername !== username">(Read {{message.dateRead | timeago}})</span>
+                        </small></span>
+                        
+                      </div>
+                      <div class="img_cont_msg">
+                            <img src="{{message.senderPhotoUrl}}" class="rounded-circle user_img_msg">
+                      </div>
+                    </div>
+          </div>
+       </div>
+      </div>
+      <div class="card-footer">
+        <form (ngSubmit)="onSubmit()"  #messageForm="ngForm" class="message-form">
+          <div class="input-group">
+            <label class="input-group-append">
+              <span class="input-group-text attach_btn"><i class="fas fa-paperclip"></i></span>
+              <input id="img-upload" type="file" class="d-none" (change)="AddImage($event)"/>
+            </label>
+            <textarea 
+            name="content" 
+            [(ngModel)]="messageContent" 
+            #content="ngModel" 
+            required 
+            placeholder="Enter your message" class="form-control type_msg" >
+            </textarea>
+            <div class="">
+              <button 
+                type="submit" 
+                class="input-group-text send_btn"
+                [disabled]="!messageForm.form.valid || loading"> 
+                <i class="fas fa-location-arrow"></i>
+                <i *ngIf="loading"  class="fa fa-spinner fa-spin"></i>
+              </button>
+            </div>
+          </div>
+
+          <div *ngIf="imagePreview" class="image-preview">
+            <p>Image Preview:</p>
+            <img [src]="imagePreview" alt="Image Preview" style="max-width: 100px;" class="form-control input-sm">
+          </div>
+
+        </form>
+      </div>
+</div>

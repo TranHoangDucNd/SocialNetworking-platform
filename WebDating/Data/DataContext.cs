@@ -119,15 +119,12 @@ namespace WebDating.Data
                     .HasConstraintName("FK__PostImage__PostId__1332DBDC");
             });
 
-
             builder.Entity<PostReportDetail>(entity =>
             {
                 entity.HasOne(d => d.Post)
                     .WithMany(p => p.PostReportDetails)
                     .HasForeignKey(d => d.PostId)
-                    .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("FK__PostRepor__PostI__17036CC0");
-
 
                 entity.HasOne(d => d.User)
                     .WithMany(p => p.PostReportDetails)
@@ -138,19 +135,12 @@ namespace WebDating.Data
 
 
             #region Post Comment
-            builder.Entity<Comment>(e =>
-            {
-                e.HasOne(c => c.Post)
-                .WithMany(p => p.Comments)
-                .HasForeignKey(k => k.PostId);
-            });
+            builder.Entity<Post>()
+             .HasMany(p => p.Comments)
+             .WithOne(c => c.Post)
+             .HasForeignKey(k => k.PostId)
+             .OnDelete(DeleteBehavior.Cascade);
 
-            builder.Entity<ReactionLog>(e =>
-            {
-                e.HasOne(c => c.Comment)
-                .WithMany(r => r.ReactionLogs)
-                .HasForeignKey(k => k.CommentId);
-            });
             #endregion
 
             #region Reaction
@@ -158,7 +148,13 @@ namespace WebDating.Data
             {
                 e.HasOne(c => c.Post)
                 .WithMany(r => r.ReactionLogs)
-                .HasForeignKey(k => k.PostId);
+                .HasForeignKey(k => k.PostId)
+                .OnDelete(DeleteBehavior.ClientCascade); // Xóa ReactionLog khi Post bị xóa
+
+                e.HasOne(c => c.Comment)
+                .WithMany(r => r.ReactionLogs)
+                .HasForeignKey(k => k.CommentId)
+                .OnDelete(DeleteBehavior.ClientCascade); // Xóa ReactionLog khi Comment bị xóa
             });
 
             builder.Entity<ReactionLog>()
@@ -169,22 +165,28 @@ namespace WebDating.Data
             builder.Entity<Notification>()
                 .HasOne(n => n.User)
                 .WithMany(u => u.Notifications)
-                .HasForeignKey(f => f.NotifyToUserId);
-
-            builder.Entity<Notification>()
-               .HasOne(n => n.Post)
-               .WithMany(u => u.Notifications)
-               .HasForeignKey(f => f.PostId);
+                .HasForeignKey(f => f.NotifyToUserId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             builder.Entity<Notification>()
               .HasOne(n => n.Comment)
               .WithMany(u => u.Notifications)
-              .HasForeignKey(f => f.CommentId);
+              .HasForeignKey(f => f.CommentId)
+              .OnDelete(DeleteBehavior.ClientCascade); // Xóa Notification khi Comment bị xóa
+
+            builder.Entity<Notification>()
+                .HasOne(n => n.Post)
+                .WithMany(u => u.Notifications)
+                .HasForeignKey(f => f.PostId)
+                .OnDelete(DeleteBehavior.ClientCascade); // Xóa Notification khi Post bị xóa
+
+
 
             builder.Entity<Notification>()
                 .HasOne<DatingRequest>()
                 .WithMany(x => x.Notifications)
                 .HasForeignKey(x => x.DatingRequestId);
+
 
             //builder.Entity<ReactionLog>()
             //    .ToTable(t => t.HasCheckConstraint("CheckForeignKeyCount", "(CommentId IS NOT NULL AND PostId IS NULL) OR (CommentId IS NULL AND PostId IS NOT NULL)"));

@@ -14,6 +14,7 @@ import {LayoutComponent} from './admin/layout/layout.component';
 import {adminGuard} from './_guards/admin.guard';
 import {PostDetailComponent} from "./post/post-detail/post-detail.component";
 import { DatingComponent } from './dating/dating.component';
+import { NewmessagesComponent } from './newmessages/newmessages.component';
 
 const routes: Routes = [
   {path: '', component: HomeComponent},
@@ -35,19 +36,10 @@ const routes: Routes = [
       {path: 'messages', component: MessagesComponent},
       {path: 'datingprofile', component: DatingProfileComponent},
       {path: 'dating', component: DatingComponent},
-
+      {path: 'featmess', component: NewmessagesComponent},
       {
         path: "admin",
         component: LayoutComponent,
-        // children: [
-        //   {path: "", component: DashboardComponent},
-        //   {path: "customerroles", loadChildren: ()=> import("./admin/components/customerrole/customerrole.module")
-        //   .then(module => module.CustomerroleModule)},
-        //   {path: "managepostreport", loadChildren: ()=> import("./admin/components/managepostreport/managepostreport.module")
-        //   .then(module => module.ManagepostreportModule)},
-        //   {path: "moderator", loadChildren: ()=> import("./admin/components/moderator/moderator.module")
-        //   .then(module => module.ModeratorModule)},
-        // ],
         canActivate: [adminGuard]
       },
     ],

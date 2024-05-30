@@ -155,6 +155,9 @@ namespace WebDating.Data.Migrations
                     b.Property<DateTime>("MessageSent")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("PublicId")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("RecipientDeleted")
                         .HasColumnType("bit");
 
@@ -173,6 +176,9 @@ namespace WebDating.Data.Migrations
                     b.Property<string>("SenderUsername")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Url")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("RecipientId");
@@ -180,6 +186,90 @@ namespace WebDating.Data.Migrations
                     b.HasIndex("SenderId");
 
                     b.ToTable("Messages");
+                });
+
+            modelBuilder.Entity("WebDating.Entities.NotificationEntities.Notification", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("CommentId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Content")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("DatingRequestId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("NotifyFromUserId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("NotifyToUserId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("PostId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CommentId");
+
+                    b.HasIndex("DatingRequestId");
+
+                    b.HasIndex("NotifyToUserId");
+
+                    b.HasIndex("PostId");
+
+                    b.ToTable("Notifications");
+                });
+
+            modelBuilder.Entity("WebDating.Entities.PostEntities.Comment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Content")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("dateTime");
+
+                    b.Property<int>("Level")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ParentId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PostId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("dateTime");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PostId");
+
+                    b.ToTable("Comments");
                 });
 
             modelBuilder.Entity("WebDating.Entities.PostEntities.ImagePost", b =>
@@ -236,61 +326,6 @@ namespace WebDating.Data.Migrations
                     b.ToTable("Post");
                 });
 
-            modelBuilder.Entity("WebDating.Entities.PostEntities.PostComment", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Content")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("CreatedAt")
-                        .HasColumnType("dateTime");
-
-                    b.Property<int>("PostId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("dateTime");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PostId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("PostComment");
-                });
-
-            modelBuilder.Entity("WebDating.Entities.PostEntities.PostLike", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("PostId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PostId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("PostLike");
-                });
-
             modelBuilder.Entity("WebDating.Entities.PostEntities.PostReportDetail", b =>
                 {
                     b.Property<int>("Id")
@@ -305,7 +340,7 @@ namespace WebDating.Data.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("PostId")
+                    b.Property<int?>("PostId")
                         .HasColumnType("int");
 
                     b.Property<int>("Report")
@@ -329,7 +364,7 @@ namespace WebDating.Data.Migrations
                     b.ToTable("PostReportDetail");
                 });
 
-            modelBuilder.Entity("WebDating.Entities.PostEntities.PostSubComment", b =>
+            modelBuilder.Entity("WebDating.Entities.PostEntities.ReactionLog", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -337,28 +372,31 @@ namespace WebDating.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Content")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("PreCommentId")
+                    b.Property<int?>("CommentId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
+                    b.Property<int?>("PostId")
+                        .HasColumnType("int");
 
-                    b.Property<int?>("UserId")
+                    b.Property<int>("ReactionType")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Target")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("PreCommentId");
+                    b.HasIndex("CommentId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("PostId");
 
-                    b.ToTable("PostSubComment");
+                    b.ToTable("ReactionLogs", t =>
+                        {
+                            t.HasCheckConstraint("CheckForeignKeyCount", "(CommentId IS NOT NULL AND PostId IS NULL) OR (CommentId IS NULL AND PostId IS NOT NULL)");
+                        });
                 });
 
             modelBuilder.Entity("WebDating.Entities.ProfileEntities.DatingProfile", b =>
@@ -369,13 +407,28 @@ namespace WebDating.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("DatingAgeFrom")
+                        .HasColumnType("int");
+
+                    b.Property<int>("DatingAgeTo")
+                        .HasColumnType("int");
+
                     b.Property<int>("DatingObject")
                         .HasColumnType("int");
 
-                    b.Property<int>("Height")
+                    b.Property<int>("HeightFrom")
+                        .HasColumnType("int");
+
+                    b.Property<int>("HeightTo")
                         .HasColumnType("int");
 
                     b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("WeightFrom")
+                        .HasColumnType("int");
+
+                    b.Property<int>("WeightTo")
                         .HasColumnType("int");
 
                     b.Property<int>("WhereToDate")
@@ -387,6 +440,30 @@ namespace WebDating.Data.Migrations
                         .IsUnique();
 
                     b.ToTable("DatingProfiles");
+                });
+
+            modelBuilder.Entity("WebDating.Entities.ProfileEntities.Occupations", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("DatingProfileId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("OccupationName")
+                        .HasColumnType("int");
+
+                    b.Property<int>("OccupationType")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DatingProfileId");
+
+                    b.ToTable("Occupations");
                 });
 
             modelBuilder.Entity("WebDating.Entities.UserEntities.AppRole", b =>
@@ -437,9 +514,6 @@ namespace WebDating.Data.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Country")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime2");
 
@@ -459,8 +533,8 @@ namespace WebDating.Data.Migrations
                     b.Property<string>("Gender")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Interests")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Height")
+                        .HasColumnType("int");
 
                     b.Property<string>("Introduction")
                         .HasColumnType("nvarchar(max)");
@@ -482,9 +556,6 @@ namespace WebDating.Data.Migrations
 
                     b.Property<DateTimeOffset?>("LockoutEnd")
                         .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("LookingFor")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
@@ -516,6 +587,9 @@ namespace WebDating.Data.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
+                    b.Property<int>("Weight")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("DatingProfileId");
@@ -544,6 +618,33 @@ namespace WebDating.Data.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetUserRoles", (string)null);
+                });
+
+            modelBuilder.Entity("WebDating.Entities.UserEntities.DatingRequest", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("ConfirmedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("CrushId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SenderId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CrushId");
+
+                    b.ToTable("DatingRequests");
                 });
 
             modelBuilder.Entity("WebDating.Entities.UserEntities.Photo", b =>
@@ -585,6 +686,9 @@ namespace WebDating.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("InterestName")
+                        .HasColumnType("int");
+
+                    b.Property<int>("InterestType")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -671,6 +775,46 @@ namespace WebDating.Data.Migrations
                     b.Navigation("Sender");
                 });
 
+            modelBuilder.Entity("WebDating.Entities.NotificationEntities.Notification", b =>
+                {
+                    b.HasOne("WebDating.Entities.PostEntities.Comment", "Comment")
+                        .WithMany("Notifications")
+                        .HasForeignKey("CommentId")
+                        .OnDelete(DeleteBehavior.ClientCascade);
+
+                    b.HasOne("WebDating.Entities.UserEntities.DatingRequest", null)
+                        .WithMany("Notifications")
+                        .HasForeignKey("DatingRequestId");
+
+                    b.HasOne("WebDating.Entities.UserEntities.AppUser", "User")
+                        .WithMany("Notifications")
+                        .HasForeignKey("NotifyToUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("WebDating.Entities.PostEntities.Post", "Post")
+                        .WithMany("Notifications")
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.ClientCascade);
+
+                    b.Navigation("Comment");
+
+                    b.Navigation("Post");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("WebDating.Entities.PostEntities.Comment", b =>
+                {
+                    b.HasOne("WebDating.Entities.PostEntities.Post", "Post")
+                        .WithMany("Comments")
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Post");
+                });
+
             modelBuilder.Entity("WebDating.Entities.PostEntities.ImagePost", b =>
                 {
                     b.HasOne("WebDating.Entities.PostEntities.Post", "Post")
@@ -695,53 +839,11 @@ namespace WebDating.Data.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("WebDating.Entities.PostEntities.PostComment", b =>
-                {
-                    b.HasOne("WebDating.Entities.PostEntities.Post", "Post")
-                        .WithMany("PostComments")
-                        .HasForeignKey("PostId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK__PostComme__PostI__0F624AF8");
-
-                    b.HasOne("WebDating.Entities.UserEntities.AppUser", "User")
-                        .WithMany("PostComments")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK__PostComme__UserI__10566F31");
-
-                    b.Navigation("Post");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("WebDating.Entities.PostEntities.PostLike", b =>
-                {
-                    b.HasOne("WebDating.Entities.PostEntities.Post", "Post")
-                        .WithMany("PostLikes")
-                        .HasForeignKey("PostId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK__PostLike__PostId__1332DBDC");
-
-                    b.HasOne("WebDating.Entities.UserEntities.AppUser", "User")
-                        .WithMany("PostLikes")
-                        .HasForeignKey("UserId")
-                        .HasConstraintName("FK__PostLike__UserId__14270015");
-
-                    b.Navigation("Post");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("WebDating.Entities.PostEntities.PostReportDetail", b =>
                 {
                     b.HasOne("WebDating.Entities.PostEntities.Post", "Post")
                         .WithMany("PostReportDetails")
                         .HasForeignKey("PostId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
                         .HasConstraintName("FK__PostRepor__PostI__17036CC0");
 
                     b.HasOne("WebDating.Entities.UserEntities.AppUser", "User")
@@ -756,21 +858,21 @@ namespace WebDating.Data.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("WebDating.Entities.PostEntities.PostSubComment", b =>
+            modelBuilder.Entity("WebDating.Entities.PostEntities.ReactionLog", b =>
                 {
-                    b.HasOne("WebDating.Entities.PostEntities.PostComment", "PreComment")
-                        .WithMany("PostSubComments")
-                        .HasForeignKey("PreCommentId")
-                        .HasConstraintName("FK__PostSubCo__PreCo__114A936A");
+                    b.HasOne("WebDating.Entities.PostEntities.Comment", "Comment")
+                        .WithMany("ReactionLogs")
+                        .HasForeignKey("CommentId")
+                        .OnDelete(DeleteBehavior.ClientCascade);
 
-                    b.HasOne("WebDating.Entities.UserEntities.AppUser", "User")
-                        .WithMany("PostSubComments")
-                        .HasForeignKey("UserId")
-                        .HasConstraintName("FK__PostSubCo__UserI__123EB7A3");
+                    b.HasOne("WebDating.Entities.PostEntities.Post", "Post")
+                        .WithMany("ReactionLogs")
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.ClientCascade);
 
-                    b.Navigation("PreComment");
+                    b.Navigation("Comment");
 
-                    b.Navigation("User");
+                    b.Navigation("Post");
                 });
 
             modelBuilder.Entity("WebDating.Entities.ProfileEntities.DatingProfile", b =>
@@ -782,6 +884,17 @@ namespace WebDating.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("WebDating.Entities.ProfileEntities.Occupations", b =>
+                {
+                    b.HasOne("WebDating.Entities.ProfileEntities.DatingProfile", "DatingProfile")
+                        .WithMany("Occupations")
+                        .HasForeignKey("DatingProfileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("DatingProfile");
                 });
 
             modelBuilder.Entity("WebDating.Entities.UserEntities.AppUser", b =>
@@ -810,6 +923,15 @@ namespace WebDating.Data.Migrations
                     b.Navigation("Role");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("WebDating.Entities.UserEntities.DatingRequest", b =>
+                {
+                    b.HasOne("WebDating.Entities.UserEntities.AppUser", null)
+                        .WithMany("DatingRequests")
+                        .HasForeignKey("CrushId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("WebDating.Entities.UserEntities.Photo", b =>
@@ -858,24 +980,30 @@ namespace WebDating.Data.Migrations
                     b.Navigation("Connections");
                 });
 
-            modelBuilder.Entity("WebDating.Entities.PostEntities.Post", b =>
+            modelBuilder.Entity("WebDating.Entities.PostEntities.Comment", b =>
                 {
-                    b.Navigation("Images");
+                    b.Navigation("Notifications");
 
-                    b.Navigation("PostComments");
-
-                    b.Navigation("PostLikes");
-
-                    b.Navigation("PostReportDetails");
+                    b.Navigation("ReactionLogs");
                 });
 
-            modelBuilder.Entity("WebDating.Entities.PostEntities.PostComment", b =>
+            modelBuilder.Entity("WebDating.Entities.PostEntities.Post", b =>
                 {
-                    b.Navigation("PostSubComments");
+                    b.Navigation("Comments");
+
+                    b.Navigation("Images");
+
+                    b.Navigation("Notifications");
+
+                    b.Navigation("PostReportDetails");
+
+                    b.Navigation("ReactionLogs");
                 });
 
             modelBuilder.Entity("WebDating.Entities.ProfileEntities.DatingProfile", b =>
                 {
+                    b.Navigation("Occupations");
+
                     b.Navigation("UserInterests");
                 });
 
@@ -886,6 +1014,8 @@ namespace WebDating.Data.Migrations
 
             modelBuilder.Entity("WebDating.Entities.UserEntities.AppUser", b =>
                 {
+                    b.Navigation("DatingRequests");
+
                     b.Navigation("LikedByUsers");
 
                     b.Navigation("LikedUsers");
@@ -894,19 +1024,20 @@ namespace WebDating.Data.Migrations
 
                     b.Navigation("MessagesSent");
 
+                    b.Navigation("Notifications");
+
                     b.Navigation("Photos");
 
-                    b.Navigation("PostComments");
-
-                    b.Navigation("PostLikes");
-
                     b.Navigation("PostReportDetails");
-
-                    b.Navigation("PostSubComments");
 
                     b.Navigation("Posts");
 
                     b.Navigation("UserRoles");
+                });
+
+            modelBuilder.Entity("WebDating.Entities.UserEntities.DatingRequest", b =>
+                {
+                    b.Navigation("Notifications");
                 });
 #pragma warning restore 612, 618
         }

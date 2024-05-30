@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using Microsoft.EntityFrameworkCore;
 using WebDating.DTOs;
 using WebDating.Entities.UserEntities;
 using WebDating.Extensions;
@@ -10,26 +12,13 @@ namespace WebDating.Data
     public class LikeRepository : ILikeRepository
     {
         private readonly DataContext _context;
+        private readonly IMapper _mapper;
 
-        public LikeRepository(DataContext context)
+        public LikeRepository(DataContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
-        ////Mục đích lấy sourceuser và tagetuser ừ y/c về để check dữ liệu trong Db
-        //public async Task<UserLike> GetUserLike(int sourceUserId, int tagetUserId)
-        //{
-        //    return await _context.Likes
-        //        .FirstOrDefaultAsync(x => x.SourceUserId == sourceUserId && x.TargetUserId == tagetUserId);
-        //}
-
-        ////Mục đích lấy ra sourceUser 
-        //public async Task<AppUser> GetUserWithLike(int userId)
-        //{
-        //    return await _context.Users
-        //        .Include(l => l.LikedUsers)
-        //        .FirstOrDefaultAsync(x => x.Id == userId);
-        //}
-
         public async Task<AppUser> GetUserWithLike(int id)
         {
             return await _context.Users
@@ -42,51 +31,7 @@ namespace WebDating.Data
             return await _context.Likes.FirstOrDefaultAsync(x => x.SourceUserId == sourceUserId && x.TargetUserId == targetUserId);
         }
 
-
-        //public async Task<PagedList<LikeDto>> GetUserLikes(LikesParams likesParams)
-        //{
-        //    var likes = _context.Likes.AsQueryable();
-        //    var users = _context.Users.OrderBy(u => u.UserName).AsQueryable();
-
-        //    if (likesParams.Predicate == "liked")
-        //    {
-        //        likes = likes.Where(like => like.SourceUserId == likesParams.UserId);
-        //        users = likes.Select(like => like.TargetUser);
-        //    }
-
-        //    if (likesParams.Predicate == "likedBy")
-        //    {
-        //        likes = likes.Where(like => like.TargetUserId == likesParams.UserId);
-        //        users = likes.Select(like => like.SourceUser);
-        //    }
-
-        //    if (likesParams.Predicate == "mutualLike")
-        //    {
-        //        var likedUsers = likes.Where(like => like.SourceUserId == likesParams.UserId)
-        //            .Select(like => like.TargetUserId);
-
-        //        var likedByUsers = likes.Where(like => like.TargetUserId == likesParams.UserId)
-        //            .Select(like => like.SourceUserId);
-
-        //        var mutualUserIds = likedUsers.Intersect(likedByUsers);
-
-        //        users = users.Where(u => mutualUserIds.Contains(u.Id));
-        //    }
-
-        //    var result = users.Select(user => new LikeDto
-        //    {
-        //        UserName = user.UserName,
-        //        KnownAs = user.KnownAs,
-        //        Age = user.DateOfBirth.CaculateAge(),
-        //        PhotoUrl = user.Photos.FirstOrDefault(x => x.IsMain).Url,
-        //        City = user.City,
-        //        Id = user.Id
-        //    });
-
-        //    return await PagedList<LikeDto>.CreateAsync(result, likesParams.PageNumber, likesParams.PageSize);
-        //}
-
-        public Task<PagedList<LikeDto>> GetUserLikes(LikesParams likesParams)
+        public async Task<PagedList<MemberDto>> GetUserLikes(LikesParams likesParams)
         {
             var likes = _context.Likes.AsQueryable();
             var users = _context.Users.OrderBy(x => x.UserName).AsQueryable();
@@ -103,7 +48,7 @@ namespace WebDating.Data
                 users = likes.Select(x => x.SourceUser);
             }
 
-            if(likesParams.Predicate == "mutualLike")
+            if (likesParams.Predicate == "mutualLike")
             {
                 var likedUsers = likes.Where(x => x.SourceUserId == likesParams.UserId)
                     .Select(x => x.TargetUserId);
@@ -114,21 +59,42 @@ namespace WebDating.Data
                 var mutualLike = likedUsers.Intersect(likedByUser);
 
                 users = users.Where(x => mutualLike.Contains(x.Id));
-                
+
             }
 
-            var result = users.Select(user => new LikeDto
-            {
-                Id = user.Id,
-                UserName = user.UserName,
-                Age = user.DateOfBirth.CaculateAge(),
-                City = user.City,
-                KnownAs = user.KnownAs,
-                PhotoUrl = user.Photos.FirstOrDefault(x => x.IsMain).Url
-            });
+            //var result = users.Select(user => new LikeDto
+            //{
+            //    Id = user.Id,
+            //    UserName = user.UserName,
+            //    Age = user.DateOfBirth.CaculateAge(),
+            //    City = user.City,
+            //    KnownAs = user.KnownAs,
+            //    PhotoUrl = user.Photos.FirstOrDefault(x => x.IsMain).Url
+            //});
 
-            return PagedList<LikeDto>.CreateAsync(result, likesParams.PageNumber, likesParams.PageSize);
+            var result = await PagedList<MemberDto>
+                .CreateAsync(users.AsNoTracking()
+                .ProjectTo<MemberDto>(_mapper.ConfigurationProvider), likesParams.PageNumber, likesParams.PageSize);
+            foreach (var member in result)
+            {
+                member.DatingProfile = await GetDatingProfile(member.Id);
+            }
+
+            return result;
         }
+
+        public async Task<List<int>> GetAllFollowerId(int userId)
+        {
+            return await _context.Likes.Where(x => x.TargetUserId == userId)
+                .Select(x => x.SourceUserId)
+                .ToListAsync();
+
+        }
+
+        public async Task<DatingProfileDto> GetDatingProfile(int id)
+            => await _context.DatingProfiles.Where(d => d.UserId == id)
+            .ProjectTo<DatingProfileDto>(_mapper.ConfigurationProvider)
+            .SingleOrDefaultAsync();
 
     }
 }

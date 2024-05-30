@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SignalR;
+using System.Globalization;
+using System.Xml.Linq;
+using WebDating.Data;
 using WebDating.DTOs;
 using WebDating.DTOs.Post;
-using WebDating.Entities;
+using WebDating.Entities.NotificationEntities;
 using WebDating.Entities.PostEntities;
 using WebDating.Entities.UserEntities;
 using WebDating.Interfaces;
@@ -19,25 +21,30 @@ namespace WebDating.Services
         private readonly UserManager<AppUser> _userManager;
         private readonly IPhotoService _photoService;
         private readonly IHubContext<CommentSignalR> _commentHubContext;
+        private readonly INotificationService _notificationService;
+        private readonly DataContext _dataContext;
 
         public PostService(IMapper mapper, IUnitOfWork uow, UserManager<AppUser> userManager,
-            IPhotoService photoService, IHubContext<CommentSignalR> commentHubContext)
+            IPhotoService photoService, IHubContext<CommentSignalR> commentHubContext, INotificationService notificationService,DataContext dataContext)
         {
             _mapper = mapper;
             _uow = uow;
             _userManager = userManager;
             _photoService = photoService;
             _commentHubContext = commentHubContext;
+            _notificationService = notificationService;
+            _dataContext = dataContext;
         }
-        public async Task<ResultDto<PostResponseDto>> Create(CreatePostDto requestDto, string name)
+        public async Task<ResultDto<PostResponseDto>> Create(CreatePostDto requestDto, string username)
         {
             try
             {
-                var user = await _userManager.FindByNameAsync(name);
-                var post = new Post() { Content = requestDto.Content };
-                post.CreatedAt = DateTime.Now;
-                post.IsDeleted = false;
-                post.UserId = user.Id;
+                var user = await _uow.UserRepository.GetUserByUsernameAsync(username);
+                Post post = new Post
+                {
+                    Content = requestDto.Content,
+                    UserId = user.Id,
+                };
 
                 await _uow.PostRepository.Insert(post);
                 await _uow.Complete();
@@ -50,13 +57,41 @@ namespace WebDating.Services
                         var img = new ImagePost(post.Id, image.SecureUrl.AbsoluteUri, image.PublicId);
                         await _uow.PostRepository.InsertImagePost(img);
                     }
-                    await _uow.Complete();
 
+                }
+                bool success = await _uow.Complete();
+                if (success)
+                {
+                    List<int> followerIds = await _uow.LikeRepository.GetAllFollowerId(user.Id);
+                    if (followerIds.Count > 0)
+                    {
+                        List<Notification> notifications = new List<Notification>();
+                        foreach (int follower in followerIds)
+                        {
+                            Notification notification = new Notification()
+                            {
+                                NotifyFromUserId = user.Id,
+                                NotifyToUserId = follower,
+                                PostId = post.Id,
+                                Type = NotificationType.NewPost,
+                                Content = _notificationService.GenerateNotificationContent(user.KnownAs, NotificationType.NewPost),
+                            };
+                            notifications.Add(notification);
+                            _uow.NotificationRepository.Insert(notification);
+                        }
+                        success = await _uow.Complete();
+                        if (success)
+                        {
+                            foreach (Notification notification in notifications)
+                            {
+                                Task t =_notificationService.SendNotification(notification.NotifyToUserId, notification);
+                            }
+                        }
+                    }
                 }
 
                 var result = _mapper.Map<PostResponseDto>(post);
                 return new SuccessResult<PostResponseDto>(result);
-
             }
             catch (Exception ex)
             {
@@ -69,6 +104,44 @@ namespace WebDating.Services
         public async Task<ResultDto<string>> Delete(int id)
         {
             var post = await _uow.PostRepository.GetById(id);
+            if(post != null)
+            {
+                foreach(var comment in post.Comments)
+                {
+                    if(comment.ReactionLogs != null)
+                    {
+                        foreach (var reactionLog in comment.ReactionLogs)
+                        {
+                            _dataContext.ReactionLogs.Remove(reactionLog);
+                        }
+                    }
+                    if(comment.Notifications != null)
+                    {
+
+                        foreach (var notification in comment.Notifications)
+                        {
+                            _dataContext.Notifications.Remove(notification);
+                        }
+
+                    }
+                    _dataContext.Comments.Remove(comment);
+                }
+                if(post.ReactionLogs != null)
+                {
+                    foreach (var reactionLog in post.ReactionLogs)
+                    {
+                        _dataContext.ReactionLogs.Remove(reactionLog);
+                    }
+                }
+                if(post.Notifications != null)
+                {
+                    foreach (var notification in post.Notifications)
+                    {
+                        _dataContext.Notifications.Remove(notification);
+                    }
+                }
+               
+            }
             _uow.PostRepository.Delete(post);
             await _uow.Complete();
             return new SuccessResult<string>();
@@ -103,17 +176,30 @@ namespace WebDating.Services
             return new SuccessResult<UserShortDto>(new UserShortDto()
             {
                 Id = username.Id,
-                FullName = username.KnownAs,
+                FullName = username.UserName,
+                KnownAs = username.KnownAs,
                 Image = username.Photos.Select(x => x.Url).FirstOrDefault()
             });
         }
 
-        public async Task<ResultDto<PostResponseDto>> Update(CreatePostDto requestDto, string name)
+        public async Task<ResultDto<List<UserShortDto>>> GetAllUserInfo()
+        {
+            var users = await _uow.UserRepository.GetAllUserWithPhotosAsync();
+            var listUserShort = users.Select(user => new UserShortDto()
+            {
+                Id = user.Id,
+                FullName = user.UserName,
+                KnownAs = user.KnownAs ?? string.Empty,
+                Image = user.Photos.Select(x => x.Url).FirstOrDefault() ?? string.Empty
+            }).ToList();
+            return new SuccessResult<List<UserShortDto>>(listUserShort);
+        }
+
+        public async Task<ResultDto<PostResponseDto>> Update(CreatePostDto requestDto, string username)
         {
             try
             {
-                var user = await _userManager.FindByNameAsync(name);
-                var post = await _uow.PostRepository.GetById(requestDto.Id);
+                Post post = await _uow.PostRepository.GetById(requestDto.Id);
 
                 post.Content = requestDto.Content;
                 _uow.PostRepository.Update(post);
@@ -129,9 +215,8 @@ namespace WebDating.Services
                         var img = new ImagePost(post.Id, image.SecureUrl.AbsoluteUri, image.PublicId);
                         await _uow.PostRepository.InsertImagePost(img);
                     }
-
-                    await _uow.Complete();
                 }
+                await _uow.Complete();
 
                 var result = _mapper.Map<PostResponseDto>(post);
                 return new SuccessResult<PostResponseDto>(result);
@@ -142,117 +227,14 @@ namespace WebDating.Services
                 return new ErrorResult<PostResponseDto>(ex.Message);
             }
         }
-        public async Task<ResultDto<List<CommentPostDto>>> CreateComment(CommentPostDto comment, int userId)
-        {
-            var post = await _uow.PostRepository.GetById(comment.PostId);
-            if (post == null)
-            {
-                return new
-                    ErrorResult<List<CommentPostDto>>("Không tìm thấy bài đọc bạn bình luận, nó có thể đã bị xóa");
-            }
-
-
-            var postComment = new PostComment()
-            {
-                PostId = post.Id,
-                UserId = comment.UserId,
-                Content = comment.Content
-            };
-            postComment.UpdatedAt = DateTime.UtcNow;
-
-            await _uow.PostRepository.InsertComment(postComment);
-            await _uow.Complete();
-
-            var comments = await GetComment(post);
-            await _commentHubContext.Clients.All.SendAsync("ReceiveComment", comments);
-            return comments;
-
-        }
-
-        public async Task<ResultDto<List<CommentPostDto>>> GetComment(Post post)
-        {
-            var users = await _uow.UserRepository.GetAll();
-            var postComments = await _uow.PostRepository.GetCommentsByPostId(post.Id);
-            return new SuccessResult<List<CommentPostDto>>(_mapper.Map<List<CommentPostDto>>(postComments));
-        }
-
+        
         public async Task<Post> GetById(int postId)
         => await _uow.PostRepository.GetById(postId);
-
-        public async Task<ResultDto<List<CommentPostDto>>> UpdateComment(CommentPostDto comment)
-        {
-            var postComment = await _uow.PostRepository.GetCommentById(comment.Id);
-            var post = await _uow.PostRepository.GetById(comment.PostId);
-            if (postComment == null)
-            {
-                return new ErrorResult<List<CommentPostDto>>("Không tìm thấy bài đọc bạn bình luận");
-            }
-            postComment.Content = comment.Content;
-            postComment.UpdatedAt = DateTime.UtcNow;
-
-            _uow.PostRepository.UpdateComment(postComment);
-            await _uow.Complete();
-
-            var comments = await GetComment(post);
-            await _commentHubContext.Clients.All.SendAsync("ReceiveComment", comments);
-
-            return comments;
-        }
-        public async Task<ResultDto<List<CommentPostDto>>> DeleteComment(int id)
-        {
-            var comment = await _uow.PostRepository.GetCommentById(id);
-            var post = await _uow.PostRepository.GetById(comment.PostId);
-
-            if (comment == null)
-            {
-                return new ErrorResult<List<CommentPostDto>>("Không tìm thấy bình luận");
-            }
-
-            _uow.PostRepository.DeleteComment(comment);
-            await _uow.Complete();
-
-            var comments = await GetComment(post);
-            await _commentHubContext.Clients.All.SendAsync("ReceiveComment", comments);
-            return comments;
-        }
-
-        public async Task<(int Likes, int Comments)> GetLikesAndCommentsCount(int postId)
-        {
-            var postLikes = await _uow.PostRepository.GetCountPostLikesByPostId(postId);
-            var postComments = await _uow.PostRepository.GetCountPostCommentByPostId(postId);
-
-            var likesCount = postLikes;
-            var commentsCount = postComments;
-
-            return (likesCount, commentsCount);
-        }
-
-
-        public async Task<ResultDto<List<PostResponseDto>>> AddOrUnLikePost(PostFpkDto postFpk)
-        {
-            var checkLike =  await _uow.PostRepository.GetLikeByMultiId(postFpk.UserId, postFpk.PostId);
-            if(checkLike is null)
-            {
-                PostLike postLike = new()
-                {
-                    UserId = postFpk.UserId,
-                    PostId = postFpk.PostId,
-                };
-                await _uow.PostRepository.InsertPostLike(postLike);
-            }
-            else
-            {
-                _uow.PostRepository.DeletePostLike(checkLike);
-            }
-            await _uow.Complete();
-
-            return await GetAll();
-        }
 
         public async Task<bool> Report(PostReportDto postReport)
         {
             var check = await _uow.PostRepository.GetReport(postReport.UserId, postReport.PostId);
-            if(check is not null)
+            if (check is not null)
             {
                 check.Report = postReport.Report;
                 check.Description = postReport.Description;
@@ -283,9 +265,340 @@ namespace WebDating.Services
         {
             var result = await _uow.PostRepository.GetAllReport();
             return new SuccessResult<List<PostReportDto>>(_mapper.Map<List<PostReportDto>>(result));
-            
+
         }
 
-     
+        #region Comment
+        public async Task<ResultDto<string>> DeleteComment(int id)
+        {
+            _uow.CommentRepository.Delete(id);
+            bool success = await _uow.Complete();
+            return success ? new SuccessResult<string>("Thành công") : new ErrorResult<string>("Lỗi khi xóa");
+        }
+
+        public async Task<ResultDto<string>> UpdateComment(CommentPostDto dto)
+        {
+            var post = await _uow.PostRepository.GetById(dto.PostId);
+            if (post is null)
+            {
+                return new ErrorResult<string>("Không tìm thấy bài đọc bạn bình luận");
+            }
+            var comment = _uow.CommentRepository.GetById(dto.Id);
+            comment.Content = dto.Content;
+            comment.UpdatedAt = DateTime.UtcNow;
+
+            _uow.CommentRepository.Update(comment);
+            bool success = await _uow.Complete();
+
+            var comments = await GetComments(comment.PostId);
+            await _commentHubContext.Clients.All.SendAsync("ReceiveComment", comments);
+
+            return success ? new SuccessResult<string>("Thành công") : new ErrorResult<string>("Lỗi khi cập nhật");
+        }
+
+        public async Task<ResultDto<string>> CreateComment(CommentPostDto dto)
+        {
+            var post = await _uow.PostRepository.GetById(dto.PostId);
+            if (post is null)
+            {
+                return new ErrorResult<string>("Không tìm thấy bài đọc bạn bình luận, nó có thể đã bị xóa");
+            }
+
+            #region New
+
+            NotificationType notificationType = NotificationType.CommentPost;
+            int notificationToUserId = post.UserId;
+            Comment newComment = new Comment
+            {
+                UserId = dto.UserId,
+                PostId = post.Id,
+                Content = dto.Content,
+            };
+
+            if (dto.ParentCommentId != 0)
+            {
+                Comment parentComment = _uow.CommentRepository.GetById(dto.ParentCommentId);
+                if (parentComment != null)
+                {
+                    newComment.ParentId = dto.ParentCommentId;
+                    newComment.Level = parentComment.Level + 1;
+                    if (newComment.Level > 3)
+                    {
+                        newComment.Level = 3;
+                        //Khi cố tình (hoặc có lỗi xảy ra) mà user vẫn trả lời
+                        //được 1 comment đang ở level 3 rồi thì sẽ không chuyển nó thành level 4,
+                        //mà vẫn sẽ là level 3 và coi như 2 comment này đang chung parent Id, nghĩa là cùng reply 1 comment
+                        newComment.ParentId = parentComment.ParentId;
+                    }
+                    notificationType = NotificationType.ReplyComment;
+                    notificationToUserId = parentComment.UserId;
+                }
+            }
+            _uow.CommentRepository.Insert(newComment);
+
+
+            Notification notification = null;
+            ///Chỉ khi nào target user và user tạo comment khác nhau thì mới thông báo (không tự thông báo cho chính mình)
+            if (dto.UserId != notificationToUserId)
+            {
+                var currentUser = await _uow.UserRepository.GetUserByIdAsync(dto.UserId);
+                if (currentUser != null)
+                {
+                    notification = new Notification()
+                    {
+                        NotifyFromUserId = dto.UserId,
+                        NotifyToUserId = notificationToUserId,
+                        PostId = post.Id,
+                        Type = notificationType,
+                        Content = _notificationService.GenerateNotificationContent(currentUser.KnownAs, NotificationType.CommentPost),
+                    };
+                    _uow.NotificationRepository.Insert(notification);
+                }
+            }
+
+            bool success = await _uow.Complete();
+            if (success && notification != null)
+            {
+                Task t = _notificationService.SendNotification(notificationToUserId, notification);
+            }
+
+
+            return success ? new SuccessResult<string>("Thành công") : new ErrorResult<string>("Lỗi khi comment");
+            #endregion
+        }
+
+        public async Task<ResultDto<List<CommentVM>>> GetComments(int postId)
+        {
+            var comments = await _uow.CommentRepository.GetByPostId(postId);
+            /*
+             * Đầu tiên get tất cả comment có postId bằng với postId truyền vào
+             * Sắp xếp lại comment theo dạng cây(sử dụng đệ quy - createCommentVM)
+             */
+            List<CommentVM> models = createCommentVM(postId, 0, comments, 1);
+
+            return new SuccessResult<List<CommentVM>>(models);
+        }
+
+        List<CommentVM> createCommentVM(int postId, int parentCommentId, List<Comment> comments, int level)
+        {
+            /*
+           * Quy định level tối đa của comment là 3, nên khi quá level 3 thì dừng đệ quy
+           * - parentCommentId: chỉ định hàm đệ quy này sẽ lấy danh sách comment con của comment nào,
+           * nói cách khác là tìm tất cả comment mà có ParentId bằng với parentCommentId truyền vào
+           * - comments: danh sách các comments (tất cả level) có liên quan tới bài viết có (postId)
+           * - level: chỉ định cấp của các comment sẽ được tạo, mỗi lần gọi đệ quy thì tăng level này nên, 
+           * biểu thị việc lấy comment cấp thấp hơn (comment con)
+           */
+            List<CommentVM> items = new List<CommentVM>();
+            if (level > 3)
+                return items;
+
+            ///Lấy tất cả các comment có ParentId bằng với parentCommentId và level=level ở tham số 
+            ///sau đó duyệt danh sách để tạo ViewModel, 
+            ///trong view model lại đệ quy để tạo child-view modle
+            IEnumerable<Comment> commentByLevel = comments.Where(it => it.ParentId == parentCommentId && it.Level == level);
+            foreach (Comment cmt in commentByLevel)
+            {
+                CommentVM item = new CommentVM()
+                {
+                    Id = cmt.Id,
+                    Content = cmt.Content,
+                    PostId = postId,
+                    UserId = cmt.UserId,
+                    ParentCommentId = cmt.ParentId,
+                    CreateAt = cmt.CreatedAt.ToString(CultureInfo.InvariantCulture),
+                };
+                ///Thống kê số lượng action mỗi loại (like, haha....),
+                ///phần này thực tế không cần join bảng để lấy mà chỉ cần sử dụng
+                ///.Include để load lên, vì đã thiết lập relationship trong context rồi.
+                item.Stats = cmt.ReactionLogs.GroupBy(it => it.ReactionType)
+                    .ToDictionary(it => it.Key, it => it.Count());
+
+                ///Lấy tất cả comment con của commnet cmt bằng cách gọi lại chính hàm này (đệ quy), 
+                ///với tham số parentCommentId = cmt.Id, @level thì bằng @level +1
+                item.Descendants = createCommentVM(postId, cmt.Id, comments, level + 1);
+                items.Add(item);
+            }
+            return items;
+        }
+
+
+        private List<CommentVM> createCommentVM(int postId, int parentCommentId, List<Comment> descendants, IEnumerable<ReactionLog> reactions)
+        {
+            List<CommentVM> items = new List<CommentVM>();
+            IEnumerable<Comment> childs = descendants.Where(it => it.ParentId == parentCommentId);
+            foreach (Comment child in childs)
+            {
+                CommentVM item = new CommentVM()
+                {
+                    Id = child.Id,
+                    Content = child.Content,
+                    PostId = postId,
+                    UserId = child.UserId,
+                    ParentCommentId = child.ParentId,
+                    CreateAt = child.CreatedAt.ToString(CultureInfo.InvariantCulture),
+                };
+                item.Stats = reactions
+                    .Where(it => it.CommentId == child.Id)
+                    .ToDictionary(it => it.ReactionType, it => 1);
+                List<Comment> replyComments = descendants
+                    .Where(it => it.ParentId == child.Id)
+                    .ToList();
+                while (replyComments.Count > 0)
+                {
+                    item.Descendants = createCommentVM(postId, child.Id, replyComments, reactions);
+                }
+                items.Add(item);
+            }
+            return items;
+        }
+        #endregion
+
+        #region Thả react
+        public async Task<ResultDto<string>> ReactComment(ReactionRequest request)
+        {
+            ReactionLog react = _uow.ReactionLogRepository.GetReactUserByComment(request.UserId, request.TargetId);
+            Notification notification = null;
+            int notificationToUserId = 0;
+            if (react is null)
+            {
+                Comment comment = _uow.CommentRepository.GetById(request.TargetId);
+                if (comment is null)
+                {
+                    return new ErrorResult<string>("Bình luận đã bị xóa hoặc không hiển thị với bạn");
+                }
+                AppUser targetUser = await _uow.UserRepository.GetUserByIdAsync(comment.UserId);
+                if (targetUser is null)
+                {
+                    return new ErrorResult<string>("Nội dung không tồn tại");
+                }
+
+                react = new ReactionLog
+                {
+                    UserId = request.UserId,
+                    CommentId = comment.Id,
+                    ReactionType = request.ReactionType,
+                    Target = ReactTarget.Comment,
+                };
+                _uow.ReactionLogRepository.Insert(react);
+                notificationToUserId = comment.UserId;
+
+                AppUser currentUser = await _uow.UserRepository.GetUserByIdAsync(request.UserId);
+
+                /*
+               * Để tạo thông báo realtime đến đúng user thì cần biết user hiện tại 
+               * đang tương tác đến đối tượng nào, và đối tượng đó do ai tạo ra
+               * Ở đây đã biết user hiện tại đang react đến comment nào? 
+               * Comment đó do ai tạo ra, từ đó truy ngược được người cần thông báo tới
+               */
+                notification = new Notification()
+                {
+                    NotifyFromUserId = request.UserId,
+                    NotifyToUserId = notificationToUserId,
+                    CommentId = comment.Id,
+                    PostId = comment.PostId,
+                    Type = NotificationType.ReactionComment,
+                    Content = _notificationService.GenerateNotificationContent(currentUser.KnownAs, NotificationType.ReactionComment),
+                };
+                _uow.NotificationRepository.Insert(notification);
+            }
+            else
+            {
+                ///Chỗ này remove bởi đang xử lý chung API, khi người dùng nhấn thả cảm xúc lần đầu 
+                ///thì sẽ tạo mới reactionLog, ngược lại khi gọi hàm này mà người dùng đã
+                ///tương tác thì coi như là hủy thả cảm xúc, do đó cần remove
+                _uow.ReactionLogRepository.Remove(react);
+            }
+
+            bool success = await _uow.Complete();
+            ///Cần confirm update database success thì mới gửi thông báo đến hub
+            if (success && notification != null)
+            {
+                Task t = _notificationService.SendNotification(notificationToUserId, notification);
+            }
+
+
+            return success ? new SuccessResult<string>("Thành công") : new ErrorResult<string>("Lỗi tương tác cảm xúc bình luận");
+        }
+        public async Task<ResultDto<string>> ReactPost(ReactionRequest request)
+        {
+            ReactionLog react = _uow.ReactionLogRepository.GetReactUserByPost(request.UserId, request.TargetId);
+            Notification notification = null;
+            int notificationToUserId = 0;
+            if (react is null)
+            {
+
+                Post post = await _uow.PostRepository.GetById(request.TargetId);
+                if (post is null)
+                {
+                    return new ErrorResult<string>("Bài viết đã bị xóa hoặc không hiển thị với bạn");
+                }
+                AppUser targetUser = await _uow.UserRepository.GetUserByIdAsync(post.UserId);
+                if (targetUser is null)
+                {
+                    return new ErrorResult<string>("Nội dung không tồn tại");
+                }
+                react = new ReactionLog
+                {
+                    UserId = request.UserId,
+                    PostId = request.TargetId,
+                    ReactionType = request.ReactionType,
+                    Target = ReactTarget.Post,
+                };
+                _uow.ReactionLogRepository.Insert(react);
+
+
+                AppUser currentUser = await _uow.UserRepository.GetUserByIdAsync(request.UserId);
+                notificationToUserId = post.UserId;
+                notification = new Notification()
+                {
+                    NotifyFromUserId = request.UserId,
+                    NotifyToUserId = notificationToUserId,
+                    Type = NotificationType.ReactionPost,
+                    Content = _notificationService.GenerateNotificationContent(currentUser.KnownAs, NotificationType.ReactionPost),
+                    PostId = post.Id,
+                };
+                _uow.NotificationRepository.Insert(notification);
+
+            }
+            else
+            {
+                _uow.ReactionLogRepository.Remove(react);
+            }
+            bool success = await _uow.Complete();
+            if (success && notification != null)
+            {
+                Task t = _notificationService.SendNotification(notificationToUserId, notification);
+            }
+            return success ? new SuccessResult<string>("Thành công") : new ErrorResult<string>("Lỗi tương tác cảm xúc bài viết");
+        }
+
+        public async Task<ResultDto<List<ReactionLogVM>>> GetDetailReaction(int targetId, bool isPost)
+        {
+            List<ReactionLogVM> vms = new List<ReactionLogVM>();
+            List<ReactionLog> reactions = isPost 
+                ? await _uow.ReactionLogRepository.GetDetailReactionForPost(targetId) 
+                : await _uow.ReactionLogRepository.GetDetailReactionForComment(targetId);
+
+            List<AppUser> userCommented = await _uow.UserRepository.GetMany(reactions.Select(it => it.UserId));
+            foreach (var react in reactions)
+            {
+                var user = userCommented.Find(it => it.Id == react.UserId);
+                if (user != null)
+                {
+                    var vm = new ReactionLogVM()
+                    {
+                        Type = react.ReactionType,
+                        DisplayName = Convert.ToString(react.ReactionType),
+                        UserFullName = user.KnownAs,
+                        UserId = user.Id,
+                    };
+                    vms.Add(vm);
+                }
+
+            }
+            return new SuccessResult<List<ReactionLogVM>>() { ResultObj = vms };
+        }
+        #endregion
     }
 }

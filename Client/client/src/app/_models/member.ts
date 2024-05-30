@@ -11,10 +11,9 @@ export interface Member {
   lastActive: Date;
   gender: string;
   introduction: string;
-  lookingFor: string;
-  interests: string;
   city: string;
-  country: string;
+  height: number;
+  weight: number;
   photos: photo[];
   datingProfile: DatingProfile;
 }

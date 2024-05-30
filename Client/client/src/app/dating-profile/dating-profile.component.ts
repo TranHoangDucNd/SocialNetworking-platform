@@ -6,7 +6,7 @@ import {
   ViewChild,
   inject,
 } from '@angular/core';
-import { FormBuilder, FormControl, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormControl, ValidatorFn, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { DatingService } from '../_service/Dating.service';
@@ -24,7 +24,7 @@ import { ToastrService } from 'ngx-toastr';
   templateUrl: './dating-profile.component.html',
   styleUrls: ['./dating-profile.component.css'],
 })
-export class DatingProfileComponent {
+export class DatingProfileComponent implements OnInit {
   @ViewChild('DatingProfileTemplate') DatingProfileTemplate!: TemplateRef<any>;
   @ViewChild('interestInput') interestInput!: ElementRef<any>;
   modalRef?: BsModalRef;
@@ -37,17 +37,24 @@ export class DatingProfileComponent {
   filteredInterest!: Observable<EItem[]>;
   separatorKeysCodes: number[] = [ENTER, COMMA];
 
+  isFormValid = true;
+  isAgeRangeValid = true;
+
   WhereToDates!: EItem[];
   Heights!: EItem[];
   DatingObjects!: EItem[];
 
-  floatLabelControl = new FormControl('auto' as FloatLabelType);
-
   createdatingform = this.fb.group({
+    datingAgeFrom: new FormControl(18, [Validators.min(18), Validators.max(99)]),
+    datingAgeTo: new FormControl(99, [Validators.min(18), Validators.max(99)]),
     datingObject: [0, Validators.required],
     height: [0, Validators.required],
     whereToDate: [0, Validators.required],
     userInterests: [[], Validators.required],
+
+  },{
+    validators: [this.validateAgeRangeControlsValue('datingAgeFrom', 'datingAgeTo')
+    ]
   });
 
   constructor(
@@ -56,7 +63,9 @@ export class DatingProfileComponent {
     private modalService: BsModalService,
     private datingService: DatingService,
     private toastr: ToastrService
-  ) {
+  ) {}
+
+  ngOnInit() {
     this.GetDatingObject();
     this.GetHeight();
     this.GetWhereToDate();
@@ -67,11 +76,17 @@ export class DatingProfileComponent {
         map((topic: string | null | EItem) =>
           typeof topic === 'string'
             ? this.ListUserInterests.filter((item) =>
-                item.displayName.toLowerCase().includes(topic.toLowerCase())
-              ).slice()
+              item.displayName.toLowerCase().includes(topic.toLowerCase())
+            ).slice()
             : this._filterInterest(topic)
         )
       );
+
+      this.createdatingform.valueChanges.subscribe((value) =>{
+        this.isFormValid = this.createdatingform.valid;
+        this.isAgeRangeValid = !this.createdatingform.hasError('Age range not valid');
+      })
+
       this.openModal();
     }, 1000);
   }
@@ -107,15 +122,16 @@ export class DatingProfileComponent {
       }
     );
   }
+
   GetDatingObject() {
-    this.datingService.GetDatingObject().subscribe(
-      (data: any) => {
-        this.DatingObjects = data;
+    this.datingService.GetDatingObject().subscribe({
+      next: (data: any[]) => {
+        this.DatingObjects = data.filter(obj => obj.value >= 1 && obj.value <= 3);
       },
-      (error: any) => {
+      error: (error: any) => {
         console.log(error);
-      }
-    );
+      },
+    });
   }
 
   openModal() {
@@ -198,6 +214,8 @@ export class DatingProfileComponent {
     formData.append('DatingObject', formValue.datingObject?.toString() || '');
     formData.append('Height', formValue.height?.toString() || '');
     formData.append('WhereToDate', formValue.whereToDate?.toString() || '');
+    formData.append('DatingAgeFrom', formValue.datingAgeFrom?.toString() || '')
+    formData.append('DatingAgeTo', formValue.datingAgeTo?.toString() || '')
 
     const userInterestsArray: UserInterest[] = [];
     for (let i = 0; i < this.ChooseUserInterests.length; i++) {
@@ -205,6 +223,8 @@ export class DatingProfileComponent {
         id: 0,
         datingProfileId: 0,
         interestName: this.ChooseUserInterests[i].value,
+        interestNameCode: 0,
+        interestType: 1
       };
       userInterestsArray.push(userInterest);
     }
@@ -222,5 +242,33 @@ export class DatingProfileComponent {
         console.log(error);
       }
     );
+  }
+
+  cancel() {
+    this.modalService.hide();
+  }
+
+  validateAgeRangeControlsValue(
+    firstControlName: string,
+    secondControlName: string
+  ): ValidatorFn {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
+    return (formGroup: FormGroup): ValidationErrors | null => {
+      const { value: firstControlValue } = formGroup.get(
+        firstControlName
+      ) as AbstractControl;
+      const { value: secondControlValue } = formGroup.get(
+        secondControlName
+      ) as AbstractControl;
+      return firstControlValue <= secondControlValue
+        ? null
+        : {
+          ageRangeNotValid: {
+            firstControlValue,
+            secondControlValue,
+          },
+        };
+    };
   }
 }

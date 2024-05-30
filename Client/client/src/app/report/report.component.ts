@@ -42,7 +42,6 @@ export class ReportComponent implements OnInit {
   getUserShort(){
     this.service.getUserShort().subscribe(
       (data: any) => {
-        console.log(data);
         this.userShort = data.resultObj;
       }
     )
@@ -77,5 +76,5 @@ export class ReportComponent implements OnInit {
       }
     )
   }
-  
+
 }

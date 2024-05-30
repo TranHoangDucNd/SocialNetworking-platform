@@ -1,0 +1,14 @@
+<mat-dialog-content style="width: 300px;">
+      <mat-list>
+        <mat-list-item *ngFor="let item of data.resultObj" >
+          <div class="d-flex justify-content-between align-items-center">
+            <p matLine>{{ item.userFullName }}</p>
+          <span *ngIf="item.displayName === 'Haha'">😆</span>
+          <span *ngIf="item.displayName === 'Love'">😍</span>
+          <span *ngIf="item.displayName === 'Wow'">😲</span>
+          <span *ngIf="item.displayName === 'Sad'">😢</span>
+          <span *ngIf="item.displayName === 'Angry'">😡</span>
+          </div>
+        </mat-list-item>
+      </mat-list>
+</mat-dialog-content>

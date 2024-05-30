@@ -15,8 +15,10 @@ namespace WebDating.Data
             _dataContext = dataContext;
         }
 
-        public void Delete(Post entity)
-        => _dataContext.Remove(entity);
+        public void RemoveRange(IEnumerable<PostReportDetail> reports)
+        {
+            _dataContext.RemoveRange(reports);
+        }
         public async Task<Post> GetPostByID(int postId)
         => await _dataContext
             .Posts.Where(x => x.Id == postId)
@@ -30,6 +32,12 @@ namespace WebDating.Data
             .OrderByDescending(x => x.ReportDate)
             .ToListAsync();
 
-        
+        public async Task<List<PostReportDetail>> GetPostReports(int postId)
+        => await _dataContext.PostReportDetails
+          .Where(x => x.PostId == postId)
+          .OrderByDescending(x => x.ReportDate)
+          .ToListAsync();
+
+
     }
 }

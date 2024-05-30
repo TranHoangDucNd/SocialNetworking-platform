@@ -1,41 +1,56 @@
-<div class="card mb-4" *ngIf="member">
-  <div class="card-img-wrapper">
-    <img
-      src="{{ member.photoUrl ||  './assets/user.png' }}"
-      alt="{{ member.knownAs }}"
-      class="card-img-top"
-    />
-    <ul class="list-inline member-icons animate text-center">
-      <li class="list-inline-item">
-        <button routerLink="/members/{{member.userName}}" class="btn btn-primary"><i class="fa fa-user"></i></button>
-      </li>
+<div class="flip-card mb-4 w-100 card" *ngIf="member">
+  <div class="flip-card-inner w-100" [ngClass]="{'is-flipped': flipped}" (dblclick)="flipCard()">
+    <div class="flip-card-front">
+      <img
+        src="{{ member.photoUrl ||  './assets/user.png' }}"
+        alt="{{ member.knownAs }}"
+        class="w-100 h-auto rounded-2"
+      />
+    </div>
+    <div class="flip-card-back d-flex flex-column justify-content-between">
+      <div class="text-center ms-1 p-1">
+        <div>
+          <h6 class="card-title mb-1">
+    <span [class.is-online]="(presenceService.onlineUsers$ | async)?.includes(member.userName)">
+      <i class="fa fa-user me-2"></i>
+    </span>
+            {{ member.knownAs }}
+          </h6>
+        </div>
 
-      <li class="list-inline-item">
-        <button (click)="addLike(member)" class="btn btn-primary"><i class="fa fa-heart"></i></button>
-      </li>
+      </div>
+      <div class="text-center ms-1 p-1">
+        <div>
+          <strong>Gender:</strong>
+          <span>{{ member.gender | titlecase}}</span>
+        </div>
+        <div>
+          <strong>Age:</strong>
+          <span>{{ member.age }}</span>
+        </div>
+        <div>
+          <strong>Height:</strong>
+          <span>{{ member.height }}</span>
+        </div>
+        <div>
+          <strong>Where to date:</strong>
+          <span>{{ member.datingProfile.whereToDate }}</span>
+        </div>
 
-      <li class="list-inline-item">
-        <button
-        routerLink="/members/{{member.userName}}"
-        [queryParams]="{tab: 'Messages'}"
-         class="btn btn-primary"><i class="fa fa-envelope"></i></button>
-      </li>
-    </ul>
-  </div>
-  <div class="card-body ms-1 p-1">
-    <h6 class="card-title mb-1">
-      <span [class.is-online]="(presenceService.onlineUsers$ | async)?.includes(member.userName)">
-        <i class="fa fa-user me-2"></i>
-      </span>
-      
-      {{ member.knownAs }} 
-    </h6>
-    <p class="card-text ms-1 text-muted">
-      Age: {{member.age}} <br> 
-      <!-- Where to date:
-       {{ member.datingProfile.whereToDate }}
-       <br> -->
-      <!-- Looking for: {{member.lookingFor}} -->
-    </p>
+      </div>
+      <div class="d-flex justify-content-center p-2">
+        <button mat-mini-fab color="warn" routerLink="/members/{{member.userName}}">
+          <mat-icon>person</mat-icon>
+        </button>
+        <button mat-mini-fab color="warn" class="mx-2" (click)="addLike(member)">
+          <mat-icon>favorite</mat-icon>
+        </button>
+        <button mat-mini-fab color="warn"
+                routerLink="/members/{{member.userName}}"
+                [queryParams]="{tab: 'Messages'}">
+          <mat-icon>mail</mat-icon>
+        </button>
+      </div>
+    </div>
   </div>
 </div>

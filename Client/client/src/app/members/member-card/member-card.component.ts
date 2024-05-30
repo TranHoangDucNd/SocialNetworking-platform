@@ -12,6 +12,12 @@ import { PresenceService } from 'src/app/_service/presence.service';
 export class MemberCardComponent implements OnInit {
   @Input() member: Member | undefined;
 
+  flipped: boolean = false;
+
+  flipCard() {
+    this.flipped = !this.flipped;
+  }
+
   constructor(private memberService: MembersService,
     private toastr: ToastrService, public presenceService: PresenceService) {}
 
@@ -20,7 +26,7 @@ export class MemberCardComponent implements OnInit {
   addLike(member: Member){
     this.memberService.addLike(member.userName).subscribe({
       next: () =>{
-        this.toastr.success("You have liked: " + member.knownAs);
+        this.toastr.success("You have followed: " + member.knownAs);
       },
       error: error => this.toastr.error(error.error)
     })

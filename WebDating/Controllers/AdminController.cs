@@ -39,7 +39,9 @@ namespace WebDating.Controllers
             {
                 x.Id,
                 UserName = x.UserName,
-                Roles = x.UserRoles.Select(x => x.Role.Name).ToList()
+                Roles = x.UserRoles.Select(x => x.Role.Name).ToList(),
+                KnownAs = x.KnownAs,
+                PhotoUrl = x.Photos.FirstOrDefault(x => x.IsMain).Url
             }).ToListAsync();
         
             return Ok(result);
@@ -94,7 +96,7 @@ namespace WebDating.Controllers
 
         [Authorize(Policy = "ManageReport")]
         [HttpDelete("delete-post-report/{postId}")]
-        public async Task<ActionResult> DeletePostReport(int postId)
+        public async Task<IActionResult> DeletePostReport(int postId)
         {
             var result = await _adminService.DeletePostReport(postId);
             return Ok(result);

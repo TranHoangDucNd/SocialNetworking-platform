@@ -1,4 +1,20 @@
-<mat-drawer-container class="admin-container">
-      <mat-drawer mode="side" opened class="admin-left"><app-sidebar></app-sidebar></mat-drawer>
-      <mat-drawer-content> <router-outlet></router-outlet> </mat-drawer-content>
-</mat-drawer-container>
+<mat-tab-group>
+  <mat-tab label="Dashboard" *appHasRole="['Admin']">
+      <app-dashboard></app-dashboard>
+  </mat-tab>
+  <mat-tab label="Manage user roles"  *appHasRole="['Admin']">
+    <ng-template matTabContent>
+      <app-customerrole></app-customerrole>
+    </ng-template>
+  </mat-tab>
+  <mat-tab label="Manage reports" *appHasRole="['Admin','ManageReport']">
+    <ng-template matTabContent>
+      <app-managepostreport></app-managepostreport>
+    </ng-template>
+  </mat-tab>
+  <mat-tab label="Manage user accounts" *appHasRole="['Admin','ModeratePhotoRole']">
+    <ng-template matTabContent>
+      <app-moderator></app-moderator>
+    </ng-template>
+  </mat-tab>
+</mat-tab-group>

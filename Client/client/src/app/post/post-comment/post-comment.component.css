@@ -1,0 +1,23 @@
+.like-button {
+  position: relative;
+}
+
+.reactions {
+  position: absolute;
+  top: -20px;
+  left: 0;
+  display: flex;
+  background-color: white;
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.reaction {
+  margin-right: 5px;
+  cursor: pointer;
+}
+
+.reaction:hover {
+  transform: scale(1.3);
+}

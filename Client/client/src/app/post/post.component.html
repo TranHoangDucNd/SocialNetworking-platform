@@ -1,93 +1,50 @@
 <div class="w-100">
-      <div class="w-100">
-            <div class="d-flex align-items-center">
-                  <img src="{{userShort != undefined && userShort.image != undefined ? userShort.image : ''}}" alt=""
-                  style="width: 36px; height: 36px; object-fit: cover;" class="rounded-circle ">
+  <div class="w-100">
+    <div class="d-row align-items-center">
+      
+      <button type="reset" class=" border-top-0 border-start-0 border-end-0 text-start "
+              (click)="openCreatePostModal()"
+              style="background-color: white;padding: 8px 16px;width: 100%; height: 80px; border: 1px solid #ccc;">
+              <img src="{{userShort != undefined && userShort.image != undefined ? userShort.image : './assets/user.png'}}"
+           alt=""
+           style="width: 60px; height: 60px; object-fit: cover;" class="rounded-circle ">
+        What's on your mind, <b>{{ user.knownAs }}</b>
+      </button>
+      <footer class="panel-footer" style="background-color: white; height: 40px;">
+        <button class="btn btn-warning pull-right">Post</button>
+        <ul class="nav nav-pills">
+            <li class="m-2">
+                <a href="#"><i class="fa fa-map-marker"></i></a>
+            </li>
+            <li class="m-2">
+                <a href="#"><i class="fa fa-camera"></i></a>
+            </li>
+            <li class="m-2">
+                <a href="#"><i class=" fa fa-film"></i></a>
+            </li>
+            <li class="m-2">
+                <a href="#"><i class="fa fa-microphone"></i></a>
+            </li>
+        </ul>
+    </footer>
+    </div>
 
-                  <button type="text" class=" border-top-0 border-start-0 border-end-0 text-start "
-                  (click)="openCreatePostModal()"
-                  style="background-color: white;padding: 8px 16px;width: 100%; border: 1px solid #ccc;">
-                  What's on your mind, {{user.knownAs}}
-                  </button>
-            </div>
-
-            <div class="my-5">
-                  <!-- Card post -->
-                  <div *ngFor="let post of posts" class=" my-3 border-bottom">
-                      <div class="d-flex ">
-                          <div>
-                              <a *ngIf="post.userShort.fullName != user.userName" routerLink="/members/{{post.userShort.fullName}}">
-                                    <img src="{{post.userShort.image || './assets/user.png'}}" alt="" class="rounded-circle object-fit-cover" style="width: 36px; height: 36px;">
-                              </a>
-                              <img *ngIf="post.userShort.fullName === user.userName" src="{{user.photoUrl || './assets/user.png'}}" alt="" class="rounded-circle object-fit-cover" style="width: 36px; height: 36px;">
-                          </div>
-                          <div class="ps-3 w-100 ">
-                              <div class="d-flex  justify-content-between ">
-                                  <strong>{{ post.userShort.fullName }}</strong>
-                                  <div class="dropdown" dropdown>
-                                      <span class="material-symbols-outlined" dropdownToggle style="cursor: pointer;">
-                                            more_horiz
-                                      </span>
-                                      <div class="dropdown-menu" *dropdownMenu>
-                                          <div *ngIf="post.userShort.fullName == user.userName; else reportPost">
-                                              <a class="dropdown-item" style="cursor: pointer;" (click)="updatePost(post.id)">Sửa
-                                                  bài</a>
-                                              <a class="dropdown-item" style="cursor: pointer;" (click)="deletePost(post.id)">Xóa bài</a>
-                                          </div>
-                                          <ng-template #reportPost>
-                                              <a class="dropdown-item" style="cursor: pointer;" (click)="Report(post.id)">Báo cáo</a>
-                                          </ng-template>
-                                      </div>
-          
-                                  </div>
-                              </div>
-                              <div>
-                                  {{ post.content }}
-                                  <div class="d-flex flex-wrap ">
-                                      <a *ngFor="let img of post.images" href="{{ img }}" target="_blank" style="width: 30%;"
-                                          class="my-2 mx-2 ">
-                                          <img src="{{ img }}" alt="" style="width: 100%; cursor: pointer;"
-                                              class="object-fit-contain">
-                                      </a>
-                                  </div>
-                              </div>
-                          </div>
-                      </div>
-                      <div class="d-flex justify-content-between mt-3 mb-2">
-                          <div>
-                             <div *ngIf="getLike(post.postLikes); else like2">
-                                <button class="bg-white border-0 px-3 " (click)="likeOrDisLike(post.id)">
-                                    <span class="material-symbols-outlined" style="color:red;">
-                                        favorite
-                                    </span>
-                                </button>
-                                <button class="bg-white border-0 px-3 ">
-                                      <span class="material-symbols-outlined" (click)="Comment(post.id)">
-                                            comment
-                                            </span>
-                                </button>
-                             </div>
-                             <ng-template #like2>
-                                <button class="bg-white border-0 px-3 " (click)="likeOrDisLike(post.id)">
-                                    <span class="material-symbols-outlined">
-                                        favorite
-                                    </span>
-                                </button>
-                                <button class="bg-white border-0 px-3 ">
-                                      <span class="material-symbols-outlined" (click)="Comment(post.id)">
-                                            comment
-                                            </span>
-                                </button>
-                             </ng-template>
-                            </div>
-                            <br>
-                          <div>
-                              {{ post.createdAt | timeAgo }}
-                          </div>
-                      </div>
-                      <app-countlikecomment [postId]="post.id"></app-countlikecomment>
-                  </div>
-          
-              </div>
+    <div class="my-5">
+      <!-- Card post -->
+      <div *ngFor="let post of posts" class=" my-3 border-bottom">
+        <div class="dropdown-menu" *dropdownMenu>
+          <div *ngIf="post.userShort.fullName == user.userName; else reportPost">
+            <a class="dropdown-item" style="cursor: pointer;" (click)="updatePost(post.id)">Sửa
+              bài</a>
+            <a class="dropdown-item" style="cursor: pointer;" (click)="deletePost(post.id)">Xóa bài</a>
+          </div>
+          <ng-template #reportPost>
+            <a class="dropdown-item" style="cursor: pointer;" (click)="Report(post.id)">Báo cáo</a>
+          </ng-template>
+        </div>
+        <app-post-card (postChanged)="getPosts()" [post]="post" [user]="user"></app-post-card>
       </div>
+
+    </div>
+  </div>
 </div>

@@ -13,6 +13,7 @@ namespace WebDating.Data
     {
         private readonly DataContext _context;
         private readonly IMapper _mapper;
+     
 
         public MessageRepository(DataContext context, IMapper mapper)
         {
@@ -30,9 +31,28 @@ namespace WebDating.Data
             _context.Messages.Add(message);
         }
 
-        public void DeleteMessage(Message message)
+        public async Task DeleteAllMessageByUserId(string currentUsername, string otherUsername)
         {
-            _context.Messages.Remove(message);
+            var messages = await _context.Messages
+                .Where(mes => (mes.SenderUsername == currentUsername && mes.RecipientUsername == otherUsername)
+                || (mes.SenderUsername == otherUsername && mes.RecipientUsername == currentUsername)).ToListAsync();
+
+            foreach(Message message in messages)
+            {
+                if(message.SenderUsername == currentUsername)
+                {
+                    message.SenderDeleted = true;
+                }
+                if(message.RecipientUsername == currentUsername)
+                {
+                    message.RecipientDeleted = true;
+                }
+            }
+            var messageToDelete = messages.Where(m => m.SenderDeleted && m.RecipientDeleted).ToList();
+            _context.Messages.RemoveRange(messageToDelete);
+           //bool success =  await _uow.Complete();
+           // return success ? new SuccessResult<string>("Successfully deleted message") : new ErrorResult<string>("Delete message failed");
+
         }
 
         public async Task<Connection> GetConnection(string connectionId)
@@ -60,6 +80,33 @@ namespace WebDating.Data
                 .FirstOrDefaultAsync(x => x.Name == groupName);
         }
 
+        public List<MessageSummaryDto> GetMessages(string currentUsername)
+        {
+            var messages = _context.Messages
+                 .Include(m => m.Sender.Photos)
+                 .Include(m => m.Recipient.Photos)
+                 .Where(m => m.RecipientUsername == currentUsername || m.SenderUsername == currentUsername)
+                 .OrderByDescending(m => m.MessageSent)
+                 .ToList() // Fetch data from database first
+                 .GroupBy(m => m.SenderUsername == currentUsername ? m.RecipientUsername : m.SenderUsername)
+                 .Select(g => g.OrderByDescending(m => m.MessageSent).FirstOrDefault())
+                 .Select(m => new MessageSummaryDto
+                 {
+                     Username = m.SenderUsername == currentUsername
+                         ? m.RecipientUsername
+                         : m.SenderUsername,
+                     LastMessageContent = m.Content,
+                     LastMessageSent = m.MessageSent,
+                     Url = m.SenderUsername == currentUsername
+                         ? m.Recipient?.Photos?.FirstOrDefault(p => p.IsMain)?.Url
+                         : m.Sender?.Photos?.FirstOrDefault(p => p.IsMain)?.Url,
+                     KnownAs = m.SenderUsername == currentUsername ? m.Recipient.KnownAs : m.Sender.KnownAs,
+                     DateRead = m.RecipientUsername == currentUsername && m.DateRead == null
+                 }).ToList();
+            return messages;
+        }
+
+
         //Get các tin nhắn đã gửi, đã nhận, chưa đọc của current user với other users
         public async Task<PagedList<MessageDto>> GetMessagesForUser(MessageParams messageParams)
         {
@@ -72,7 +119,7 @@ namespace WebDating.Data
             {
                 case "Inbox":
                     var latestMessagesInbox = query
-                        .Where(m => m.RecipientUsername == messageParams.Username)
+                        .Where(m => m.RecipientUsername == messageParams.Username && m.RecipientDeleted == false)
                         .GroupBy(m => m.SenderUsername)
                         .Select(g => g.OrderByDescending(m => m.MessageSent).FirstOrDefault());
                     query = query.Where(m => latestMessagesInbox.Any(lm => lm.Id == m.Id));

@@ -16,7 +16,7 @@ namespace WebDating.Data
 
         public IUserRepository UserRepository => new UserRepository(_context, _mapper);
 
-        public ILikeRepository LikeRepository => new LikeRepository(_context);
+        public ILikeRepository LikeRepository => new LikeRepository(_context, _mapper);
 
         public IMessageRepository MessageRepository => new MessageRepository(_context, _mapper);
 
@@ -25,10 +25,16 @@ namespace WebDating.Data
         public IPostRepository PostRepository => new PostRepository(_context);
 
         public IAdminRepository AdminRepository => new AdminRepository(_context);
+        public ICommentRepository CommentRepository => new CommentRepository(_context);
+
+        public IReactionLogRepository ReactionLogRepository => new ReactionLogRepository(_context);
+        public INotificationRepository NotificationRepository => new NotificationRepository(_context);
+
+        public IDatingRequestRepository DatingRequestRepository => new DatingRequestRepository(_context);
 
         public async Task<bool> Complete()
         {
-           return await _context.SaveChangesAsync() > 0;
+            return await _context.SaveChangesAsync() > 0;
         }
 
         public bool CompleteNotAsync()

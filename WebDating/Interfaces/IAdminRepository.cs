@@ -4,10 +4,11 @@ using WebDating.Helpers;
 
 namespace WebDating.Interfaces
 {
-    public interface IAdminRepository : IBaseDeleteRepository<Post>
+    public interface IAdminRepository
     {
         Task<IEnumerable<PostReportDetail>> GetPostReports();
         Task<Post> GetPostByID(int postId);
-
+        Task<List<PostReportDetail>> GetPostReports(int postId);
+        void RemoveRange(IEnumerable<PostReportDetail> reports);
     }
 }

@@ -1,0 +1,30 @@
+<div class="my-2">
+  <header class="border-0 mb-2 bg-transparent">
+    <img src="{{userShort?.image || './assets/user.png'}}"
+         alt=""
+         style="width: 36px; height: 36px; object-fit: cover;" class="rounded-circle me-2">
+    <strong>{{ userShort?.knownAs }}</strong>
+  </header>
+  <div class="py-1">
+    <div>
+        <textarea
+          class="form-control form-control-sm border border-2 rounded-1"
+          id="exampleFormControlTextarea1"
+          [(ngModel)]="content"
+          style="height: 50px"
+          placeholder="Add a comment..."
+          minlength="3"
+          maxlength="255"
+          required
+        ></textarea>
+    </div>
+  </div>
+  <footer class="bg-transparent border-0 text-end">
+    <button
+      (click)="sendComment()"
+      mat-button color="primary"
+      type="submit">
+      Send
+    </button>
+  </footer>
+</div>

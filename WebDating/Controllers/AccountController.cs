@@ -14,13 +14,15 @@ namespace WebDating.Controllers
         private readonly UserManager<AppUser> _userManager;
         private readonly ITokenService _tokenService;
         private readonly IMapper _mapper;
+        private readonly IDatingService _datingService;
 
         public AccountController(UserManager<AppUser> userManager,
-            ITokenService tokenService, IMapper mapper)
+            ITokenService tokenService, IMapper mapper, IDatingService datingService)
         {
             _userManager = userManager;
             _tokenService = tokenService;
             _mapper = mapper;
+            _datingService = datingService;
         }
 
         [HttpPost("register")]
@@ -41,12 +43,15 @@ namespace WebDating.Controllers
             var roleResult = await _userManager.AddToRoleAsync(user, "Member");
             if (!roleResult.Succeeded) return BadRequest(roleResult.Errors);
 
+            await _datingService.CreateProfileAndRandomInterestsForUser(user.UserName);
+
             return new UserDto
             {
+                Id = user.Id,
                 UserName = user.UserName,
                 Token = await _tokenService.CreateToken(user),
                 KnownAs = user.KnownAs,
-                Gender = user.Gender
+                Gender = user.Gender,
             };
 
         }
@@ -66,6 +71,7 @@ namespace WebDating.Controllers
 
             return new UserDto
             {
+                Id = user.Id,
                 UserName = user.UserName.ToLower(),
                 Token = await _tokenService.CreateToken(user),
                 PhotoUrl = user.Photos.FirstOrDefault(x => x.IsMain)?.Url,
@@ -73,7 +79,7 @@ namespace WebDating.Controllers
                 Gender = user.Gender
             };
         }
-
+        [HttpGet("UserExists")]
         public async Task<bool> UserExists(string username)
         {
             return await _userManager.Users.AnyAsync(x => x.UserName.ToLower() == username.ToLower());

@@ -8,6 +8,7 @@ using WebDating.Entities.MessageEntities;
 using WebDating.Extensions;
 using WebDating.Helpers;
 using WebDating.Interfaces;
+using WebDating.Services;
 
 namespace WebDating.Controllers
 {
@@ -16,12 +17,29 @@ namespace WebDating.Controllers
     {
         private readonly IUnitOfWork _uow;
         private readonly IMapper _mapper;
+        private readonly IPhotoService _photoService;
 
-        public MessagesController(IUnitOfWork uow, IMapper mapper)
+        public MessagesController(IUnitOfWork uow, IMapper mapper, IPhotoService photoService)
         {
             _uow = uow;
             _mapper = mapper;
+            _photoService = photoService;
         }
+
+        [Authorize]
+        [HttpPost]
+        [Route("upload-image-message")]
+        public async Task<IActionResult> UploadImage(IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+                return BadRequest("No file uploaded.");
+            var uploadResult = await _photoService.AddPhotoAsync(file);
+            var path = uploadResult.SecureUrl.AbsoluteUri;
+            var publicId = uploadResult.PublicId;
+
+            return Ok(new { Path = path, PublicId = publicId });
+        }
+
 
         [HttpPost]
         public async Task<ActionResult<MessageDto>> CreateMessage(CreateMessageDto createMessageDto)
@@ -69,12 +87,32 @@ namespace WebDating.Controllers
 
         }
 
+        [HttpGet]
+        [Route("get-messages-for-user")]
+        public ActionResult<List<MessageDto>> GetMessages()
+        {
+            var username = User.GetUserName();
+            var result = _uow.MessageRepository.GetMessages(username);
+            return Ok(result);
+        }
+
         [HttpGet("thread/{username}")]
         public async Task<ActionResult<IEnumerable<MessageDto>>> GetMessagesThread(string username)
         {
             var currentUserName = User.GetUserName();
 
             return Ok(await _uow.MessageRepository.GetMessageThread(currentUserName, username));
+        }
+
+        [HttpDelete]
+        [Route("delete-messages-by-username/{otherUsername}")]
+        public async Task<IActionResult> DeleteAllMessagesByUserId(string otherUsername)
+        {
+            string currentUsername = User.GetUserName();
+             await _uow.MessageRepository.DeleteAllMessageByUserId(currentUsername, otherUsername);
+            if(await _uow.Complete()) return NoContent();
+            return BadRequest("Delete message failed");
+            
         }
     }
 }

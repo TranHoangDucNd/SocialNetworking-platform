@@ -13,7 +13,6 @@ namespace WebDating.DTOs.Post
         public int ViewNumber { get; set; } = 0;
         public int CommentNumber { get; set; } = 0;
         public int LikeNumber { get; set; } = 0;
-        public ICollection<PostComment> PostComments { get; set; } = new List<PostComment>();
-        public ICollection<PostLike> PostLikes { get; set; } = new List<PostLike>();
+        public ICollection<ReactionLogVM> Reactions { get; set; } = new List<ReactionLogVM>();
     }
 }

@@ -1,0 +1,79 @@
+<div class="comment-card">
+  <mat-card-header>
+    <div class="w-100 d-flex justify-content-between">
+      <div>
+        <mat-card-title>
+      <span>
+      <a *ngIf="comment?.userShort?.fullName != user?.userName" routerLink="/members/{{comment?.userShort?.fullName}}">
+        <img src="{{comment?.userShort?.image || './assets/user.png'}}" alt="" class="rounded-circle object-fit-cover"
+             style="width: 36px; height: 36px;">
+      </a>
+      <img *ngIf="comment?.userShort?.fullName === user?.userName" src="{{user?.photoUrl || './assets/user.png'}}"
+           alt=""
+           class="rounded-circle object-fit-cover" style="width: 36px; height: 36px;">
+        </span>
+          {{ comment?.userShort?.knownAs }}
+
+        </mat-card-title>
+        <mat-card-subtitle>{{ comment!.createAt | timeAgo }}</mat-card-subtitle>
+      </div>
+      <div>
+        <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
+          <mat-icon>more_horiz</mat-icon>
+        </button>
+        <mat-menu #menu="matMenu">
+          <button *ngIf="comment?.userShort?.fullName === user?.userName" (click)="delete(comment!.id)" mat-menu-item>
+            <span>Xoá</span>
+          </button>
+          <button *ngIf="comment?.userShort?.fullName != user?.userName" mat-menu-item>
+            <span>Báo cáo</span>
+          </button>
+        </mat-menu>
+      </div>
+    </div>
+
+  </mat-card-header>
+  <mat-card-content>
+    <p>
+      {{ comment?.content }}
+    </p>
+  </mat-card-content>
+  <mat-card-actions class="d-flex justify-content-between">
+    <div>
+      <button mat-icon-button matTooltip="Like" class="like-button" (mouseenter)="showReactions=true"
+              (mouseleave)="showReactions=false" (click)="handleReaction('like')">
+        <span *ngIf="currentReaction">{{ currentReaction }}</span>
+        <mat-icon *ngIf="!currentReaction">thumb_up</mat-icon>
+        <div class="reactions" *ngIf="showReactions">
+          <div class="reaction" (click)="handleReaction('like')">👍</div>
+          <div class="reaction" (click)="handleReaction('love')">😍</div>
+          <div class="reaction" (click)="handleReaction('haha')">😆</div>
+          <div class="reaction" (click)="handleReaction('wow')">😲</div>
+          <div class="reaction" (click)="handleReaction('sad')">😢</div>
+          <div class="reaction" (click)="handleReaction('angry')">😡</div>
+        </div>
+      </button>
+      <button mat-icon-button matTooltip="Reply" *ngIf="level <= 1" (click)="openComment(comment!.id)">
+        <mat-icon>chat_bubble_outline</mat-icon>
+      </button>
+    </div>
+    <div>
+      <span>{{ reactionCount }} R</span>
+      <span class="mx-2">·</span>
+      <span><a (click)="openComment(comment!.id)" style="cursor: pointer">{{ commentCount }} C</a></span>
+    </div>
+  </mat-card-actions>
+  <mat-divider></mat-divider>
+  <div class="ms-5" *ngIf="openedComments[comment!.id]">
+    <div *ngFor="let childComment of comment?.descendants">
+      <app-post-comment (commentChanged)="handleCommentChanged($event)" [comment]="childComment" [user]="user"
+                        [level]="level + 1"></app-post-comment>
+    </div>
+    <mat-expansion-panel [expanded]="openedComments[comment!.id]" hideToggle>
+      <app-post-comment-box (commentAdded)="handleCommentAdded($event)" [postId]="comment?.postId"
+                            [parentCommentId]="comment?.id"></app-post-comment-box>
+    </mat-expansion-panel>
+  </div>
+</div>
+
+

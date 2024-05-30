@@ -1,0 +1,78 @@
+<div class="filter-container">
+
+  <form  class="mx-3" [formGroup]="filterForm">
+    <h1 mat-dialog-title>Filter</h1>
+    <mat-dialog-content>
+      <div class="w-100 row">
+        <div class="col-3">
+          <mat-form-field class="w-100">
+            <mat-label>From Age</mat-label>
+            <input matInput type="number" min="18" max="99" formControlName="minAge">
+            <mat-error *ngIf="!isFormValid && (filterForm.get('minAge')?.hasError('min') || filterForm.get('minAge')?.hasError('max'))">
+              From Age >= 18 and <= 99
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div class="col-3">
+          <mat-form-field class="w-100">
+            <mat-label>To Age</mat-label>
+            <input matInput type="number" min="18" max="99" formControlName="maxAge">
+            <mat-error *ngIf="!isFormValid && (filterForm.get('maxAge')?.hasError('min') || filterForm.get('maxAge')?.hasError('max'))">
+              To Age >= 18 and <= 99
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div class="col-6">
+          <mat-form-field class="w-100">
+            <mat-label>Gender</mat-label>
+            <mat-select formControlName="gender">
+              <div *ngFor="let gender of genderList">
+                <mat-option [value]="gender.key">{{gender.value}}</mat-option>
+              </div>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="col-3">
+          <mat-form-field class="w-100">
+            <mat-label>From Height</mat-label>
+            <input matInput type="number" min="120" max="200" formControlName="minHeight">
+            <span matTextSuffix> cm</span>
+            <mat-error *ngIf="!isFormValid && (filterForm.get('minHeight')?.hasError('min') || filterForm.get('minHeight')?.hasError('max'))">
+              From Height >= 120 and <= 200
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div class="col-3">
+          <mat-form-field class="w-100">
+            <mat-label>To Height</mat-label>
+            <input matInput type="number" min="120" max="200" formControlName="maxHeight">
+            <span matTextSuffix> cm</span>
+            <mat-error *ngIf="!isFormValid && (filterForm.get('maxHeight')?.hasError('min') || filterForm.get('maxHeight')?.hasError('max'))">
+              To Height >= 120 and <= 200
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div class="col-6">
+          <mat-form-field class="w-100">
+            <mat-label>City</mat-label>
+            <mat-select formControlName="province">
+              <div *ngFor="let city of provinces">
+                <mat-option [value]="city.key">{{city.value}}</mat-option>
+              </div>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+    </mat-dialog-content>
+    <mat-dialog-actions class="mx-4 mb-3" align="end">
+        <button mat-button color="warn" mat-dialog-close>Cancel</button>
+        <button (click)="resetFilter()" mat-button color="primary">
+            Reset
+        </button>
+        <button mat-flat-button color="primary" [disabled]="!isFormValid" (click)="applyFilter()">
+          <i class="fa fa-check"></i> Apply
+        </button>
+    </mat-dialog-actions>
+
+  </form>
+</div>

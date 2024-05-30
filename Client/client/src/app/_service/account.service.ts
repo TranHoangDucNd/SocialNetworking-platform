@@ -1,9 +1,9 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, map } from 'rxjs';
-import { environment } from 'src/environments/environment';
-import { User } from '../_models/user';
-import { HttpClient } from '@angular/common/http';
-import { PresenceService } from './presence.service';
+import {Injectable} from '@angular/core';
+import {BehaviorSubject, map} from 'rxjs';
+import {environment} from 'src/environments/environment';
+import {User} from '../_models/user';
+import {HttpClient} from '@angular/common/http';
+import {PresenceService} from './presence.service';
 
 @Injectable({
   providedIn: 'root',
@@ -16,7 +16,8 @@ export class AccountService {
   constructor(
     private http: HttpClient,
     private presenceService: PresenceService
-  ) {}
+  ) {
+  }
 
   login(model: any) {
     return this.http.post<User>(this.baseUrl + 'account/login', model).pipe(
@@ -37,6 +38,10 @@ export class AccountService {
         }
       })
     );
+  }
+
+  getCurrentUser() {
+    return JSON.parse(localStorage.getItem('user')!) as User;
   }
 
   setCurrentUser(user: User) {

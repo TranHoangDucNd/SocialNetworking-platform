@@ -45,7 +45,12 @@ namespace WebDating.Controllers
             var result = Utils.GetAllAccountType<Interest>();
             return Ok(result);
         }
-
+        [HttpGet("GetUserOccupations")]
+        public ActionResult<IEnumerable<EnumT<Occupation>>> GetUserOccupations()
+        {
+            var result = Utils.GetAllAccountType<Occupation>();
+            return Ok(result);
+        }
         [HttpPost]
         [Authorize]
         public async Task<ActionResult<ResultDto<DatingProfileVM>>> CreateDatingProfile([FromForm] DatingProfileVM datingProfile)

@@ -1,15 +1,18 @@
-<div class="row">
+<div class="row justify-content-center">
   <div class="col-4">
     <div class="profile-card-4 z-depth-3">
       <div class="card">
-        <div class="card-body text-center bg-primary rounded-top">
+        <div
+          class="card-body text-center rounded-top"
+          style="background-color: #fdd9e5 !important"
+        >
           <div class="user-box">
             <img
               src="{{ member.photoUrl || './assets/user.png' }}"
               alt="{{ member.knownAs }}"
             />
           </div>
-          <h5 class="mb-1 text-white">{{ member.userName }}</h5>
+          <h5 class="mb-1 text-white">{{ member.knownAs }}</h5>
         </div>
         <div class="card-body">
           <ul class="list-group shadow-none">
@@ -24,7 +27,7 @@
               >
                 <i class="class fa fa-user-circle text-success"></i> Online now
               </div>
-  
+
               <div>
                 <strong>Last active:</strong>
                 <p>{{ member.lastActive | timeago }}</p>
@@ -33,12 +36,11 @@
             <li class="list-group-item">
               <div>
                 <strong>Location:</strong>
-                <p>{{ member.city }}, {{ member.country }}</p>
+                <p>{{ member.city }}</p>
               </div>
-      
+
               <div>
-                <strong>Age:  {{ member.age }}</strong>
-                
+                <strong>Age: {{ member.age }}</strong>
               </div>
             </li>
             <li class="list-group-item">
@@ -51,41 +53,38 @@
         </div>
         <div class="card-footer">
           <div class="btn-group d-flex">
-            <button class="btn btn-primary" (click)="addLike(member)">Like</button>
+            <button
+              class="btn"
+              style="background-color: #fdd9e5 !important"
+              (click)="addLike(member)"
+            >
+              <i class="fa fa-heart"></i> Follow
+            </button>
             <!-- Messages là heading dưới heading="Messages"-->
-            <button (click)="selectTab('Messages')" class="btn btn-success">
+            <button
+              (click)="selectTab('Messages')"
+              class="btn"
+              style="background-color: #fdd9e5 !important"
+            >
+              <i class="fa fa-envelope"></i>
               Messages
             </button>
+
+            <button
+              (click)="selectTab('Messages')"
+              class="btn"
+              (click)="sendDatingRequest(member)"
+            >
+              <i class="fa fa-venus-mars"></i>
+              Dating
+            </button>
           </div>
-        </div>
-        <div class="card-footer text-center">
-          <a
-            href="javascript:void()"
-            class="btn-social btn-facebook waves-effect waves-light m-1"
-            ><i class="fa fa-facebook"></i
-          ></a>
-          <a
-            href="javascript:void()"
-            class="btn-social btn-google-plus waves-effect waves-light m-1"
-            ><i class="fa fa-google-plus"></i
-          ></a>
-          <a
-            href="javascript:void()"
-            class="list-inline-item btn-social btn-behance waves-effect waves-light"
-            ><i class="fa fa-behance"></i
-          ></a>
-          <a
-            href="javascript:void()"
-            class="list-inline-item btn-social btn-dribbble waves-effect waves-light"
-            ><i class="fa fa-dribbble"></i
-          ></a>
         </div>
       </div>
     </div>
   </div>
-  
 
-  <div class="col-8">
+  <div class="col-6">
     <tabset class="member-tabset" #memberTabs>
       <tab
         heading="About {{ member.knownAs }}"
@@ -93,58 +92,140 @@
       >
         <div class="tab-content p-3">
           <div class="tab-pane active show" id="profile">
-            <h5 class="mb-3">User Profile</h5>
+            <h5 class="mb-3">{{ member.knownAs }} Profile</h5>
+            <h6>Description</h6>
+                <p>{{ member.introduction }}</p>
+                <hr />
             <div class="row">
               <div class="col-md-6">
-                <h6>Description</h6>
-                <p>{{member.introduction}}</p>
-                <h6>LookingFor</h6>
-                <p>
-                  {{member.lookingFor}}
-                </p>
-              </div>
-              <div class="col-md-6">
-                <h6>Interests</h6>
-                <li *ngFor="let i of member.datingProfile.userInterests" class="badge badge-dark badge-pill">
-                  {{ i.interestName }}
-                </li>
+                <h5 class="mb-3">About {{member.knownAs}}</h5>
                 <hr />
                 <table class="table table-hover table-striped">
                   <tbody>
                     <tr>
                       <td>
-                        <strong>Height: </strong>
-                        <strong>{{member.datingProfile.height}}</strong>
+                        <strong>Gender: {{ member.gender | titlecase }}</strong>
                       </td>
                     </tr>
                     <tr>
                       <td>
+                        <strong>Age: {{ member.age }}</strong>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <strong>Lives in: {{ member.city }}</strong>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <strong
+                          >Height: {{ member.height }} Cm</strong
+                        >
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td>
+                        <strong
+                          >Weight: {{ member.weight }} Kg</strong
+                        >
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td>
+                        <h5>Interests:</h5>
+                        <ul>
+                          <ng-container *ngFor="let interest of member.datingProfile.userInterests">
+                            <li *ngIf="interest.interestType === 1" class="badge badge-dark badge-pill" style="margin: 0 5px 5px 0;">
+                              {{ interest.interestName }}
+                            </li>
+                          </ng-container>
+                        </ul>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <h5>Occupation:</h5>
+                        <ul>
+                          <ng-container *ngFor="let occupation of member.datingProfile.occupations">
+                            <li *ngIf="occupation.occupationType === 1" class="badge badge-dark badge-pill" style="margin: 0 5px 5px 0;">
+                              {{ occupation.occupationName }}
+                            </li>
+                          </ng-container>
+                        </ul>
+                      </td>
+                    </tr>
+                   
+                  </tbody>
+                </table>
+              </div>
+              <div class="col-md-6">
+                <h5 class="mb-3">Looking for</h5>
+                <hr />
+                <table class="table table-hover table-striped">
+                  <tbody>
+                    <tr>
+                      <td>
                         <strong>Dating object: </strong>
-                        <strong>{{member.datingProfile.datingObject}}</strong>
+                        <strong>{{ member.datingProfile.datingObject }}</strong>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <strong
+                          >Age: {{ member.datingProfile.datingAgeFrom }} -
+                          {{ member.datingProfile.datingAgeTo }}</strong
+                        >
                       </td>
                     </tr>
                     <tr>
                       <td>
                         <strong>Where to date: </strong>
-                        <strong>{{member.datingProfile.whereToDate}}</strong>
+                        <strong>{{ member.datingProfile.whereToDate }}</strong>
                       </td>
                     </tr>
                     <tr>
                       <td>
-                        <strong>John</strong> deleted My Board1 in
-                        <strong>`Discussions`</strong>
+                        <strong>Height: </strong>
+                        <strong>{{ member.datingProfile.heightFrom }} - {{member.datingProfile.heightTo}} Cm</strong>
                       </td>
                     </tr>
                     <tr>
                       <td>
-                        <strong>Skell</strong> deleted his post Look at Why this
-                        is.. in <strong>`Discussions`</strong>
+                        <strong>Weight: </strong>
+                        <strong>{{ member.datingProfile.weightFrom }} - {{member.datingProfile.weightTo}} Kg</strong>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td>
+                        <h5>Desired Interests:</h5>
+                        <ul>
+                          <ng-container *ngFor="let interest of member.datingProfile.userInterests">
+                            <li *ngIf="interest.interestType === 2" class="badge badge-dark badge-pill" style="margin: 0 5px 5px 0;">
+                              {{ interest.interestName }}
+                            </li>
+                          </ng-container>
+                        </ul>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <h5>Desired Occupation:</h5>
+                        <ul>
+                          <ng-container *ngFor="let occupation of member.datingProfile.occupations">
+                            <li *ngIf="occupation.occupationType === 2" class="badge badge-dark badge-pill" style="margin: 0 5px 5px 0;">
+                              {{ occupation.occupationName }}
+                            </li>
+                          </ng-container>
+                        </ul>
                       </td>
                     </tr>
                   </tbody>
                 </table>
               </div>
-             
             </div>
           </div>
         </div>
@@ -162,7 +243,7 @@
           thumbPosition="left"
         ></gallery>
       </tab>
-      
+
       <tab heading="Messages" (selectTab)="onTabActivated($event)">
         <app-member-messages [username]="member.userName"></app-member-messages>
       </tab>

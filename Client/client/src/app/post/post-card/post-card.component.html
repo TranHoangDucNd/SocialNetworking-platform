@@ -1,0 +1,91 @@
+<mat-card class="post-card" style="">
+  <mat-card-header>
+    <div class="w-100 d-flex justify-content-between">
+      <div>
+        <mat-card-title>
+      <span>
+      <a *ngIf="post?.userShort?.fullName != user?.userName" routerLink="/members/{{post?.userShort?.fullName}}">
+        <img src="{{post?.userShort?.image || './assets/user.png'}}" alt="" class="rounded-circle object-fit-cover"
+             style="width: 36px; height: 36px;">
+      </a>
+      <img *ngIf="post?.userShort?.fullName === user?.userName" src="{{user?.photoUrl || './assets/user.png'}}" alt=""
+           class="rounded-circle object-fit-cover" style="width: 36px; height: 36px;">
+        </span>
+          {{ post?.userShort?.knownAs }}
+
+        </mat-card-title>
+        <mat-card-subtitle>{{ post?.createdAt ?? "" | timeAgo }}</mat-card-subtitle>
+      </div>
+      <div>
+        <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
+          <mat-icon>more_horiz</mat-icon>
+        </button>
+        <mat-menu #menu="matMenu">
+          <button *ngIf="post?.userShort?.fullName === user?.userName" (click)="updatePost(post!.id)" mat-menu-item>
+            <span>Sửa</span>
+          </button>
+          <button *ngIf="post?.userShort?.fullName === user?.userName" (click)="deletePost(post!.id)" mat-menu-item>
+            <span>Xóa bài</span>
+          </button>
+          <button *ngIf="post?.userShort?.fullName != user?.userName" (click)="report(post!.id)" mat-menu-item>
+            <span>Báo cáo</span>
+          </button>
+        </mat-menu>
+      </div>
+    </div>
+
+  </mat-card-header>
+  <mat-card-content class="row">
+    <p class="col col-12">
+      {{ post?.content }}
+    </p>
+    <div class="col col-12 d-flex mb-2">
+      <div class="w-100" *ngFor="let img of post?.images">
+        <img src="{{ img }}" class="w-100 h-auto rounded" alt="" (click)="openImageInNewTab(img)">
+      </div>
+    </div>
+    <mat-divider></mat-divider>
+  </mat-card-content>
+  <mat-card-actions class="d-flex justify-content-between">
+    <div>
+      <button mat-icon-button matTooltip="Like" class="like-button" (mouseenter)="showReactions=true"
+              (mouseleave)="showReactions=false" (click)="handleReaction('like')">
+        <span *ngIf="currentReaction">{{ currentReaction }}</span>
+        <mat-icon *ngIf="!currentReaction">thumb_up</mat-icon>
+        <div class="reactions" *ngIf="showReactions">
+          <div class="reaction" (click)="handleReaction('like')">👍</div>
+          <div class="reaction" (click)="handleReaction('love')">😍</div>
+          <div class="reaction" (click)="handleReaction('haha')">😆</div>
+          <div class="reaction" (click)="handleReaction('wow')">😲</div>
+          <div class="reaction" (click)="handleReaction('sad')">😢</div>
+          <div class="reaction" (click)="handleReaction('angry')">😡</div>
+        </div>
+      </button>
+      <button mat-icon-button matTooltip="Comment" (click)="openComment(post!.id)">
+        <mat-icon>chat_bubble_outline</mat-icon>
+      </button>
+    </div>
+    <div>
+      <div class="col col-12 d-flex justify-content-end">
+        <span>{{ reactionCount }} Reactions</span>
+        <span class="material-symbols-outlined" (click)="openDialog()">
+          visibility
+        </span>
+        
+        <span class="mx-2">·</span>
+        <span><a (click)="openComment(post!.id)" style="cursor: pointer">{{ commentCount }} Comments</a></span>
+      </div>
+    </div>
+
+  </mat-card-actions>
+  <mat-expansion-panel [expanded]="openedComments[post!.id]" hideToggle>
+    <ng-template matExpansionPanelContent>
+      <app-post-comment-box (commentAdded)="handleCommentChanged($event)" [postId]="post?.id"
+                            [parentCommentId]="0"></app-post-comment-box>
+      <ng-container *ngFor="let childComment of comments" >
+        <app-post-comment (commentChanged)="handleCommentChanged($event)" [comment]="childComment" [user]="user"
+                          [level]="0" *ngIf="childComment.parentCommentId === 0"></app-post-comment>
+      </ng-container>
+    </ng-template>
+  </mat-expansion-panel>
+</mat-card>

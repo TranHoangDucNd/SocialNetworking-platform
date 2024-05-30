@@ -1,124 +1,214 @@
-<div style="width: 100%;">
-      <ng-template #DatingProfileTemplate style="width: 70%;">
-            <div class="modal-header">
-                  <h4 class="modal-title pull-left">How wonderful ! Welcome to the dating social network on
-                      <strong>DATING</strong>
-                  </h4>
-                  <button type="button" class="btn-close close pull-right" aria-label="Close" (click)="modalRef?.hide()">
-                      <span aria-hidden="true" class="visually-hidden">&times;</span>
+<div style="width: 100%">
+  <ng-template #DatingProfileTemplate style="width: 70%">
+    <div class="modal-header">
+      <h4 class="modal-title pull-left">
+        How wonderful ! Welcome to the dating social network on
+        <strong>DATING</strong>
+      </h4>
+      <button
+        type="button"
+        class="btn-close close pull-right"
+        aria-label="Close"
+        (click)="cancel()"
+      >
+        <span aria-hidden="true" class="visually-hidden">&times;</span>
+      </button>
+    </div>
+
+    <div
+      class="modal-body mat-typography"
+      style="font-family: 'Roboto', serif !important"
+    >
+      <mat-stepper #stepper>
+        <mat-step label="Wellcome">
+          <ol class="list-group list-group-numbered">
+            <li class="d-flex justify-content-between align-items-start">
+              <div class="ms-2 me-auto">
+                <div class="fw-bold fs-6">New way of dating</div>
+                Use features and experiences to find your target audience
+              </div>
+              <span class="badge text-bg-primary rounded-pill">14</span>
+            </li>
+            <li class="d-flex justify-content-between align-items-start my-2">
+              <div class="ms-2 me-auto">
+                <div class="fw-bold fs-6">All free</div>
+                We will never ask you to pay to use any Dating features
+              </div>
+              <span class="badge text-bg-primary rounded-pill">14</span>
+            </li>
+            <li class="d-flex justify-content-between align-items-start">
+              <div class="ms-2 me-auto">
+                <div class="fw-bold fs-6">Prioritize privacy</div>
+                We always respect and prioritize your personal privacy anytime
+                and anywhere
+              </div>
+              <span class="badge text-bg-primary rounded-pill">14</span>
+            </li>
+            <button mat-button matStepperNext class="btn button-primaryyy mt-3">
+              Start
+            </button>
+          </ol>
+        </mat-step>
+        <mat-step label="About you" matIconSuffix="2" matIconPrefix="2">
+          <form [formGroup]="createdatingform">
+            <div class="d-flex mt-2">
+              <div class="d-row col-4">
+                <mat-label>Select the age you want to date</mat-label>
+                <div class="d-flex">
+                  <mat-form-field style="width: 100px" class="me-2">
+                    <mat-label>From Age</mat-label>
+                    <input
+                      matInput
+                      type="number"
+                      min="18"
+                      max="99"
+                      formControlName="datingAgeFrom"
+                    />
+                    <mat-error
+                      *ngIf="
+                        !isFormValid &&
+                        (createdatingform
+                          .get('datingAgeFrom')
+                          ?.hasError('min') ||
+                          createdatingform
+                            .get('datingAgeFrom')
+                            ?.hasError('max'))
+                      "
+                    >
+                      From Age >= 18 and <= 99
+                    </mat-error>
+                  </mat-form-field>
+
+                  <mat-form-field style="width: 100px">
+                    <mat-label>To Age</mat-label>
+                    <input
+                      matInput
+                      type="number"
+                      min="18"
+                      max="99"
+                      formControlName="datingAgeTo"
+                    />
+                    <mat-error
+                      *ngIf="
+                        !isFormValid &&
+                        (createdatingform.get('datingAgeTo')?.hasError('min') ||
+                          createdatingform.get('datingAgeTo')?.hasError('max'))
+                      "
+                    >
+                      To Age >= 18 and <= 99
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+              </div>
+
+              <div class="d-row col-4">
+                <mat-label class="me-2"
+                  >Select the person you want to date</mat-label
+                >
+                <mat-form-field>
+                  <mat-label>Select the person you want to date</mat-label>
+                  <mat-select formControlName="datingObject">
+                    <div *ngFor="let option of DatingObjects">
+                      <mat-option [value]="option.value">
+                        {{ option.displayName }}</mat-option
+                      >
+                    </div>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+            </div>
+
+            <div class="d-flex mt-2">
+              <div class="d-row col-4">
+                <mat-label class="me-2">Choose your height</mat-label>
+                <mat-form-field>
+                  <mat-label>Choose your height?</mat-label>
+                  <mat-select formControlName="height">
+                    <div *ngFor="let option of Heights">
+                      <mat-option [value]="option.value">{{
+                        option.displayName
+                      }}</mat-option>
+                    </div>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+              <div class="d-row col-5">
+                <mat-label class="me-2">Where you want to a date</mat-label>
+                <mat-form-field>
+                  <mat-label>Where you want to a date?</mat-label>
+                  <mat-select formControlName="whereToDate">
+                    <div *ngFor="let option of WhereToDates">
+                      <mat-option [value]="option.value">
+                        {{ option.displayName }}</mat-option
+                      >
+                    </div>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+            </div>
+            <div>
+              <button mat-button matStepperNext>Next</button>
+            </div>
+          </form>
+        </mat-step>
+
+        <mat-step [stepControl]="createdatingform" label="Interest">
+          <form [formGroup]="createdatingform">
+            <div class="mx-3 my-3">Choose your preferences</div>
+            <mat-form-field class="w-100 mt-1">
+              <mat-chip-grid #chipGrid aria-label="Chọn 1 chủ đề">
+                <mat-chip-row
+                  *ngFor="let title of ChooseUserInterests"
+                  (removed)="removeTopic(title)"
+                >
+                  {{ title.displayName }}
+                  <button
+                    matChipRemove
+                    [attr.aria-label]="'remove ' + title.displayName"
+                  >
+                    <mat-icon>cancel</mat-icon>
                   </button>
-            </div>
+                </mat-chip-row>
+              </mat-chip-grid>
+              <mat-label>
+                <mat-icon matSuffix>tag</mat-icon>
+              </mat-label>
+              <input
+                #interestInput
+                placeholder="Search your interest..."
+                [formControl]="interestCtrl"
+                [matChipInputFor]="chipGrid"
+                [matAutocomplete]="auto"
+                [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                (matChipInputTokenEnd)="addTopic($event)"
+              />
+              <mat-autocomplete
+                #auto="matAutocomplete"
+                (optionSelected)="selectedTopic($event)"
+              >
+                <mat-option
+                  *ngFor="let item of filteredInterest | async"
+                  [value]="item.displayName"
+                >
+                  {{ item.displayName }}
+                </mat-option>
+              </mat-autocomplete>
+            </mat-form-field>
+          </form>
+          <div>
+            <button mat-button matStepperNext>Next</button>
+          </div>
+        </mat-step>
 
-              
-            <div class="modal-body mat-typography" style="font-family: 'Roboto' !important;">
-                  <mat-stepper #stepper>
-                        <mat-step label="Wellcome">
-                              <ol class="list-group list-group-numbered">
-                                    <li class=" d-flex justify-content-between align-items-start">
-                                        <div class="ms-2 me-auto">
-                                            <div class="fw-bold fs-6 ">New way of dating</div>
-                                            Use features and experiences to find your target audience
-                                        </div>
-                                        <span class="badge text-bg-primary rounded-pill">14</span>
-                                    </li>
-                                    <li class=" d-flex justify-content-between align-items-start my-2 ">
-                                        <div class="ms-2 me-auto">
-                                            <div class="fw-bold fs-6">All free</div>
-                                            We will never ask you to pay to use any Dating features
-                                        </div>
-                                        <span class="badge text-bg-primary rounded-pill">14</span>
-                                    </li>
-                                    <li class=" d-flex justify-content-between align-items-start">
-                                        <div class="ms-2 me-auto">
-                                            <div class="fw-bold fs-6">Prioritize privacy</div>
-                                            We always respect and prioritize your personal privacy anytime and anywhere
-                                        </div>
-                                        <span class="badge text-bg-primary rounded-pill">14</span>
-                                    </li>
-                                    <button mat-button matStepperNext class="btn button-primaryyy mt-3">
-                                        Start
-                                    </button>
-                                </ol>
-                        </mat-step>
-                        <mat-step label="About you" matIconSuffix="2" matIconPrefix="2">
-                          <form [formGroup]="createdatingform">
-                              <div class="d-flex align-items-center ">
-                                    <mat-label class="me-2 ">Select the person you want to date</mat-label>
-                                    <mat-radio-group [formControl]="floatLabelControl" class="d-flex align-items-center">
-                                    <div *ngFor="let option of DatingObjects">
-                                          <mat-radio-button formControlName="datingObject" [value]="option.value">
-                                                {{option.displayName}}</mat-radio-button>
-                                    </div>
-                                    </mat-radio-group>
-                              </div>
-                              <div class="d-flex mt-2 ">
-                                    <mat-form-field>
-                                          <mat-label>Choose your height?</mat-label>
-                                          <mat-select formControlName="height">
-                                              <div *ngFor="let option of Heights">
-                                                  <mat-option [value]="option.value">{{ option.displayName}}</mat-option>
-                                              </div>
-                                          </mat-select>
-                                      </mat-form-field>
-
-                                      <mat-form-field class="ms-3">
-                                          <mat-label>Where you want to a date?</mat-label>
-                                          <mat-select formControlName="whereToDate">
-                                              <div *ngFor="let option of WhereToDates">
-                                                  <mat-option [value]="option.value">
-                                                  {{ option.displayName}}</mat-option>
-                                              </div>
-                                          </mat-select>
-                                      </mat-form-field>
-                              </div>
-                              <div>
-                                    <button mat-button matStepperNext>Next</button>
-                              </div>
-                          </form>
-                        </mat-step>
-
-                        <mat-step [stepControl]="createdatingform" label="Interest">
-                              <form [formGroup]="createdatingform">
-                                  <div class="mx-3 my-3 ">
-                                      Choose your preferences
-                                  </div>
-                                  <mat-form-field class=" w-100 mt-1">
-                                    <mat-chip-grid #chipGrid aria-label="Chọn 1 chủ đề">
-                                        <mat-chip-row *ngFor="let title of ChooseUserInterests" (removed)="removeTopic(title)">
-                                            {{title.displayName}}
-                                            <button matChipRemove [attr.aria-label]="'remove ' + title.displayName">
-                                                <mat-icon>cancel</mat-icon>
-                                            </button>
-                                        </mat-chip-row>
-                                    </mat-chip-grid>
-                                    <mat-label>
-                                        <mat-icon matSuffix>tag</mat-icon>
-                                    </mat-label>
-                                    <input #interestInput placeholder="Search your interest..." [formControl]="interestCtrl"
-                                        [matChipInputFor]="chipGrid" [matAutocomplete]="auto"
-                                        [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-                                        (matChipInputTokenEnd)="addTopic($event)" />
-                                    <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selectedTopic($event)">
-                                        <mat-option *ngFor="let item of filteredInterest | async" [value]="item.displayName">
-                                            {{item.displayName}}
-                                        </mat-option>
-                                    </mat-autocomplete>
-                                </mat-form-field>
-                              </form>
-                              <div>
-                                  <button mat-button matStepperNext>Next</button>
-                              </div>
-                          </mat-step>
-
-                          <mat-step label="Done">
-                              <p>You are now done.</p>
-                              <div>
-                                  <button mat-button (click)="updateDatingProfile()">Update Dating
-                                      Profile</button>
-                              </div>
-                          </mat-step>
-                      </mat-stepper>
-            </div>
-            
-      </ng-template>
+        <mat-step label="Done">
+          <p>You are now done.</p>
+          <div>
+            <button mat-button (click)="updateDatingProfile()">
+              Update Dating Profile
+            </button>
+          </div>
+        </mat-step>
+      </mat-stepper>
+    </div>
+  </ng-template>
 </div>

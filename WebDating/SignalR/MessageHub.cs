@@ -73,6 +73,8 @@ namespace WebDating.SignalR
                 SenderUsername = sender.UserName,
                 RecipientUsername = recipient.UserName,
                 Content = createMessageDto.Content,
+                PublicId = createMessageDto.PublicId,
+                Url = createMessageDto.Url
             };
 
             var groupName = GetGroupName(sender.UserName, recipient.UserName);
@@ -85,7 +87,7 @@ namespace WebDating.SignalR
             {
                 message.DateRead = DateTime.UtcNow;
             }
-            else
+            else if (!group.Connections.Any(x => x.Username == recipient.UserName && message.DateRead != null))
             {
                 var connections = await PresenceTracker.GetConnectionsForUser(recipient.UserName);
                 if (connections != null)
@@ -93,6 +95,7 @@ namespace WebDating.SignalR
                     await _presenceHub.Clients.Clients(connections).SendAsync("NewMessageReceived",
                         new { username = sender.UserName, knownAs = sender.KnownAs }
                     );
+                    await _presenceHub.Clients.Clients(connections).SendAsync("NewUnreadMessage", new { username = sender.UserName });
                 }
             }
 
@@ -101,6 +104,22 @@ namespace WebDating.SignalR
             if (await _uow.Complete())
             {
                 await Clients.Group(groupName).SendAsync("NewMessage", _mapper.Map<MessageDto>(message));
+                var messageSummaryDto = new MessageSummaryDto
+                {
+                    Username = message.SenderUsername == username
+                     ? message.RecipientUsername
+                     : message.SenderUsername,
+                            LastMessageContent = message.Content,
+                            LastMessageSent = message.MessageSent,
+                            Url = message.SenderUsername == username
+                     ? message.Recipient.Photos.FirstOrDefault(p => p.IsMain)?.Url
+                     : message.Sender.Photos.FirstOrDefault(p => p.IsMain)?.Url,
+                            KnownAs = message.SenderUsername == username
+                     ? message.Recipient.KnownAs
+                     : message.Sender.KnownAs,
+                    DateRead = message.RecipientUsername == username && message.DateRead == null
+                };
+                await Clients.Caller.SendAsync("UpdateUI", messageSummaryDto);
             }
         }
 

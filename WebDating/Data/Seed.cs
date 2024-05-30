@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
+using WebDating.Entities.ProfileEntities;
 using WebDating.Entities.UserEntities;
 
 namespace WebDating.Data
@@ -23,7 +24,7 @@ namespace WebDating.Data
                 new AppRole{Name = "ManageReport"},
             };
 
-            foreach(var role in roles)
+            foreach (var role in roles)
             {
                 await roleManager.CreateAsync(role);
             }
@@ -33,7 +34,7 @@ namespace WebDating.Data
                 user.UserName = user.UserName.ToLower();
                 await userManager.CreateAsync(user, "Pa$$w0rd");
                 await userManager.AddToRoleAsync(user, "Member");
-               
+
             }
 
             var admin = new AppUser()

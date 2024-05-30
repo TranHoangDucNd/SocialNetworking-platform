@@ -23,24 +23,24 @@ namespace WebDating.Controllers
             _mapper = mapper;
             _photoService = photoService;
         }
-       
-        [HttpGet]
-        public async Task<ActionResult<PagedList<MemberDto>>> GetUsers([FromQuery] UserParams userParams)
-        {
-            userParams.CurrentUserName = User.GetUserName();
-            var gender = await _uow.UserRepository.GetUserGender(User.GetUserName());
 
-            if (string.IsNullOrEmpty(userParams.Gender))
-            {
-                userParams.Gender = gender == "female" ? "male" : "female";
-            }
+        //[HttpGet]
+        //public async Task<ActionResult<PagedList<MemberDto>>> GetUsers([FromQuery] UserParams userParams)
+        //{
+        //    userParams.CurrentUserName = User.GetUserName();
+        //    var gender = await _uow.UserRepository.GetUserGender(User.GetUserName());
 
-            var users = await _uow.UserRepository.GetMembersAsync(userParams);
+        //    if (string.IsNullOrEmpty(userParams.Gender))
+        //    {
+        //        userParams.Gender = gender == "female" ? "male" : "female";
+        //    }
 
-            Response.AddPaginationHeader(new PaginationHeader(users.CurrentPage, users.PageSize, users.TotalCount, users.TotalPages));
+        // var users = await _uow.UserRepository.GetMembersAsync(userParams);
 
-            return Ok(users);
-        }
+        //    Response.AddPaginationHeader(new PaginationHeader(users.CurrentPage, users.PageSize, users.TotalCount, users.TotalPages));
+
+        //    return Ok(users);
+        //}
 
         [HttpGet("{username}")]
         public async Task<ActionResult<MemberDto>> GetMember(string username)
@@ -57,15 +57,12 @@ namespace WebDating.Controllers
         [HttpPut]
         public async Task<ActionResult> UpdateUser(MemberUpdateDto memberUpdateDto)
         {
-            var username = User.GetUserName();
-            var user = await _uow.UserRepository.GetUserByUsernameAsync(username);
-            if (user == null) return NotFound();
-
-            _mapper.Map(memberUpdateDto, user);
+           
+            await _uow.UserRepository.UpdateUser(memberUpdateDto);
 
             if (await _uow.Complete()) return NoContent();
 
-            return BadRequest("Failed update");
+            return BadRequest("Failed to update user!");
         }
 
         [HttpPost("add-photo")]
@@ -107,7 +104,7 @@ namespace WebDating.Controllers
             if (photo.IsMain) return BadRequest("This is already your main photo!");
 
             var currentPhoto = user.Photos.FirstOrDefault(x => x.IsMain);
-            if(currentPhoto != null) currentPhoto.IsMain = false;
+            if (currentPhoto != null) currentPhoto.IsMain = false;
             photo.IsMain = true;
 
             if (await _uow.Complete()) return NoContent();
@@ -125,10 +122,10 @@ namespace WebDating.Controllers
             if (photo == null) return NotFound();
             if (photo.IsMain) return BadRequest("You cannot delete your main photo!");
 
-            if(photo.PublicId != null)
+            if (photo.PublicId != null)
             {
                 var result = await _photoService.DeletePhotoAsync(photo.PublicId);
-                if(result.Error != null) return BadRequest(result.Error.Message);
+                if (result.Error != null) return BadRequest(result.Error.Message);
             }
 
             user.Photos.Remove(photo);
@@ -136,6 +133,17 @@ namespace WebDating.Controllers
             if (await _uow.Complete()) return Ok();
 
             return BadRequest("Problem deleting photo!");
+        }
+
+
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<ActionResult<PagedList<MemberDto>>> GetUsers([FromQuery] UserParams userParams)
+        {
+            userParams.CurrentUserName = User.GetUserName();
+            var res = await _uow.UserRepository.GetBestMatch(userParams);
+            Response.AddPaginationHeader(new PaginationHeader(res.CurrentPage, res.PageSize, res.TotalCount, res.TotalPages));
+            return Ok(res);
         }
     }
 }

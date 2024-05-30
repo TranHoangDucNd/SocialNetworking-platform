@@ -2,6 +2,55 @@
 
 <app-nav></app-nav>
 
-<div class="container" style="margin-top: 100px">
-      <router-outlet></router-outlet>
-  </div>
+<mat-sidenav-container class="example-container">
+  <mat-sidenav #sidenav mode="side" opened class="example-sidenav" [fixedInViewport]="false"
+               *ngIf="accountService.currentUser$ | async" style="background-color: #ffffff">
+    <mat-nav-list>
+      <mat-list-item routerLink="/">
+        <i class="fa fa-home"> </i>
+        <span class="full-width"> New Posts</span>
+      </mat-list-item>
+      <mat-divider></mat-divider>
+      <mat-list-item routerLink="/personalpage/{{user?.userName}}">
+        <i class="fa fa-user"> </i>
+        <span class="full-width"> My Posts</span>
+      </mat-list-item>
+      <mat-list-item routerLink="/members">
+        <i class="fa fa-users"> </i>
+        <span class="full-width"> Matches</span>
+      </mat-list-item>
+      <mat-list-item routerLink="/lists">
+        <i class="fa fa-heart"> </i>
+        <span class="full-width"> Follows</span>
+      </mat-list-item>
+      
+      <mat-list-item routerLink="/featmess" (click)="clearUnreadMessages()">      
+        <i class="fa fa-envelope"></i>
+        <span class="full-width"> Messages <span *ngIf="unreadMessageCount > 0" class="badge">{{ unreadMessageCount }}</span></span>
+      </mat-list-item>
+
+      <mat-list-item routerLink="/dating">
+        <i class="fa fa-venus-mars"> </i>
+        <span class="full-width">Dating</span>
+      </mat-list-item>
+
+      <mat-divider></mat-divider>
+      <mat-list-item routerLink="/admin" *appHasRole="['Admin', 'Moderator','ManageReport']">
+        <i class="fa fa-cog"> </i>
+        <span class="full-width"> Admin</span>
+      </mat-list-item>
+    </mat-nav-list>
+  </mat-sidenav>
+
+  <mat-sidenav-content style="background-color: #f4f6f6">
+    <div *ngIf="accountService.currentUser$ | async">
+      <button mat-button (click)="sidenav?.toggle()">
+        <mat-icon>menu</mat-icon>
+      </button>
+    </div>
+
+    <router-outlet></router-outlet>
+
+  </mat-sidenav-content>
+</mat-sidenav-container>
+

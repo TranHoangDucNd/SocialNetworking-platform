@@ -105,9 +105,20 @@ export class MemberDetailComponent implements OnInit, OnDestroy {
   addLike(member: Member){
     this.memberService.addLike(member.userName).subscribe({
       next: () =>{
-        this.toastr.success("You have liked: " + member.knownAs);
+        this.toastr.success("You have followed: " + member.knownAs);
       },
       error: error => this.toastr.error(error.error)
+    })
+  }
+
+  sendDatingRequest(member: Member){
+    this.memberService.sendDatingRequest(member.id).subscribe({
+      next: (res) => {
+        this.toastr.success(res.message);
+      },
+      error: error =>{
+        this.toastr.error(error.error);
+      }
     })
   }
 }

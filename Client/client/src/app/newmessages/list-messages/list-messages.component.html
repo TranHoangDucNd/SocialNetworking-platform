@@ -1,0 +1,28 @@
+<div class="card">
+      <div class="container-fluid h-100">
+        <div class="row justify-content-center h-100">
+          <div class="card mb-sm-3 mb-md-0 contacts_card">
+            <div class="card-header">
+            </div>
+            <div *ngFor="let message of messages">
+              <ul class="contacts">
+              <li [ngClass]="{'active': selectedUsername === message.username}"  (click)="selectUser(message.username)">
+                <div class="d-flex bd-highlight">
+                  <div class="img_cont">
+                    <img src="{{message.url}}" class="rounded-circle user_img">
+                    <span [class.online_icon]="(presenceService.onlineUsers$ | async)?.includes(message.username)"></span>
+                  </div>
+                  <div class="user_info">
+                    <span>{{message.knownAs}}</span>
+                    <p style="font-size: 20px;" [ngClass]="{'unread-message': message.dateRead, 'read-message': !message.dateRead}">{{message.lastMessageContent}}</p>
+                  </div>
+                </div>
+              </li>
+            </ul>
+            </div>
+            <div class="card-footer"></div>
+          </div></div>
+        
+        </div>
+    </div>
+    

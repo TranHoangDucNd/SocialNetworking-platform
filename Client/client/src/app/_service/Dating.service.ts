@@ -14,15 +14,18 @@ export class DatingService {
   }
 
   GetUserInterests() {
-    return this.http.get(this.baseUrl + 'DatingProfile/GetUserInterests');
+    return this.http.get<any>(this.baseUrl + 'DatingProfile/GetUserInterests');
+  }
+  GetUserOccupations() {
+    return this.http.get<any>(this.baseUrl + 'DatingProfile/GetUserOccupations');
   }
   GetWhereToDate() {
-    return this.http.get(this.baseUrl + 'DatingProfile/GetWhereToDate');
+    return this.http.get<any>(this.baseUrl + 'DatingProfile/GetWhereToDate');
   }
   GetHeight() {
-    return this.http.get(this.baseUrl + 'DatingProfile/GetHeight');
+    return this.http.get<any>(this.baseUrl + 'DatingProfile/GetHeight');
   }
   GetDatingObject() {
-    return this.http.get(this.baseUrl + 'DatingProfile/GetDatingObject');
+    return this.http.get<any>(this.baseUrl + 'DatingProfile/GetDatingObject');
   }
 }

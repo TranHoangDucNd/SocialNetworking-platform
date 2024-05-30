@@ -1,0 +1,148 @@
+<div class="col-12">
+  <tabset class="member-tabset" #memberTabs>
+    <tab
+      heading="About {{ member.knownAs }}"
+    >
+      <div class="tab-content p-3">
+        <div class="tab-pane active show" id="profile">
+          <h5 class="mb-3">{{ member.knownAs }} Profile</h5>
+          <h6>Description</h6>
+              <p>{{ member.introduction }}</p>
+              <hr />
+          <div class="row">
+            <div class="col-md-6">
+              <h5 class="mb-3">About {{member.knownAs}}</h5>
+              <hr />
+              <table class="table table-hover table-striped">
+                <tbody>
+                  <tr>
+                    <td>
+                      <strong>Gender: {{ member.gender | titlecase }}</strong>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <strong>Age: {{ member.age }}</strong>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <strong>Lives in: {{ member.city }}</strong>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <strong
+                        >Height: {{ member.height }} Cm</strong
+                      >
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td>
+                      <strong
+                        >Weight: {{ member.weight }} Kg</strong
+                      >
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td>
+                      <h5>Interests:</h5>
+                      <ul>
+                        <ng-container *ngFor="let interest of member.datingProfile.userInterests">
+                          <li *ngIf="interest.interestType === 1" class="badge badge-dark badge-pill" style="margin: 0 5px 5px 0;">
+                            {{ interest.interestName }}
+                          </li>
+                        </ng-container>
+                      </ul>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <h5>Occupation:</h5>
+                      <ul>
+                        <ng-container *ngFor="let occupation of member.datingProfile.occupations">
+                          <li *ngIf="occupation.occupationType === 1" class="badge badge-dark badge-pill" style="margin: 0 5px 5px 0;">
+                            {{ occupation.occupationName }}
+                          </li>
+                        </ng-container>
+                      </ul>
+                    </td>
+                  </tr>
+                 
+                </tbody>
+              </table>
+            </div>
+            <div class="col-md-6">
+              <h5 class="mb-3">Looking for</h5>
+              <hr />
+              <table class="table table-hover table-striped">
+                <tbody>
+                  <tr>
+                    <td>
+                      <strong>Dating object: </strong>
+                      <strong>{{ member.datingProfile.datingObject }}</strong>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <strong
+                        >Age: {{ member.datingProfile.datingAgeFrom }} -
+                        {{ member.datingProfile.datingAgeTo }}</strong
+                      >
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <strong>Where to date: </strong>
+                      <strong>{{ member.datingProfile.whereToDate }}</strong>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <strong>Height: </strong>
+                      <strong>{{ member.datingProfile.heightFrom }} - {{member.datingProfile.heightTo}} Cm</strong>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <strong>Weight: </strong>
+                      <strong>{{ member.datingProfile.weightFrom }} - {{member.datingProfile.weightTo}} Kg</strong>
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td>
+                      <h5>Desired Interests:</h5>
+                      <ul>
+                        <ng-container *ngFor="let interest of member.datingProfile.userInterests">
+                          <li *ngIf="interest.interestType === 2" class="badge badge-dark badge-pill" style="margin: 0 5px 5px 0;">
+                            {{ interest.interestName }}
+                          </li>
+                        </ng-container>
+                      </ul>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <h5>Desired Occupation:</h5>
+                      <ul>
+                        <ng-container *ngFor="let occupation of member.datingProfile.occupations">
+                          <li *ngIf="occupation.occupationType === 2" class="badge badge-dark badge-pill" style="margin: 0 5px 5px 0;">
+                            {{ occupation.occupationName }}
+                          </li>
+                        </ng-container>
+                      </ul>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </tab>
+
+  </tabset>
+</div>

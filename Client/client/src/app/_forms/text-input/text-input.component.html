@@ -6,18 +6,18 @@
       placeholder={{label}}
       >
       <div class="invalid-feedback" *ngIf="control.errors?.['required']">
-            Please enter a {{label}}
+            Không được để trống {{label}}
       </div>
       <div class="invalid-feedback" *ngIf="control.errors?.['minlength']">
-            {{label}} must be at least {{control.errors?.['minlength'].requiredLength}} characters
+            {{label}} phải có ít nhất {{control.errors?.['minlength'].requiredLength}} ký tự
       </div>
       <div class="invalid-feedback" *ngIf="control.errors?.['maxlength']">
-            {{label}} must be at most {{control.errors?.['maxlength'].requiredLength}} characters
+            {{label}} không được vượt quá {{control.errors?.['maxlength'].requiredLength}} ký tự
       </div>
       <div class="invalid-feedback" *ngIf="control.errors?.['passwordStrength']">
-            Your password must have lower case, upper case and numeric characters.
+            Mật khẩu phải bao gồm chữ cái in hoa, in thường, ký tự đặc biệt và số
       </div>
       <div class="invalid-feedback" *ngIf="control.errors?.['notMatching']">
-           Password do not match
+           Mật khẩu không khớp
       </div>
 </div>

@@ -103,20 +103,40 @@ namespace WebDating.Data
             
             var profile = await _context.DatingProfiles
                 .Include(it => it.UserInterests)
+                .Include(it => it.Occupations)
                 .SingleOrDefaultAsync(x => x.UserId == user.Id);
             
             user.Introduction = memberUpdateDto.Introduction;
             user.City = memberUpdateDto.City;
+            user.Height = memberUpdateDto.Height;
+            user.Weight = memberUpdateDto.Weight;
            
             profile.DatingObject = memberUpdateDto.DatingObject;
-            profile.Height = memberUpdateDto.Height;
+            profile.HeightFrom = memberUpdateDto.HeightFrom;
+            profile.HeightTo = memberUpdateDto.HeightTo;
+            profile.WeightFrom = memberUpdateDto.WeightFrom;
+            profile.WeightTo = memberUpdateDto.WeightTo;
+            profile.DatingAgeFrom = memberUpdateDto.DatingAgeFrom;
+            profile.DatingAgeTo = memberUpdateDto.DatingAgeTo;
             profile.WhereToDate = memberUpdateDto.WhereToDate;
+
+
             profile.UserInterests = memberUpdateDto.DatingProfile.UserInterests.Select(it => new UserInterest
             {
                 DatingProfileId = profile.Id,
                 InterestName = it.InterestNameCode,
                 DatingProfile = profile,
+                InterestType = it.InterestType
             }).DistinctBy(it => it.InterestName).ToList();
+
+            profile.Occupations = memberUpdateDto.DatingProfile.Occupations.Select(it => new Occupations
+            {
+                DatingProfileId = profile.Id,
+                OccupationName = it.OccupationNameCode,
+                DatingProfile = profile,
+                OccupationType = it.OccupationType
+            }).DistinctBy(it => it.OccupationName).ToList();
+
             _context.Users.Update(user);
             _context.DatingProfiles.Update(profile);
         }
@@ -153,48 +173,58 @@ namespace WebDating.Data
             {
                 return new PagedList<MemberDto>(Enumerable.Empty<MemberDto>(), 0, userParams.PageNumber, userParams.PageSize);
             }
-            IEnumerable<int> listInterest = _context.UserInterests.Where(it => it.DatingProfileId == profile.Id)
+            //IEnumerable<int> listInterest = _context.UserInterests.Where(it => it.DatingProfileId == profile.Id)
+            //    .Select(it => (int)it.InterestName);
+
+
+
+            IEnumerable<int> listInterest = _context.UserInterests
+                .Where(it => it.DatingProfileId == profile.Id && it.InterestType == InterestType.DesiredInterest)
                 .Select(it => (int)it.InterestName);
 
+            IEnumerable<int> listOccupation = _context.Occupations
+                .Where(it => it.DatingProfileId == profile.Id && it.OccupationType == OccupationType.DesiredOccupation)
+                .Select(it => (int)it.OccupationName);
+
+           
 
             var minAge = userParams.MinAge > 0 ? userParams.MinAge : profile.DatingAgeFrom;
             var maxAge = userParams.MaxAge > 0 ? userParams.MaxAge : profile.DatingAgeTo;
 
-            if(userParams.Gender == Gender.MatchGender)
+            var minHeight = userParams.MinHeight > 0 ? userParams.MinHeight : profile.HeightFrom;
+            var maxHeight = userParams.MaxHeight > 0 ? userParams.MaxHeight : profile.HeightTo;
+
+            var minWeight = userParams.MinWeight > 0 ? userParams.MinWeight : profile.WeightFrom;
+            var maxWeight = userParams.MaxWeight > 0 ? userParams.MaxWeight : profile.WeightTo;
+
+
+            if (userParams.Gender == Gender.MatchGender)
             {
                 userParams.Gender = (Gender)profile.DatingObject;
             }
 
             string @interest = string.Join(",", listInterest);
+            string @occupation = string.Join(",", listOccupation);
             SqlParameter[] sqlParams = new SqlParameter[]
             {
-                new SqlParameter("@MinHeight", userParams.MinHeight),
-                new SqlParameter("@MaxHeight",  userParams.MaxHeight),
+                new SqlParameter("@MinHeight", minHeight),
+                new SqlParameter("@MaxHeight",  maxHeight),
                 new SqlParameter("@Gender", userParams.Gender == Gender.EveryOne ? DBNull.Value : userParams.Gender == Gender.Female ? "female" : "male"),
                 new SqlParameter("@MinAge", minAge),
                 new SqlParameter("@MaxAge", maxAge),
                 new SqlParameter("@City", userParams.Province is <= 0 ? DBNull.Value : userParams.Province),
-                new SqlParameter("@Interest",@interest),
+                new SqlParameter("@Interest", @interest),
+                new SqlParameter("@MinWeight", minWeight),
+                new SqlParameter("@MaxWeight", maxWeight),
+                new SqlParameter("@Occupation", @occupation), 
             };
 
             List<int> listTds = _context.Database
-                .SqlQueryRaw<int>("EXEC Search_Best_Match @MinHeight, @MaxHeight, @Gender,@MinAge,@MaxAge, @City, @Interest", sqlParams)
+                .SqlQueryRaw<int>("EXEC Search_Best_Match @MinHeight, @MaxHeight, @Gender,@MinAge,@MaxAge,@City,@Interest,@MinWeight,@MaxWeight,@Occupation ", sqlParams)
                 .ToList();
 
-            var query = _context.Users
-                .Include(x => x.DatingRequests)
-                .AsQueryable();
-
-            var datingRequest = _context.DatingRequests
-                .Where(it => it.SenderId == currentUser.Id || it.CrushId == currentUser.Id)
-                .Select(it => it.SenderId == currentUser.Id ? it.CrushId : it.SenderId);
-
-
-            query = query.Where(it => listTds.Contains(it.Id)
-                && it.UserName != userParams.CurrentUserName
-                && it.DatingRequests.All(x => x.Status != DatingStatus.Confirmed)
-                && !datingRequest.Contains(it.Id));
-
+            var query = _context.Users.AsQueryable();
+            query = query.Where(it => listTds.Contains(it.Id));
             query = userParams.OrderBy switch
             {
                 "created" => query.OrderByDescending(x => x.Created),

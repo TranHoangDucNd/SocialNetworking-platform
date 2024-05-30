@@ -46,23 +46,38 @@ namespace WebDating.Helpers
                     opt => opt.MapFrom(s => s.WhereToDate.GetDisplayName()))
                 .ForMember(dest => dest.WhereToDateCode,
                     opt => opt.MapFrom(s => s.WhereToDate))
-                .ForMember(dest => dest.Height,
-                    opt => opt.MapFrom(s => s.Height.GetDisplayName()))
-                .ForMember(dest => dest.HeightCode,
-                    opt => opt.MapFrom(s => s.Height))
+                .ForMember(dest => dest.HeightFrom,
+                    opt => opt.MapFrom(s => s.HeightFrom))
+                .ForMember(dest => dest.HeightTo,
+                    opt => opt.MapFrom(s => s.HeightTo))
+                .ForMember(dest => dest.WeightFrom,
+                    opt => opt.MapFrom(s => s.WeightFrom))
+                .ForMember(dest => dest.WeightTo,
+                    opt => opt.MapFrom(s => s.WeightTo))
                 .ForMember(dest => dest.DatingObject,
                     opt => opt.MapFrom(s => s.DatingObject.GetDisplayName()))
                 .ForMember(dest => dest.DatingObjectCode,
                     opt => opt.MapFrom(s => s.DatingObject))
                 .ForMember(dest => dest.DatingAgeFrom, opt => opt.MapFrom(s => s.DatingAgeFrom))
                 .ForMember(dest => dest.DatingAgeTo, opt => opt.MapFrom(s => s.DatingAgeTo))
+
                 .ForMember(dest => dest.UserInterests,
                     opt => opt.MapFrom(s => s.UserInterests.Select(ui => new UserInterestDto
                     {
                         Id = ui.Id,
                         DatingProfileId = ui.DatingProfileId,
                         InterestName = ui.InterestName.GetDisplayName(),
-                        InterestNameCode = ui.InterestName
+                        InterestNameCode = ui.InterestName,
+                        InterestType = ui.InterestType
+                    }).ToList()))
+                .ForMember(dest => dest.Occupations,
+                    opt => opt.MapFrom(s => s.Occupations.Select(ui => new OccupationDto
+                    {
+                        Id = ui.Id,
+                        DatingProfileId = ui.DatingProfileId,
+                        OccupationName = ui.OccupationName.GetDisplayName(),
+                        OccupationNameCode = ui.OccupationName,
+                        OccupationType = ui.OccupationType
                     }).ToList()));
 
             CreateMap<Post, PostResponseDto>()

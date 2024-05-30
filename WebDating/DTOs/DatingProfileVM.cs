@@ -20,15 +20,18 @@ namespace WebDating.DTOs
         // Đối tượng hẹn hò
         public string DatingObject { get; set; }
         public Gender DatingObjectCode { get; set; }
-        // Chiều cao
-        public string Height { get; set; }
         public Height HeightCode { get; set; }
         // Địa điểm muốn hẹn hò - Tỉnh thành
         public string WhereToDate { get; set; }
         public Provice WhereToDateCode { get; set; }
         public int DatingAgeFrom { get; set; }
         public int DatingAgeTo { get; set; }
+        public int HeightFrom { get; set; }
+        public int HeightTo { get; set; }
+        public int WeightFrom { get; set; }
+        public int WeightTo { get; set; }
         // Sở thích
         public List<UserInterestDto> UserInterests { get; set; }
+        public List<OccupationDto> Occupations { get; set; }
     }
 }

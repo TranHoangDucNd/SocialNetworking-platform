@@ -5,15 +5,16 @@ export class UserParams {
   gender= 0;
   minAge = 0;
   maxAge = 0;
-  minHeight = 120;
-  maxHeight = 200;
+  minHeight = 0;
+  maxHeight = 0;
   province = 0;
   pageNumber = 1;
+  minWeight = 0;
+  maxWeight = 0;
   pageSize = 5;
   orderBy = 'lastActive';
 
   constructor(user?: User) {
     this.currentUserName = user?.userName || '';
   }
-
 }

@@ -16,8 +16,10 @@ namespace WebDating.Entities.UserEntities
         public bool IsUpdatedDatingProfile { get; set; } = false;
         public string Gender { get; set; }
         public string Introduction { get; set; }
-        public string Interests { get; set; }
         public string City { get; set; }
+        public int Height { get; set; }
+        public int Weight { get; set; }
+
         public bool Lock { get; set; } = false;
         public DatingProfile DatingProfile { get; set; }
         public List<Photo> Photos { get; set; } = new();

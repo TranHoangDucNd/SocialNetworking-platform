@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebDating.Data;
 
@@ -11,9 +12,11 @@ using WebDating.Data;
 namespace WebDating.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20240526111118_ChangeUserInterestTypeToInterestType")]
+    partial class ChangeUserInterestTypeToInterestType
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -416,19 +419,10 @@ namespace WebDating.Data.Migrations
                     b.Property<int>("DatingObject")
                         .HasColumnType("int");
 
-                    b.Property<int>("HeightFrom")
-                        .HasColumnType("int");
-
-                    b.Property<int>("HeightTo")
+                    b.Property<int>("Height")
                         .HasColumnType("int");
 
                     b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("WeightFrom")
-                        .HasColumnType("int");
-
-                    b.Property<int>("WeightTo")
                         .HasColumnType("int");
 
                     b.Property<int>("WhereToDate")
@@ -440,30 +434,6 @@ namespace WebDating.Data.Migrations
                         .IsUnique();
 
                     b.ToTable("DatingProfiles");
-                });
-
-            modelBuilder.Entity("WebDating.Entities.ProfileEntities.Occupations", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("DatingProfileId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("OccupationName")
-                        .HasColumnType("int");
-
-                    b.Property<int>("OccupationType")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("DatingProfileId");
-
-                    b.ToTable("Occupations");
                 });
 
             modelBuilder.Entity("WebDating.Entities.UserEntities.AppRole", b =>
@@ -533,8 +503,8 @@ namespace WebDating.Data.Migrations
                     b.Property<string>("Gender")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Height")
-                        .HasColumnType("int");
+                    b.Property<string>("Interests")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Introduction")
                         .HasColumnType("nvarchar(max)");
@@ -586,9 +556,6 @@ namespace WebDating.Data.Migrations
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
-
-                    b.Property<int>("Weight")
-                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -886,17 +853,6 @@ namespace WebDating.Data.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("WebDating.Entities.ProfileEntities.Occupations", b =>
-                {
-                    b.HasOne("WebDating.Entities.ProfileEntities.DatingProfile", "DatingProfile")
-                        .WithMany("Occupations")
-                        .HasForeignKey("DatingProfileId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("DatingProfile");
-                });
-
             modelBuilder.Entity("WebDating.Entities.UserEntities.AppUser", b =>
                 {
                     b.HasOne("WebDating.Entities.ProfileEntities.DatingProfile", "DatingProfile")
@@ -1002,8 +958,6 @@ namespace WebDating.Data.Migrations
 
             modelBuilder.Entity("WebDating.Entities.ProfileEntities.DatingProfile", b =>
                 {
-                    b.Navigation("Occupations");
-
                     b.Navigation("UserInterests");
                 });
 

@@ -34,22 +34,22 @@ export class MemberListComponent implements OnInit, OnDestroy {
 
   }
 
-  checkUser() {
-    this.accountService.checkDatingProfile().subscribe(
-      (data: any) => {
-        if (data == false) this.openDatingModal();
-      },
-      (error: any) => {
-        console.log(error);
-      }
-    );
-  }
+  // checkUser() {
+  //   this.accountService.checkDatingProfile().subscribe(
+  //     (data: any) => {
+  //       if (data == false) this.openDatingModal();
+  //     },
+  //     (error: any) => {
+  //       console.log(error);
+  //     }
+  //   );
+  // }
 
-  openDatingModal() {
-    this.modalService.show(DatingProfileComponent, {
-      class: 'modal-lg',
-    });
-  }
+  // openDatingModal() {
+  //   this.modalService.show(DatingProfileComponent, {
+  //     class: 'modal-lg',
+  //   });
+  // }
 
   openFilterModal() {
     const dialogRef = this._dialog.open(MemberFilterComponent, {
@@ -67,7 +67,6 @@ export class MemberListComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.userParams = this.memberService.getUserParams();
     this.getOptionValues();
-    this.checkUser();
     this.loadMembers();
   }
 

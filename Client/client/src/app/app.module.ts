@@ -1,4 +1,4 @@
-import {NgModule} from '@angular/core';
+import {CUSTOM_ELEMENTS_SCHEMA, NgModule} from '@angular/core';
 import {BrowserModule} from '@angular/platform-browser';
 
 import {AppRoutingModule} from './app-routing.module';
@@ -77,6 +77,7 @@ import { MessagesThreadComponent } from './newmessages/messages-thread/messages-
 import { NewmessagesComponent } from './newmessages/newmessages.component';
 import { ConfirmComponent } from './newmessages/confirm/confirm.component';
 import { PostreportdetailComponent } from './admin/components/postreportdetail/postreportdetail.component';
+import { MyprofileComponent } from './members/myprofile/myprofile.component';
 
 @NgModule({
   declarations: [
@@ -115,7 +116,8 @@ import { PostreportdetailComponent } from './admin/components/postreportdetail/p
     MessagesThreadComponent,
     NewmessagesComponent,
     ConfirmComponent,
-    PostreportdetailComponent
+    PostreportdetailComponent,
+    MyprofileComponent
     
   ],
   providers: [
@@ -149,7 +151,7 @@ import { PostreportdetailComponent } from './admin/components/postreportdetail/p
     MatTooltipModule,
     OverlayModule,
     AdminModule, MatButtonToggleModule, NgOptimizedImage, MatSidenavModule, MatTreeModule, MatListModule, MatCardModule, MatExpansionModule, MatPaginatorModule, MatBadgeModule, CustomerroleModule, DashboardModule, ManagepostreportModule, MatTabsModule, ModeratorModule
-  ],
+  ]
 })
 export class AppModule {
 }

@@ -224,6 +224,7 @@ export class DatingProfileComponent implements OnInit {
         datingProfileId: 0,
         interestName: this.ChooseUserInterests[i].value,
         interestNameCode: 0,
+        interestType: 1
       };
       userInterestsArray.push(userInterest);
     }

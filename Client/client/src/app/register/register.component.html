@@ -13,7 +13,7 @@
             <div class="row row-space">
               <div class="col-2">
                 <div class="input-group">
-                  <label class="label">Tên người dùng</label>
+                  <label class="label">Full name</label>
                   <app-text-input
                     [formControl]="$any(registerForm.controls['knownAs'])"
                     [label]="'Nhập tên hiển thị'"
@@ -22,11 +22,11 @@
                 </div>
               </div>
               <div class="col-2">
-                <label class="label">Giới tính</label>
+                <label class="label">Gender</label>
                 <div class="input-group">
                   <div class="p-t-10">
                     <label class="radio-container m-r-45"
-                      >Nam
+                      >Male
                       <input
                         type="radio"
                         checked="checked"
@@ -37,7 +37,7 @@
                       <span class="checkmark"></span>
                     </label>
                     <label class="radio-container">
-                      Nữ
+                      Female
                       <input
                         type="radio"
                         name="gender"
@@ -52,28 +52,62 @@
             </div>
             <div class="row row-space">
               <div class="col-2">
-                <div class="input-group">
-                  <label class="label">Quê quán</label>
-                  <div>
+                <div class="">
+                  <label class="label">Lives in</label>
                     <mat-form-field
                       appearance="fill"
-                      style="height: 62px; width: 230px"
+                      style="height:70px; width: 221px"
                     >
-                      <mat-label>Thành phố</mat-label>
+                      <mat-label>City</mat-label>
                       <mat-select formControlName="city">
                         <mat-option
-                          *ngFor="let city of cities"
+                          *ngFor="let city of citiesInVietnam"
                           [value]="city"
                           >{{ city }}</mat-option
                         >
                       </mat-select>
                     </mat-form-field>
-                  </div>
+            
+                </div>
+              </div>
+
+              
+              <div class="col-2 d-flex">
+                <div class="row">
+                  <label class="label">Height</label>
+                <mat-form-field style="width: 100px; height: 70px;">
+                  <mat-label>Height</mat-label>
+                  <input matInput type="number" min="140" max="190" formControlName="height">
+                  <mat-error *ngIf="!isFormValid && (registerForm.get('height')?.hasError('min') || registerForm.get('height')?.hasError('max'))">
+                    From Height >= 140 and <= 190
+                  </mat-error>
+                </mat-form-field>
+                </div>
+                
+                <div class="row">
+                  <label class="label">Weight</label>
+                  <mat-form-field style="width: 100px; height: 70px;">
+                    <mat-label>From Weight</mat-label>
+                    <input matInput type="number" min="40" max="100" formControlName="weight">
+                    <mat-error *ngIf="!isFormValid && (registerForm.get('weight')?.hasError('min') || registerForm.get('weight')?.hasError('max'))">
+                      From Weight >= 40 and <= 100
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+            </div>
+            <div class="row row-space">
+              <div class="col-2">
+                <div class="input-group">
+                  <label class="label">User name</label>
+                  <app-text-input
+                    [formControl]="$any(registerForm.controls['userName'])"
+                    [label]="'Username'"
+                  ></app-text-input>
                 </div>
               </div>
               <div class="col-2">
                 <div class="input-group">
-                  <label class="label">Sinh nhật</label>
+                  <label class="label">Date of birth</label>
                   <span class="material-symbols-outlined">
                     calendar_month
                   </span>
@@ -87,23 +121,14 @@
                   </div>
                 </div>
               </div>
-            </div>
-            <div class="row row-space">
-              <div class="col-2">
-                <div class="input-group">
-                  <label class="label">Tên đăng nhập</label>
-                  <app-text-input
-                    [formControl]="$any(registerForm.controls['userName'])"
-                    [label]="'Username'"
-                  ></app-text-input>
-                </div>
+                
               </div>
             </div>
 
             <div class="row row-space">
               <div class="col-2">
                 <div class="input-group">
-                  <label class="label">Mật khẩu</label>
+                  <label class="label">Password</label>
                   <app-text-input
                     [formControl]="$any(registerForm.controls['password'])"
                     [label]="'Password'"
@@ -113,7 +138,7 @@
               </div>
               <div class="col-2">
                 <div class="input-group">
-                  <label class="label">Xác nhận lại mật khẩu</label>
+                  <label class="label">Confirm password</label>
                   <app-text-input
                     [formControl]="
                       $any(registerForm.controls['confirmPassword'])

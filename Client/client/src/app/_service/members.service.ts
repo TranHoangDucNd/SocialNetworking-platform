@@ -86,6 +86,9 @@ export class MembersService {
     params = params.append('province', userParams.province);
     params = params.append('gender', userParams.gender);
     params = params.append('orderBy', userParams.orderBy);
+    params = params.append('minWeight', userParams.minWeight);
+    params = params.append('maxWeight', userParams.maxWeight);
+
 
     return getPaginationResult<Member[]>(this.baseUrl + 'users', params, this.http).pipe(
       map(response =>{

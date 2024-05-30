@@ -30,6 +30,7 @@ namespace WebDating.Data
         //Profile
         public DbSet<DatingProfile> DatingProfiles { get; set; }
         public DbSet<UserInterest> UserInterests { get; set; }
+        public DbSet<Occupations> Occupations { get; set; }
 
         //Post
         public DbSet<Post> Posts { get; set; }

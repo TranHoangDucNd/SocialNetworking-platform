@@ -16,6 +16,9 @@ export class DatingService {
   GetUserInterests() {
     return this.http.get<any>(this.baseUrl + 'DatingProfile/GetUserInterests');
   }
+  GetUserOccupations() {
+    return this.http.get<any>(this.baseUrl + 'DatingProfile/GetUserOccupations');
+  }
   GetWhereToDate() {
     return this.http.get<any>(this.baseUrl + 'DatingProfile/GetWhereToDate');
   }

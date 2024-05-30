@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using WebDating.Data;
 using WebDating.DTOs;
 using WebDating.Entities.MessageEntities;
 using WebDating.Entities.NotificationEntities;
@@ -14,12 +16,14 @@ namespace WebDating.Services
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _uow;
         private readonly INotificationService _notificationService;
+        private readonly DataContext _dataContext;
 
-        public DatingService(IMapper mapper, IUnitOfWork uow, INotificationService notificationService)
+        public DatingService(IMapper mapper, IUnitOfWork uow, INotificationService notificationService, DataContext dataContext)
         {
             _mapper = mapper;
             _uow = uow;
             _notificationService = notificationService;
+            _dataContext = dataContext;
         }
         #region Xử lý yêu cầu hẹn hò và xác nhận/ từ chối yêu cầu
         public async Task<ResultDto<string>> CancelDating(int userId)
@@ -286,5 +290,115 @@ namespace WebDating.Services
 
         }
 
+
+        public async Task CreateProfileAndRandomInterestsForUser(string username)
+        {
+            // Tìm UserId dựa trên tên người dùng
+            var user = await _uow.UserRepository.GetUserByUsernameAsync(username);
+            if (user == null)
+            {
+                // Xử lý người dùng không tồn tại
+                return;
+            }
+
+            // Tạo mẫu dữ liệu DatingProfile
+            var datingProfile = new DatingProfile
+            {
+                UserId = user.Id,
+                DatingObject = Gender.EveryOne, // Giới tính mặc định
+                HeightFrom = 140,
+                HeightTo = 170,
+                WeightFrom = 40,
+                WeightTo = 80, // Chiều cao mặc định
+                WhereToDate = Provice.HaNoi, // Nơi hẹn hò mặc định
+                DatingAgeFrom = 18, // Tuổi tối thiểu cho đối tượng hẹn hò
+                DatingAgeTo = 99 // Tuổi tối đa cho đối tượng hẹn hò
+            };
+
+            _dataContext.DatingProfiles.Add(datingProfile);
+            await _uow.Complete();
+
+            // Danh sách các sở thích có sẵn
+            var allInterests = Enum.GetValues(typeof(Interest)).Cast<Interest>().ToList();
+
+            // Chọn ngẫu nhiên một số sở thích cho sở thích cá nhân
+            var random = new Random();
+            var randomPersonalInterests = new List<Interest>();
+            for (int i = 0; i < 5; i++) // Chọn 3 sở thích ngẫu nhiên
+            {
+                var randomIndex = random.Next(0, allInterests.Count);
+                var randomInterest = allInterests[randomIndex];
+                randomPersonalInterests.Add(randomInterest);
+                allInterests.RemoveAt(randomIndex); // Loại bỏ sở thích đã chọn để không chọn lại
+            }
+
+            // Chọn ngẫu nhiên một số sở thích cho sở thích mong muốn
+            var randomDesiredInterests = new List<Interest>();
+            for (int i = 0; i < 5; i++) // Chọn 3 sở thích ngẫu nhiên
+            {
+                var randomIndex = random.Next(0, allInterests.Count);
+                var randomInterest = allInterests[randomIndex];
+                randomDesiredInterests.Add(randomInterest);
+                allInterests.RemoveAt(randomIndex); // Loại bỏ sở thích đã chọn để không chọn lại
+            }
+
+            // Tạo mẫu dữ liệu UserInterests từ các sở thích ngẫu nhiên
+            var userInterests = new List<UserInterest>();
+            userInterests.AddRange(randomPersonalInterests.Select(interest => new UserInterest
+            {
+                DatingProfileId = datingProfile.Id,
+                InterestName = interest,
+                InterestType = InterestType.OwnInterest // Loại sở thích cá nhân
+            }));
+            userInterests.AddRange(randomDesiredInterests.Select(interest => new UserInterest
+            {
+                DatingProfileId = datingProfile.Id,
+                InterestName = interest,
+                InterestType = InterestType.DesiredInterest // Loại sở thích mong muốn
+            }));
+
+            _dataContext.UserInterests.AddRange(userInterests);
+            await _uow.Complete();
+
+            var allOccupations = Enum.GetValues(typeof(Occupation)).Cast<Occupation>().ToList();
+            
+            // Chọn ngẫu nhiên một số nghề nghiệp cho nghề nghiệp hiện tại
+            var randomCurrentOccupations = new List<Occupation>();
+            for (int i = 0; i < 3; i++) // Chọn 3 nghề nghiệp ngẫu nhiên
+            {
+                int randomIndex = random.Next(0, allOccupations.Count);
+                Occupation randomOccupation = allOccupations[randomIndex];
+                randomCurrentOccupations.Add(randomOccupation);
+                allOccupations.RemoveAt(randomIndex); // Loại bỏ nghề nghiệp đã chọn để không chọn lại
+            }
+
+            // Chọn ngẫu nhiên một số nghề nghiệp cho nghề nghiệp mong muốn
+            var randomDesiredOccupations = new List<Occupation>();
+            for (int i = 0; i < 3; i++) // Chọn 3 nghề nghiệp ngẫu nhiên
+            {
+                int randomIndex = random.Next(0, allOccupations.Count);
+                Occupation randomOccupation = allOccupations[randomIndex];
+                randomDesiredOccupations.Add(randomOccupation);
+                allOccupations.RemoveAt(randomIndex); // Loại bỏ nghề nghiệp đã chọn để không chọn lại
+            }
+
+            // Tạo mẫu dữ liệu UserOccupations từ các nghề nghiệp ngẫu nhiên
+            var userOccupations = new List<Occupations>();
+            userOccupations.AddRange(randomCurrentOccupations.Select(occupation => new Occupations
+            {
+                DatingProfileId = datingProfile.Id,
+                OccupationName = occupation,
+                OccupationType = OccupationType.OwnOccupation // Loại nghề nghiệp hiện tại
+            }));
+            userOccupations.AddRange(randomDesiredOccupations.Select(occupation => new Occupations
+            {
+                DatingProfileId = datingProfile.Id,
+                OccupationName = occupation,
+                OccupationType = OccupationType.DesiredOccupation // Loại nghề nghiệp mong muốn
+            }));
+
+            _dataContext.Occupations.AddRange(userOccupations);
+            await _uow.Complete();
+        }
     }
 }

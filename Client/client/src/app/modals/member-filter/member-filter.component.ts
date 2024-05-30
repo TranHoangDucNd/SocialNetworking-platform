@@ -102,7 +102,7 @@ export class MemberFilterComponent implements OnInit {
   }
 
   applyFilter() {
-    if (this.filterForm?.valid) {
+    if (this.filterForm.valid) {
       const userParams = this.filterForm?.value as UserParams;
 
       this._memberService.setUserParams(userParams);

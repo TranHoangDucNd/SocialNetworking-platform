@@ -1,8 +1,9 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, DestroyRef, EventEmitter, inject, OnInit, Output } from '@angular/core';
 import { AccountService } from '../_service/account.service';
 import {
   AbstractControl,
   FormBuilder,
+  FormControl,
   FormGroup,
   ValidationErrors,
   ValidatorFn,
@@ -22,7 +23,10 @@ export class RegisterComponent implements OnInit {
   registerForm: FormGroup = new FormGroup({});
   maxDate: Date = new Date();
   validationErrors: string[] | undefined;
-  
+  _destroyed = inject(DestroyRef);
+
+  isFormValid = true;
+  isAgeRangeValid = true;
   constructor(
     private accountService: AccountService,
     private fb: FormBuilder,
@@ -42,6 +46,8 @@ export class RegisterComponent implements OnInit {
       knownAs: ['', Validators.required],
       dateOfBirth: ['', Validators.required],
       city: ['', Validators.required],
+      height: new FormControl(140, [Validators.min(140), Validators.max(190)]),
+      weight: new FormControl(40, [Validators.min(40), Validators.max(100)]),
       password: [
         '',
         [
@@ -57,6 +63,10 @@ export class RegisterComponent implements OnInit {
       ],
 
       isUpdatedDatingProfile: [false, Validators.required],
+    }, {
+      validators: [this.validateHeightWeightRange('height', 'weight')
+        
+      ]
     });
 
     this.registerForm.controls['password'].valueChanges.subscribe({
@@ -88,6 +98,31 @@ export class RegisterComponent implements OnInit {
     });
   }
 
+  validateHeightWeightRange(heightControlName: string, weightControlName: string) {
+    return (formGroup: FormGroup) => {
+      const heightControl = formGroup.controls[heightControlName];
+      const weightControl = formGroup.controls[weightControlName];
+
+      if (!heightControl || !weightControl) {
+        return null;
+      }
+
+      if (heightControl.value > 190 || heightControl.value < 140) {
+        heightControl.setErrors({ notValid: true });
+      } else {
+        heightControl.setErrors(null);
+      }
+
+      if (weightControl.value > 100 || weightControl.value < 40) {
+        weightControl.setErrors({ notValid: true });
+      } else {
+        weightControl.setErrors(null);
+      }
+
+      return null;
+    };
+  }
+
 
 
   cancel() {
@@ -106,65 +141,57 @@ export class RegisterComponent implements OnInit {
       .slice(0, 10);
   }
 
-  cities: string[] = [
-    'Hà Nội',
-    'Hồ Chí Minh',
-    'Đà Nẵng',
-    'Hải Phòng',
-    'Cần Thơ',
-    'Nghệ An',
-    'Thanh Hóa',
-    'Bắc Ninh',
-    'Bảo Lộc',
-    'Biên Hòa',
-    'Bến Tre',
-    'Buôn Ma Thuột',
-    'Cà Mau',
-    'Cẩm Phả',
-    'Cao Lãnh',
-    'Đà Lạt',
-    'Điện Biên Phủ',
-    'Đông Hà',
-    'Đồng Hới',
-    'Hà Tĩnh',
-    'Hạ Long',
-    'Hải Dương',
-    'Hòa Bình',
-    'Hội An',
-    'Huế',
-    'Hưng Yên',
-    'Kon Tum',
-    'Lạng Sơn',
-    'Lào Cai',
-    'Long Xuyên',
-    'Móng Cái',
-    'Mỹ Tho',
-    'Nam Định',
-    'Ninh Bình',
-    'Nha Trang',
-    'Phan Rang-Tháp Chàm',
-    'Phan Thiết',
-    'Phủ Lý',
-    'Pleiku',
-    'Quảng Ngãi',
-    'Quy Nhơn',
-    'Rạch Giá',
-    'Sóc Trăng',
-    'Sơn La',
-    'Tam Kỳ',
-    'Tân An',
-    'Thái Bình',
-    'Thái Nguyên',
-    'Trà Vinh',
-    'Tuy Hòa',
-    'Tuyên Quang',
-    'Uông Bí',
-    'Việt Trì',
-    'Vĩnh Yên',
-    'Vĩnh Long',
-    'Vũng Tàu',
-    'Yên Bái'
-  ];
+  citiesInVietnam: string[] = [
+    "TP. Hà Nội",
+    "TP. Hồ Chí Minh",
+    "TP. Đà Nẵng",
+    "TP. Hải Phòng",
+    "TP. Cần Thơ",
+    "TP. Nha Trang",
+    "TP. Huế",
+    "TP. Vũng Tàu",
+    "TP. Quy Nhơn",
+    "TP. Đà Lạt",
+    "TP. Buôn Ma Thuột",
+    "TP. Thanh Hóa",
+    "TP. Vinh",
+    "TP. Nam Định",
+    "TP. Thái Nguyên",
+    "TP. Phan Thiết",
+    "TP. Rạch Giá",
+    "TP. Long Xuyên",
+    "TP. Thủ Dầu Một",
+    "TP. Bạc Liêu",
+    "TP. Trà Vinh",
+    "TP. Cao Lãnh",
+    "TP. Bắc Ninh",
+    "TP. Tuy Hòa",
+    "TP. Bến Tre",
+    "TP. Tân An",
+    "TP. Hà Tĩnh",
+    "TP. Việt Trì",
+    "TP. Lào Cai",
+    "TP. Yên Bái",
+    "TP. Điện Biên Phủ",
+    "TP. Sơn La",
+    "TP. Lạng Sơn",
+    "TP. Hạ Long",
+    "TP. Móng Cái",
+    "TP. Bắc Giang",
+    "TP. Phủ Lý",
+    "TP. Hưng Yên",
+    "TP. Thái Bình",
+    "TP. Ninh Bình",
+    "TP. Tam Kỳ",
+    "TP. Quảng Ngãi",
+    "TP. Pleiku",
+    "TP. Kon Tum",
+    "TP. Sóc Trăng",
+    "TP. Vị Thanh",
+    "TP. Châu Đốc",
+    "TP. Sa Đéc",
+    "TP. Hồng Ngự"
+];
 }
 
 export function createPasswordStrengthValidator(): ValidatorFn {

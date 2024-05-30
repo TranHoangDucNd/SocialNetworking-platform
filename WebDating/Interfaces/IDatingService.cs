@@ -21,5 +21,8 @@ namespace WebDating.Interfaces
         Task<ResultDto<DatingRequestVM>> Get(int userId, int datingRequestId);
         Task<ResultDto<DatingRequestVM>> GetDating(int userId);
 
+        //set default profile
+        Task CreateProfileAndRandomInterestsForUser(string username);
+
     }
 }

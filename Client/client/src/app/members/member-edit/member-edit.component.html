@@ -1,16 +1,4 @@
 <div class="row my-3 mx-5" *ngIf="member">
-  <div class="col-4 text-center">
-    <h1>Your profile</h1>
-  </div>
-  <div class="col-8">
-    <!--    <div class="alert alert-info pb-0" *ngIf="editForm.dirty">-->
-    <!--      <p>-->
-    <!--        <strong>Information: </strong>You have made changes. Any unsaved changes-->
-    <!--        will be lost-->
-    <!--      </p>-->
-    <!--    </div>-->
-  </div>
-
   <div class="col-4 mt-2">
     <div class="card-body">
       <ul class="list-group shadow-none">
@@ -32,9 +20,13 @@
         <li class="list-group-item">
           <div>
             <strong>Interests: </strong>
-            <li *ngFor="let i of member.datingProfile.userInterests" class="badge badge-dark badge-pill">
-              {{ i.interestName }}
-            </li>
+            <ul>
+              <ng-container *ngFor="let interest of member.datingProfile.userInterests">
+                <li *ngIf="interest.interestType === 1" class="badge badge-dark badge-pill" style="margin: 0 5px 5px 0;">
+                  {{ interest.interestName }}
+                </li>
+              </ng-container>
+            </ul>
           </div>
         </li>
         <li class="list-group-item">
@@ -83,27 +75,52 @@
       <tab heading="About">
         <form [formGroup]="editProfileForm" class="py-2 px-4">
           <div class="row">
-            <mat-form-field class="col col-6">
-              <mat-label>Height</mat-label>
-              <mat-select formControlName="height">
-                <div *ngFor="let option of Heights">
-                  <mat-option [value]="option.value">{{ option.displayName }}</mat-option>
-                </div>
-              </mat-select>
+            <mat-form-field class="col col-2">
+              <mat-label>Your Height/Cm</mat-label>
+           <input matInput type="number" min="140" max="190" formControlName="height">
             </mat-form-field>
 
-            <mat-form-field class="col col-6">
-              <mat-label>Where to date</mat-label>
-              <mat-select formControlName="whereToDate">
-                <div *ngFor="let option of WhereToDates">
-                  <mat-option [value]="option.value">
-                    {{ option.displayName }}
-                  </mat-option>
-                </div>
-              </mat-select>
+            <mat-form-field class="col col-2">
+              <mat-label>From Height/Cm</mat-label>
+              <input matInput type="number" min="140" max="190" formControlName="heightFrom">
             </mat-form-field>
 
-            <mat-form-field class="col col-6">
+            <mat-form-field class="col col-2">
+              <mat-label>To Height/Cm</mat-label>
+              <input matInput type="number" min="140" max="190" formControlName="heightTo">
+            </mat-form-field>
+
+            <mat-form-field class="col col-2">
+              <mat-label>Your Weight/Kg</mat-label>
+              <input matInput type="number" min="40" max="100" formControlName="weight">
+            </mat-form-field>
+
+            <mat-form-field class="col col-2">
+              <mat-label>From Weight/Kg</mat-label>
+              <input matInput type="number" min="40" max="100" formControlName="weightFrom">
+            </mat-form-field>
+
+            <mat-form-field class="col col-2">
+              <mat-label>To Weight/Kg</mat-label>
+              <input matInput type="number" min="40" max="100" formControlName="weightTo">
+            </mat-form-field>
+
+            <mat-form-field class="col col-2">
+              <mat-label>Your Age</mat-label>
+              <input matInput type="number" min="18" max="100" formControlName="age">
+            </mat-form-field>
+
+            <mat-form-field class="col col-2">
+              <mat-label>From Age</mat-label>
+              <input matInput type="number" min="18" max="100" formControlName="datingAgeFrom" style="border-radius: 15px;">
+            </mat-form-field>
+
+            <mat-form-field class="col col-2">
+              <mat-label>To Age</mat-label>
+              <input matInput type="number" min="18" max="100" formControlName="datingAgeTo">
+            </mat-form-field>
+
+             <mat-form-field class="col col-6" >
               <mat-label>Dating Object</mat-label>
               <mat-select formControlName="datingObject">
                 <div *ngFor="let option of genderList">
@@ -113,10 +130,13 @@
                 </div>
               </mat-select>
             </mat-form-field>
+            <br>
+
 
             <mat-form-field class="col col-6">
-              <mat-chip-grid #chipGrid aria-label="Chọn 1 chủ đề">
-                <mat-chip-row *ngFor="let title of ChooseUserInterests" (removed)="removeTopic(title)">
+              <mat-label>Your Interests</mat-label>
+              <mat-chip-grid #chipGrid1 aria-label="Select a topic">
+                <mat-chip-row *ngFor="let title of ChooseUserInterests1" (removed)="removeTopic1(title)">
                   {{ title.displayName }}
                   <button matChipRemove [attr.aria-label]="'remove ' + title.displayName">
                     <mat-icon>cancel</mat-icon>
@@ -126,33 +146,117 @@
               <mat-label>
                 <mat-icon matSuffix>tag</mat-icon>
               </mat-label>
-              <input #interestInput placeholder="Search your interest..." [formControl]="interestCtrl"
-                     [matChipInputFor]="chipGrid" [matAutocomplete]="auto"
+              <input #interestInput1 placeholder="Search your interest..." [formControl]="interestCtrl1"
+                     [matChipInputFor]="chipGrid1" [matAutocomplete]="auto1"
                      [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-                     (matChipInputTokenEnd)="addTopic($event)"/>
-              <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selectedTopic($event)"
-                                formControlName="interests">
-                <mat-option *ngFor="let item of filteredInterest | async" [value]="item.displayName">
+                     (matChipInputTokenEnd)="addTopic1($event)"/>
+              <mat-autocomplete #auto1="matAutocomplete" (optionSelected)="selectedTopic1($event)"
+                                formControlName="interests1">
+                <mat-option *ngFor="let item of filteredInterest1 | async" [value]="item.displayName">
                   {{ item.displayName }}
                 </mat-option>
               </mat-autocomplete>
             </mat-form-field>
 
             <mat-form-field class="col col-6">
+              <mat-label>Desired Interests</mat-label>
+              <mat-chip-grid #chipGrid2 aria-label="Select a topic">
+                <mat-chip-row *ngFor="let title of ChooseUserInterests2" (removed)="removeTopic2(title)">
+                  {{ title.displayName }}
+                  <button matChipRemove [attr.aria-label]="'remove ' + title.displayName">
+                    <mat-icon>cancel</mat-icon>
+                  </button>
+                </mat-chip-row>
+              </mat-chip-grid>
+              <mat-label>
+                <mat-icon matSuffix>tag</mat-icon>
+              </mat-label>
+              <input #interestInput2 placeholder="Search your interest..." [formControl]="interestCtrl2"
+                     [matChipInputFor]="chipGrid2" [matAutocomplete]="auto2"
+                     [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                     (matChipInputTokenEnd)="addTopic2($event)"/>
+              <mat-autocomplete #auto2="matAutocomplete" (optionSelected)="selectedTopic2($event)"
+                                formControlName="interests2">
+                <mat-option *ngFor="let item of filteredInterest2 | async" [value]="item.displayName">
+                  {{ item.displayName }}
+                </mat-option>
+              </mat-autocomplete>
+            </mat-form-field>
+
+            <mat-form-field class="col col-6">
+              <mat-label>Your Occupations</mat-label>
+              <mat-chip-grid #chipGrid3 aria-label="Select a topic">
+                <mat-chip-row *ngFor="let title of ChooseUserOccupations1" (removed)="removeOccupationTopic1(title)">
+                  {{ title.displayName }}
+                  <button matChipRemove [attr.aria-label]="'remove ' + title.displayName">
+                    <mat-icon>cancel</mat-icon>
+                  </button>
+                </mat-chip-row>
+              </mat-chip-grid>
+              <mat-label>
+                <mat-icon matSuffix>tag</mat-icon>
+              </mat-label>
+              <input #occupationInput1 placeholder="Search your occupation..." [formControl]="occupationCtrl1"
+                     [matChipInputFor]="chipGrid3" [matAutocomplete]="auto3"
+                     [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                     (matChipInputTokenEnd)="addOccupationTopic1($event)"/>
+              <mat-autocomplete #auto3="matAutocomplete" (optionSelected)="selectedTopicOccupation1($event)"
+                                formControlName="occupations1">
+                <mat-option *ngFor="let item of filteredOccupation1 | async" [value]="item.displayName">
+                  {{ item.displayName }}
+                </mat-option>
+              </mat-autocomplete>
+            </mat-form-field>
+
+
+            <mat-form-field class="col col-6">
+              <mat-label>Desired Occupation</mat-label>
+              <mat-chip-grid #chipGrid4 aria-label="Select a topic">
+                <mat-chip-row *ngFor="let title of ChooseUserOccupations2" (removed)="removeOccupationTopic2(title)">
+                  {{ title.displayName }}
+                  <button matChipRemove [attr.aria-label]="'remove ' + title.displayName">
+                    <mat-icon>cancel</mat-icon>
+                  </button>
+                </mat-chip-row>
+              </mat-chip-grid>
+              <mat-label>
+                <mat-icon matSuffix>tag</mat-icon>
+              </mat-label>
+              <input #occupationInput2 placeholder="Search your occupation..." [formControl]="occupationCtrl2"
+                     [matChipInputFor]="chipGrid4" [matAutocomplete]="auto4"
+                     [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                     (matChipInputTokenEnd)="addOccupationTopic2($event)"/>
+              <mat-autocomplete #auto4="matAutocomplete" (optionSelected)="selectedTopicOccupation2($event)"
+                                formControlName="occupations2">
+                <mat-option *ngFor="let item of filteredOccupation2 | async" [value]="item.displayName">
+                  {{ item.displayName }}
+                </mat-option>
+              </mat-autocomplete>
+            </mat-form-field>
+            
+           
+
+            <mat-form-field class="col col-6" style="height: 100px;">
               <mat-label>Description</mat-label>
               <textarea formControlName="introduction" matInput rows="4"></textarea>
             </mat-form-field>
 
-            <mat-form-field class="col col-6">
-              <mat-label>Looking for</mat-label>
-              <textarea formControlName="lookingFor" matInput rows="4"></textarea>
-            </mat-form-field>
-
-            <mat-form-field class="col col-6">
+            <mat-form-field class="col col-3">
               <mat-label>City</mat-label>
               <input formControlName="city" matInput placeholder="City">
             </mat-form-field>
-
+            
+            <mat-form-field class="col col-3" >
+              <mat-label>Where to date</mat-label>
+              <mat-select formControlName="whereToDate">
+                <div *ngFor="let option of WhereToDates">
+                  <mat-option [value]="option.value">
+                    {{ option.displayName }}
+                  </mat-option>
+                </div>
+              </mat-select>
+            </mat-form-field>
+            <br>
           </div>
           <div class="d-flex justify-content-end">
             <button mat-raised-button color="primary" type="submit" (click)="updateMember()">Save</button>
@@ -161,6 +265,9 @@
       </tab>
       <tab heading="Edit Photos">
         <app-photo-editor [member]="member"></app-photo-editor>
+      </tab>
+      <tab heading="Profile">
+        <app-myprofile [member]="member"></app-myprofile>
       </tab>
     </tabset>
   </div>

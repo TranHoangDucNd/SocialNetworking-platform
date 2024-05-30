@@ -7519,11 +7519,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "E:\\TranHoangDuc_DATN\\Try-Hard\\WebDating\\WebDating.csproj",
+      "projectUniqueName": "E:\\Do an tot nghiep\\Try-Hard\\WebDating\\WebDating.csproj",
       "projectName": "WebDating",
-      "projectPath": "E:\\TranHoangDuc_DATN\\Try-Hard\\WebDating\\WebDating.csproj",
+      "projectPath": "E:\\Do an tot nghiep\\Try-Hard\\WebDating\\WebDating.csproj",
       "packagesPath": "C:\\Users\\ADMIN\\.nuget\\packages\\",
-      "outputPath": "E:\\TranHoangDuc_DATN\\Try-Hard\\WebDating\\obj\\",
+      "outputPath": "E:\\Do an tot nghiep\\Try-Hard\\WebDating\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\ADMIN\\AppData\\Roaming\\NuGet\\NuGet.Config",

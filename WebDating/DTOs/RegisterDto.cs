@@ -17,5 +17,9 @@ namespace WebDating.DTOs
         [Required]
         [StringLength(15, MinimumLength = 6)]
         public string Password { get; set; }
+        [Required]
+        public int Height { get; set; }
+        [Required]
+        public int Weight { get; set; }
     }
 }
